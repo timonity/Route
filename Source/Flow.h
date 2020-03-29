@@ -6,7 +6,7 @@
 //  Copyright © 2020 HOME. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 //! Project version number for Flow.
 FOUNDATION_EXPORT double FlowVersionNumber;
