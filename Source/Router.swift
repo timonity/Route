@@ -8,22 +8,8 @@
 
 import UIKit
 
-typealias Condition = (UIViewController) -> Bool
-typealias Completion = () -> Void
-
-struct BackAction {
-    
-    var dismiss: UIViewController?
-    
-    var popTo: UIViewController?
-}
-
-struct BackResult {
-    
-    var target: UIViewController?
-    
-    var action: BackAction?
-}
+public typealias Condition = (UIViewController) -> Bool
+public typealias Completion = () -> Void
 
 open class Router {
     
@@ -134,6 +120,10 @@ open class Router {
                 
                 fatalError("Tabbar in stack not supported")
                 
+            } else if let pp = presenting as? RootViewController, let cc = pp.childViewControllers.first {
+                
+                return findControllerInStack(condition: condition, current: cc, action: newAction)
+                
             } else {
              
                 return findControllerInStack(condition: condition, current: presenting, action: newAction)
@@ -177,19 +167,50 @@ open class Router {
     
     // MARK: Forward
     
-    public func setWindowRoot(_ controller: UIViewController, animated: Bool = true) {
+    // https://qnoid.com/2019/02/15/How_to_replace_the_-rootViewController-_of_the_-UIWindow-_in_iOS.html
+    public func setWindowRoot(
+        _ controller: UIViewController,
+        animated: Bool = true,
+        completion: Completion? = nil
+    ) {
         
-        if animated == true {
+//        if animated == true {
+//
+//            let transition = CATransition()
+//            transition.type = "moveIn"
+//            transition.subtype = "fromTop"
+//
+//            window.layer.add(transition, forKey: nil)
+//        }
+        
+        if
+            let root = window.rootViewController as? RootViewController,
+            let child = root.childViewControllers.first
+        {
             
-            let transition = CATransition()
-//            transition.type = CATransitionType.moveIn
-//            transition.subtype = CATransitionSubtype.fromTop
+            root.transition(from: child, to: controller, completion: completion)
             
-            window.layer.add(transition, forKey: nil)
+        } else {
+            
+            let root = RootViewController()
+            
+            root.insert(controller: controller)
+            
+            window.rootViewController = root
         }
         
-        window.rootViewController?.dismiss(animated: false, completion: nil)
-        window.rootViewController = controller
+        
+//        window.rootViewController = controller
+//        window.rootViewController?.dismiss(animated: false, completion: nil)
+//
+//
+//        UIView.transition(
+//            with: window,
+//            duration: 0.3,
+//            options: .transitionCrossDissolve,
+//            animations: {  },
+//            completion: { isCompleted in completion?() }
+//        )
     }
     
     
@@ -291,8 +312,10 @@ open class Router {
             
             presenting.present(controller, animated: animated, completion: completion)
         
-        } else if findPreviousController(for: from).target == nil {
-            
+        }
+            else if findPreviousController(for: from).target == nil
+            || findPreviousController(for: from).target is RootViewController
+        {
             setWindowRoot(controller, animated: animated)
         }
     }

@@ -109,7 +109,7 @@ class ViewController: UIViewController {
         router.back(
             to: ViewController.self,
             condition: { $0.id == 3 },
-            prepare: { $0.view.backgroundColor = .blue },
+            prepare: { $0.view.backgroundColor = .gray },
             completion: { $0.showAlert(with: title) }
         )
     }
