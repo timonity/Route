@@ -8,6 +8,8 @@
 
 import UIKit
 
+// MARK: TopControllerProvider
+
 extension UINavigationController: TopControllerProvider {
     
     var top: UIViewController? {
@@ -15,6 +17,18 @@ extension UINavigationController: TopControllerProvider {
         return visibleViewController
     }
 }
+
+// MARK: ContainerController
+
+extension UINavigationController: ContainerController {
+    
+    var visibleController: UIViewController? {
+        
+        return topViewController
+    }
+}
+
+// MARK: Forward Navigation
 
 extension UINavigationController {
     
@@ -85,6 +99,8 @@ extension UINavigationController {
         )
     }
 }
+
+// MARK: Previous Controller
 
 extension UINavigationController {
     

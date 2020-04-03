@@ -8,10 +8,29 @@
 
 import UIKit
 
+// MARK: TopControllerProvider
+
 extension UITabBarController: TopControllerProvider {
     
     var top: UIViewController? {
         
         return selectedViewController
+    }
+}
+
+// MARK: ContainerController
+
+extension UITabBarController: ContainerController {
+    
+    var visibleController: UIViewController? {
+        
+        if let container = selectedViewController as? ContainerController {
+            
+            return container.visibleController
+            
+        } else {
+            
+            return selectedViewController
+        }
     }
 }

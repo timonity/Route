@@ -23,23 +23,23 @@ open class Router {
     
     // MARK: - Private methods
     
-    private func findNextController(
-        for controller: UIViewController
-    ) -> UIViewController {
-        
-        if let p = controller.presentedViewController {
-            
-            return findNextController(for: p)
-            
-        } else if let t = controller as? TopControllerProvider, let c = t.top {
-            
-            return findNextController(for: c)
-            
-        } else {
-            
-            return controller
-        }
-    }
+//    private func findNextController(
+//        for controller: UIViewController
+//    ) -> UIViewController {
+//        
+//        if let p = controller.presentedViewController {
+//            
+//            return findNextController(for: p)
+//            
+//        } else if let t = controller as? TopControllerProvider, let c = t.top {
+//            
+//            return findNextController(for: c)
+//            
+//        } else {
+//            
+//            return controller
+//        }
+//    }
     
     private func findPreviousController(
         for controller: UIViewController
@@ -109,25 +109,34 @@ open class Router {
             newAction.dismiss = presenting
             newAction.popTo = nil
             
+            if let container = presenting as? ContainerController, let content = container.visibleController {
+                
+                return findControllerInStack(condition: condition, current: content, action: newAction)
+                
+            } else {
+                
+                return findControllerInStack(condition: condition, current: presenting, action: newAction)
+            }
+            
             // 2. Если презентить из контроллера, который в навигейшн контроллере, то у запрезенченого контроллера
             // presentingViewController будет навигейшн контроллер
             
-            if let nav = presenting as? UINavigationController, let top = nav.topViewController {
-                
-                return findControllerInStack(condition: condition, current: top, action: newAction)
-                
-            } else if let tabBar = presenting as? UITabBarController {
-                
-                fatalError("Tabbar in stack not supported")
-                
-            } else if let pp = presenting as? RootViewController, let cc = pp.childViewControllers.first {
-                
-                return findControllerInStack(condition: condition, current: cc, action: newAction)
-                
-            } else {
-             
-                return findControllerInStack(condition: condition, current: presenting, action: newAction)
-            }
+//            if let nav = presenting as? UINavigationController, let top = nav.topViewController {
+//
+//                return findControllerInStack(condition: condition, current: top, action: newAction)
+//
+//            } else if let tabBar = presenting as? UITabBarController {
+//
+//                fatalError("Tabbar in stack not supported")
+//
+//            } else if let pp = presenting as? RootViewController, let cc = pp.childViewControllers.first {
+//
+//                return findControllerInStack(condition: condition, current: cc, action: newAction)
+//
+//            } else {
+//
+//                return findControllerInStack(condition: condition, current: presenting, action: newAction)
+//            }
             
         } else {
             
