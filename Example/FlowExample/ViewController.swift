@@ -58,7 +58,9 @@ class ViewController: UIViewController {
         controller.tree = getTree(newNode: "(\(id + 1))")
         controller.id = id + 1
         
-        router.push(controller)
+        let animator: Animator? = (id % 2 != 0) ? FadeAnimator() : nil
+        
+        router.push(controller, animator: animator)
     }
     
     @IBAction func presentButtonTouched(_ sender: Any) {
@@ -67,7 +69,11 @@ class ViewController: UIViewController {
         controller.tree = getTree(newNode: "[\(id + 1)]")
         controller.id = id + 1
         
-        router.present(controller)
+        controller.modalPresentationStyle = .fullScreen
+        
+        let animator: Animator? = (id % 2 == 0) ? FadeAnimator() : nil
+        
+        router.present(controller, animator: animator)
     }
     
     @IBAction func presentInNavigationButtonTouched(_ sender: Any) {
@@ -83,10 +89,7 @@ class ViewController: UIViewController {
     
     @IBAction func exitButtonTouched(_ sender: Any) {
         
-        router.exit(completion: { [id] (c: ViewController) in
-            
-            c.showAlert(with: "Backed from \(id)")
-        })
+        router.exit()
     }
     
     @IBAction func replaceButtonTouched(_ sender: Any) {

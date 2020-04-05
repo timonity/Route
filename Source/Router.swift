@@ -11,17 +11,57 @@ import UIKit
 public typealias Condition = (UIViewController) -> Bool
 public typealias Completion = () -> Void
 
-open class Router {
+open class Router: NSObject {
     
     // MARK: Private properties
     
-    public weak var currentController: UIViewController?
+    private let window: UIWindow
+    
+    private var transitions: Set<Transition> = []
     
     // MARK: Public properties
     
-    let window: UIWindow
+    public weak var currentController: UIViewController?
     
     // MARK: - Private methods
+    
+    private func getTransitionFor(source: UIViewController, target: UIViewController) -> Transition? {
+        
+        return transitions.filter { $0.from === source && $0.to === target }.first
+    }
+    
+    private func getTransitionForSource(_ controller: UIViewController) -> Transition? {
+        
+        return transitions.filter { $0.from === controller }.first
+    }
+    
+    private func getTransitionForTarger(_ controller: UIViewController) -> Transition? {
+        
+        return transitions.filter { $0.to === controller }.first
+    }
+    
+    private func deleteFineshedTransitions() {
+        
+        let finishedTransitions = transitions.filter { $0.isFinished }
+        
+        transitions = transitions.subtracting(finishedTransitions)
+        
+        print("Transitions count after clear: \(transitions.count)")
+    }
+    
+//    private func getAllControllersInStack() -> Set<UIViewController> {
+//
+//        var result: Set<UIViewController> = [currentController!]
+//
+//        _ = findPreviousController(for: currentController!) { (controller) -> Bool in
+//
+//            result.insert(controller)
+//
+//            return false
+//        }
+//
+//        return result
+//    }
     
 //    private func findNextController(
 //        for controller: UIViewController
@@ -206,6 +246,8 @@ open class Router {
             root.insert(controller: controller)
             
             window.rootViewController = root
+            
+            completion?()
         }
         
         
@@ -249,6 +291,7 @@ open class Router {
     public func push(
         _ controller: UIViewController,
         animated: Bool = true,
+        animator: Animator? = nil,
         completion: (() -> Void)? = nil
     ) {
         
@@ -266,12 +309,23 @@ open class Router {
             return
         }
         
+        if let animator = animator {
+            
+            let transition = Transition(from: from, to: controller, animator: animator)
+            
+            navagation.delegate = self
+            
+            transitions.insert(transition)
+            
+        }
+        
         navagation.push(controller: controller, animated: true, completion: completion)
     }
     
     public func present(
         _ controller: UIViewController,
         animated: Bool = true,
+        animator: Animator? = nil,
         completion: (() -> Void)? = nil
     ) {
         
@@ -280,6 +334,15 @@ open class Router {
             print("Current controller not found")
             
             return
+        }
+        
+        if let animator = animator {
+            
+            let transition = Transition(from: from, to: controller, animator: animator)
+            
+            controller.transitioningDelegate = self
+            
+            transitions.insert(transition)
         }
         
         from.present(controller, animated: animated, completion: completion)
@@ -372,9 +435,11 @@ open class Router {
         
         prepare?(targetController)
         
-        navigate(with: navigationResult, animated: animated) {
+        navigate(with: navigationResult, animated: animated) { [weak self] in
             
             completion?(targetController)
+            
+            self?.deleteFineshedTransitions()
         }
     }
     
@@ -409,5 +474,65 @@ open class Router {
             prepare: prepare,
             completion: completion
         )
+    }
+}
+
+// MARK: UINavigationControllerDelegate
+
+extension Router: UINavigationControllerDelegate {
+    
+    public func navigationController(
+        _ navigationController: UINavigationController,
+        animationControllerFor operation: UINavigationController.Operation,
+        from fromVC: UIViewController,
+        to toVC: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+        
+        let animator: Animator?
+        
+        switch operation {
+            
+        case .none:
+            animator = nil
+            
+        case .push:
+            animator = getTransitionFor(source: fromVC, target: toVC)?.animator
+            animator?.isOpening = true
+            
+        case .pop:
+            animator = getTransitionFor(source: toVC, target: fromVC)?.animator
+            animator?.isOpening = false
+        }
+        
+        return animator
+    }
+}
+
+// MARK: UIViewControllerTransitioningDelegate
+
+extension Router: UIViewControllerTransitioningDelegate {
+    
+    public func animationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController,
+        source: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+        
+        let animator = getTransitionFor(source: source, target: presented)?.animator
+        
+        animator?.isOpening = true
+        
+        return animator
+    }
+    
+    public func animationController(
+        forDismissed dismissed: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+        
+        let animator = getTransitionForTarger(dismissed)?.animator
+        
+        animator?.isOpening = false
+        
+        return animator
     }
 }
