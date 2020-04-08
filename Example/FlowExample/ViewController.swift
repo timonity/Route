@@ -58,9 +58,9 @@ class ViewController: UIViewController {
         controller.tree = getTree(newNode: "(\(id + 1))")
         controller.id = id + 1
         
-        let animator: Animator? = (id % 2 != 0) ? FadeAnimator() : nil
+        let animator: Animator? = (id % 2 == 0) ? FadeAnimator() : nil
         
-        router.push(controller, animator: animator)
+        router.push(controller)
     }
     
     @IBAction func presentButtonTouched(_ sender: Any) {
@@ -69,11 +69,11 @@ class ViewController: UIViewController {
         controller.tree = getTree(newNode: "[\(id + 1)]")
         controller.id = id + 1
         
-        controller.modalPresentationStyle = .fullScreen
+//        controller.modalPresentationStyle = .fullScreen
         
         let animator: Animator? = (id % 2 == 0) ? FadeAnimator() : nil
         
-        router.present(controller, animator: animator)
+        router.present(controller)
     }
     
     @IBAction func presentInNavigationButtonTouched(_ sender: Any) {
@@ -82,7 +82,10 @@ class ViewController: UIViewController {
         controller.tree = getTree(newNode: "[\(id + 1)]")
         controller.id = id + 1
         
+        
         let nc = UINavigationController(rootViewController: controller)
+        nc.modalPresentationStyle = .fullScreen
+//        nc.interactivePopGestureRecognizer?.delegate = nil
         
         router.present(nc)
     }

@@ -13,11 +13,13 @@ public typealias Completion = () -> Void
 
 open class Router: NSObject {
     
-    // MARK: Private properties
-    
-    private let window: UIWindow
+    // MARK: Akk
     
     private var transitions: Set<Transition> = []
+    
+    // MARK: Private properties
+    
+    private let window: UIWindow?
     
     // MARK: Public properties
     
@@ -25,69 +27,37 @@ open class Router: NSObject {
     
     // MARK: - Private methods
     
-    private func getTransitionFor(source: UIViewController, target: UIViewController) -> Transition? {
+    private var keyController: UIViewController? {
         
-        return transitions.filter { $0.from === source && $0.to === target }.first
-    }
-    
-    private func getTransitionForSource(_ controller: UIViewController) -> Transition? {
-        
-        return transitions.filter { $0.from === controller }.first
-    }
-    
-    private func getTransitionForTarger(_ controller: UIViewController) -> Transition? {
-        
-        return transitions.filter { $0.to === controller }.first
-    }
-    
-    private func deleteFineshedTransitions() {
-        
-        let finishedTransitions = transitions.filter { $0.isFinished }
-        
-        transitions = transitions.subtracting(finishedTransitions)
-        
-        print("Transitions count after clear: \(transitions.count)")
-    }
-    
-//    private func getAllControllersInStack() -> Set<UIViewController> {
-//
-//        var result: Set<UIViewController> = [currentController!]
-//
-//        _ = findPreviousController(for: currentController!) { (controller) -> Bool in
-//
-//            result.insert(controller)
-//
-//            return false
-//        }
-//
-//        return result
-//    }
-    
-//    private func findNextController(
-//        for controller: UIViewController
-//    ) -> UIViewController {
-//        
-//        if let p = controller.presentedViewController {
-//            
-//            return findNextController(for: p)
-//            
-//        } else if let t = controller as? TopControllerProvider, let c = t.top {
-//            
-//            return findNextController(for: c)
-//            
-//        } else {
-//            
-//            return controller
-//        }
-//    }
-    
-    private func findPreviousController(
-        for controller: UIViewController
-    ) -> BackResult {
-        
-        return findPreviousController(for: controller) { (c) -> Bool in
+        guard let controller = currentController else {
             
-            if c is UINavigationController {
+            assertionFailure("Current controller not found")
+            
+            return nil
+        }
+        
+        return controller
+    }
+    
+    private var keyNavigationController: UINavigationController? {
+        
+        guard let navigation = keyController?.navigationController else {
+            
+            print("Missing `UINavigationController` for current controller")
+            
+            return nil
+        }
+        
+        return navigation
+    }
+    
+    private func findPreviousContentController(
+        for controller: UIViewController
+    ) -> BackResult? {
+        
+        return findControllerInNavigationTree(for: controller) { (c) -> Bool in
+            
+            if c is ContainerController {
                 
                 return false
                 
@@ -102,23 +72,23 @@ open class Router: NSObject {
         }
     }
     
-    private func findPreviousController(
+    private func findControllerInNavigationTree(
         for controller: UIViewController,
         condition: Condition
-    ) -> BackResult {
+    ) -> BackResult? {
         
-        return findControllerInStack(
+        return findControllerInNavigationTree(
             condition: condition,
             current: controller,
             action: BackAction()
         )
     }
     
-    private func findControllerInStack(
+    private func findControllerInNavigationTree(
         condition: Condition,
         current: UIViewController,
         action: BackAction
-    ) -> BackResult {
+    ) -> BackResult? {
         
         if condition(current) {
             
@@ -131,17 +101,17 @@ open class Router: NSObject {
                 var newAction = action
                 newAction.popTo = prevContr
                 
-                return findControllerInStack(condition: condition, current: prevContr, action: newAction)
+                return findControllerInNavigationTree(condition: condition, current: prevContr, action: newAction)
                 
             } else {
                 
-                return findControllerInStack(condition: condition, current: navigation, action: action)
+                return findControllerInNavigationTree(condition: condition, current: navigation, action: action)
             }
             
         } else if let parent = current.parent {
             
             // Возможно это покрыват кейс, когда парент = табБарКонтроллер
-            return findControllerInStack(condition: condition, current: parent, action: action)
+            return findControllerInNavigationTree(condition: condition, current: parent, action: action)
         
         } else if let presenting = current.presentingViewController {
             
@@ -151,43 +121,23 @@ open class Router: NSObject {
             
             if let container = presenting as? ContainerController, let content = container.visibleController {
                 
-                return findControllerInStack(condition: condition, current: content, action: newAction)
+                return findControllerInNavigationTree(condition: condition, current: content, action: newAction)
                 
             } else {
                 
-                return findControllerInStack(condition: condition, current: presenting, action: newAction)
+                return findControllerInNavigationTree(condition: condition, current: presenting, action: newAction)
             }
-            
-            // 2. Если презентить из контроллера, который в навигейшн контроллере, то у запрезенченого контроллера
-            // presentingViewController будет навигейшн контроллер
-            
-//            if let nav = presenting as? UINavigationController, let top = nav.topViewController {
-//
-//                return findControllerInStack(condition: condition, current: top, action: newAction)
-//
-//            } else if let tabBar = presenting as? UITabBarController {
-//
-//                fatalError("Tabbar in stack not supported")
-//
-//            } else if let pp = presenting as? RootViewController, let cc = pp.childViewControllers.first {
-//
-//                return findControllerInStack(condition: condition, current: cc, action: newAction)
-//
-//            } else {
-//
-//                return findControllerInStack(condition: condition, current: presenting, action: newAction)
-//            }
             
         } else {
             
-            return BackResult(target: nil, action: nil)
+            return nil
         }
     }
     
     private func navigate(
         with result: BackResult,
         animated: Bool = true,
-        completion: (() -> Void)? = nil
+        completion: Completion? = nil
     ) {
         
         if let controllerToDismiss = result.action?.dismiss {
@@ -209,7 +159,7 @@ open class Router: NSObject {
     
     // MARK: - Public methods
     
-    public init(window: UIWindow) {
+    public init(window: UIWindow?) {
         
         self.window = window
     }
@@ -223,14 +173,12 @@ open class Router: NSObject {
         completion: Completion? = nil
     ) {
         
-//        if animated == true {
-//
-//            let transition = CATransition()
-//            transition.type = "moveIn"
-//            transition.subtype = "fromTop"
-//
-//            window.layer.add(transition, forKey: nil)
-//        }
+        guard let window = window else {
+            
+            print("Current window not found")
+            
+            return
+        }
         
         if
             let root = window.rootViewController as? RootViewController,
@@ -268,84 +216,28 @@ open class Router: NSObject {
     public func push(
         _ controllers: [UIViewController],
         animated: Bool = true,
-        completion: (() -> Void)? = nil
+        completion: Completion? = nil
     ) {
         
-        guard let from = currentController else {
-            
-            print("Current controller not found")
-            
-            return
-        }
-
-        guard let navagation = from.navigationController else {
-
-            print("Missing UINavigationController for \(from)")
-
-            return
-        }
-        
-        navagation.push(controllers: controllers, animated: animated, completion: completion)
+        keyNavigationController?.push(controllers: controllers, animated: animated, completion: completion)
     }
     
     public func push(
         _ controller: UIViewController,
         animated: Bool = true,
-        animator: Animator? = nil,
-        completion: (() -> Void)? = nil
+        completion: Completion? = nil
     ) {
         
-        guard let from = currentController else {
-            
-            print("Current controller not found")
-            
-            return
-        }
-        
-        guard let navagation = from.navigationController else {
-            
-            print("Missing `UINavigationController` for `\(type(of: controller))`")
-            
-            return
-        }
-        
-        if let animator = animator {
-            
-            let transition = Transition(from: from, to: controller, animator: animator)
-            
-            navagation.delegate = self
-            
-            transitions.insert(transition)
-            
-        }
-        
-        navagation.push(controller: controller, animated: true, completion: completion)
+        keyNavigationController?.push(controller: controller, animated: true, completion: completion)
     }
     
     public func present(
         _ controller: UIViewController,
         animated: Bool = true,
-        animator: Animator? = nil,
-        completion: (() -> Void)? = nil
+        completion: Completion? = nil
     ) {
         
-        guard let from = currentController else {
-            
-            print("Current controller not found")
-            
-            return
-        }
-        
-        if let animator = animator {
-            
-            let transition = Transition(from: from, to: controller, animator: animator)
-            
-            controller.transitioningDelegate = self
-            
-            transitions.insert(transition)
-        }
-        
-        from.present(controller, animated: animated, completion: completion)
+        keyController?.present(controller, animated: animated, completion: completion)
     }
     
     // MARK: Replace
@@ -353,17 +245,12 @@ open class Router: NSObject {
     public func replace(
         to controller: UIViewController,
         animated: Bool = true,
-        completion: (() -> Void)? = nil
+        completion: Completion? = nil
     ) {
         
-        guard let from = currentController else {
-            
-            print("Current controller not found")
-            
-            return
-        }
+        guard let current = keyController else { return }
         
-        if let navigationController = from.navigationController {
+        if let navigationController = keyController?.navigationController {
             
             if controller.navigationController != nil {
                 
@@ -378,15 +265,15 @@ open class Router: NSObject {
                 completion: completion
             )
             
-        } else if let presenting = from.presentingViewController {
+        } else if let presenting = current.presentingViewController {
             
-            from.dismiss(animated: animated, completion: nil)
+            current.dismiss(animated: animated, completion: nil)
             
             presenting.present(controller, animated: animated, completion: completion)
         
         }
-            else if findPreviousController(for: from).target == nil
-            || findPreviousController(for: from).target is RootViewController
+        else if findPreviousContentController(for: current)?.target == nil
+            || findPreviousContentController(for: current)?.target is RootViewController
         {
             setWindowRoot(controller, animated: animated)
         }
@@ -402,20 +289,15 @@ open class Router: NSObject {
         completion: ((T) -> Void)? = nil
     ) {
         
-        guard let from = currentController else {
-            
-            print("Current controller not found")
-            
-            return
-        }
+        guard let current = keyController else { return }
         
-        let navigationResult = findPreviousController(for: from) { (controller) -> Bool in
+        let navigationResult = findControllerInNavigationTree(for: current) { (controller) -> Bool in
             
-            if let c = controller as? T {
+            if let candidate = controller as? T {
                 
-                if let cond = condition {
+                if let condition = condition {
                     
-                    return cond(c)
+                    return condition(candidate)
                     
                 } else {
                     
@@ -428,18 +310,18 @@ open class Router: NSObject {
             }
         }
         
-        guard let targetController = navigationResult.target as? T else {
+        guard let navigationPath = navigationResult, let targetController = navigationResult?.target as? T else {
+            
+            print("Target controller of type `\(to)` not found in navigation tree")
             
             return
         }
         
         prepare?(targetController)
         
-        navigate(with: navigationResult, animated: animated) { [weak self] in
+        navigate(with: navigationPath, animated: animated) {
             
             completion?(targetController)
-            
-            self?.deleteFineshedTransitions()
         }
     }
     
@@ -449,27 +331,17 @@ open class Router: NSObject {
         completion: ((T) -> Void)? = nil
     ) {
         
-        guard let from = currentController else {
-            
-            print("Current controller not found")
-            
-            return
-        }
-        
         back(
             to: T.self,
             animated: animated,
-            condition: { (controller) -> Bool in
-            
-                if
-                    controller is UINavigationController
-                    || controller is UITabBarController
-                {
+            condition: { [weak self] (controller) -> Bool in
+                
+                if controller is ContainerController {
                     
                     return false
                 }
                 
-                return from !== controller
+                return self?.keyController !== controller
             },
             prepare: prepare,
             completion: completion
@@ -477,9 +349,91 @@ open class Router: NSObject {
     }
 }
 
+// MARK: - Akk
+
+extension Router {
+    
+    private func findNextController(
+        for controller: UIViewController
+    ) -> UIViewController {
+        
+        if let p = controller.presentedViewController {
+            
+            return findNextController(for: p)
+            
+        } else if let t = controller as? TopControllerProvider, let c = t.top {
+            
+            return findNextController(for: c)
+            
+        } else {
+            
+            return controller
+        }
+    }
+}
+
+// MARK: - Transition methods
+
+extension Router {
+    
+    private func getTransitionFor(source: UIViewController, target: UIViewController) -> Transition? {
+        
+        return transitions.filter { $0.from === source && $0.to === target }.first
+    }
+    
+    private func getTransitionForSource(_ controller: UIViewController) -> Transition? {
+        
+        return transitions.filter { $0.from === controller }.first
+    }
+    
+    private func getTransitionForTarger(_ controller: UIViewController) -> Transition? {
+        
+        return transitions.filter { $0.to === controller }.first
+    }
+    
+    private func deleteFineshedTransitions() {
+        
+        let finishedTransitions = transitions.filter { $0.isFinished }
+        
+        transitions = transitions.subtracting(finishedTransitions)
+        
+        print("Transitions count after clear: \(transitions.count)")
+    }
+    
+    private func getAllControllersInStack() -> Set<UIViewController> {
+
+        var result: Set<UIViewController> = [currentController!]
+
+        _ = findControllerInNavigationTree(for: currentController!) { (controller) -> Bool in
+
+            result.insert(controller)
+
+            return false
+        }
+
+        return result
+    }
+}
+
 // MARK: UINavigationControllerDelegate
 
 extension Router: UINavigationControllerDelegate {
+    
+    public func navigationController(
+        _ navigationController: UINavigationController,
+        willShow viewController: UIViewController,
+        animated: Bool
+    ) {
+        
+    }
+
+    public func navigationController(
+        _ navigationController: UINavigationController,
+        didShow viewController: UIViewController,
+        animated: Bool
+    ) {
+        
+    }
     
     public func navigationController(
         _ navigationController: UINavigationController,
@@ -505,6 +459,14 @@ extension Router: UINavigationControllerDelegate {
         }
         
         return animator
+    }
+    
+    public func navigationController(
+        _ navigationController: UINavigationController,
+        interactionControllerFor animationController: UIViewControllerAnimatedTransitioning
+    ) -> UIViewControllerInteractiveTransitioning? {
+        
+        return nil
     }
 }
 
@@ -534,5 +496,19 @@ extension Router: UIViewControllerTransitioningDelegate {
         animator?.isOpening = false
         
         return animator
+    }
+    
+    public func interactionControllerForPresentation(
+        using animator: UIViewControllerAnimatedTransitioning
+    ) -> UIViewControllerInteractiveTransitioning? {
+        
+        return nil
+    }
+    
+    public func interactionControllerForDismissal(
+        using animator: UIViewControllerAnimatedTransitioning
+    ) -> UIViewControllerInteractiveTransitioning? {
+        
+        return nil
     }
 }

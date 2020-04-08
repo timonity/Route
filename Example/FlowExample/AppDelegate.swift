@@ -14,7 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
     
-    lazy var router = Router(window: window!)
+    lazy var router = Router(window: window)
 
     func application(
         _ application: UIApplication,
@@ -42,10 +42,10 @@ extension UIViewController {
     
     var router: Router {
         
-        let r = (UIApplication.shared.delegate as! AppDelegate).router
+        let keyRouter = (UIApplication.shared.delegate as! AppDelegate).router
         
-        r.currentController = self
+        keyRouter.currentController = self
         
-        return r
+        return keyRouter
     }
 }

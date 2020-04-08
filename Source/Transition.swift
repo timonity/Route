@@ -63,25 +63,39 @@ final class Transition: NSObject {
 
 // MARK: UIViewControllerTransitioningDelegate
 
-//extension Transition: UIViewControllerTransitioningDelegate {
-//
-//    func animationController(
-//        forPresented presented: UIViewController,
-//        presenting: UIViewController,
-//        source: UIViewController
-//    ) -> UIViewControllerAnimatedTransitioning? {
-//
-//        animator.isOpening = true
-//
-//        return animator
-//    }
-//
-//    func animationController(
-//        forDismissed dismissed: UIViewController
-//    ) -> UIViewControllerAnimatedTransitioning? {
-//
-//        animator.isOpening = false
-//
-//        return animator
-//    }
-//}
+extension Transition: UIViewControllerTransitioningDelegate {
+
+    func animationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController,
+        source: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+
+        animator.isOpening = true
+
+        return animator
+    }
+
+    func animationController(
+        forDismissed dismissed: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+
+        animator.isOpening = false
+
+        return animator
+    }
+    
+    public func interactionControllerForPresentation(
+        using animator: UIViewControllerAnimatedTransitioning
+    ) -> UIViewControllerInteractiveTransitioning? {
+        
+        return nil
+    }
+
+    public func interactionControllerForDismissal(
+        using animator: UIViewControllerAnimatedTransitioning
+    ) -> UIViewControllerInteractiveTransitioning? {
+        
+        return nil
+    }
+}
