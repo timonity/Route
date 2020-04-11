@@ -25,10 +25,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let root = ViewController.initiate()
         root.title = "Root"
-        root.tree.append("[WinRoot]")
         root.id = 0
+        root.tree.append("->[\(root.id)]")
         
-        router.setWindowRoot(root, animated: false)
+        router.setWindowRoot(
+            root,
+            animated: false,
+            completion: {}
+        )
         
         window?.makeKeyAndVisible()
         
@@ -48,4 +52,19 @@ extension UIViewController {
         
         return keyRouter
     }
+}
+
+
+extension UITabBarController: StoryboadInitable {
+    
+    public static var storyboardId: String {
+        
+        return "TabBar"
+    }
+    
+    public static var storyboardName: String {
+        
+        return "Main"
+    }
+    
 }

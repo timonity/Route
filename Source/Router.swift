@@ -281,7 +281,7 @@ open class Router: NSObject {
     
     // MARK: Back
     
-    public func back<T: UIViewController>(
+    public func backTo<T: UIViewController>(
         to: T.Type,
         animated: Bool = true,
         condition: ((T) -> Bool)? = nil,
@@ -325,13 +325,13 @@ open class Router: NSObject {
         }
     }
     
-    public  func exit<T: UIViewController>(
+    public  func back<T: UIViewController>(
         animated: Bool = true,
         prepare: ((T) -> Void)? = nil,
         completion: ((T) -> Void)? = nil
     ) {
         
-        back(
+        backTo(
             to: T.self,
             animated: animated,
             condition: { [weak self] (controller) -> Bool in
