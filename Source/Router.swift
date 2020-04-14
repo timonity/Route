@@ -21,6 +21,11 @@ open class Router: NSObject {
     
     private let window: UIWindow?
     
+    private var windowRootController: UIViewController? {
+        
+        return window?.rootViewController
+    }
+    
     // MARK: Public properties
     
     public weak var currentController: UIViewController?
@@ -325,7 +330,7 @@ open class Router: NSObject {
         }
     }
     
-    public  func back<T: UIViewController>(
+    public func back<T: UIViewController>(
         animated: Bool = true,
         prepare: ((T) -> Void)? = nil,
         completion: ((T) -> Void)? = nil
@@ -343,6 +348,46 @@ open class Router: NSObject {
                 
                 return self?.keyController !== controller
             },
+            prepare: prepare,
+            completion: completion
+        )
+    }
+    
+    public func backToWindowRoot<T: UIViewController>(
+        animated: Bool = true,
+        prepare: ((T) -> Void)? = nil,
+        completion: ((T) -> Void)? = nil
+    ) {
+        
+        backTo(
+            to: T.self,
+            animated: animated,
+            condition: { controller in
+                
+                if let root = self.windowRootController as? RootViewController {
+                    
+                    return controller === root.current
+                    
+                } else {
+                    
+                    return controller == self.windowRootController
+                }
+            },
+            prepare: prepare,
+            completion: completion
+        )
+    }
+    
+    public func backToKeyNavigationRoot<T: UIViewController>(
+        animated: Bool = true,
+        prepare: ((T) -> Void)? = nil,
+        completion: ((T) -> Void)? = nil
+    ) {
+        
+        backTo(
+            to: T.self,
+            animated: animated,
+            condition: { $0 === self.keyNavigationController?.root },
             prepare: prepare,
             completion: completion
         )

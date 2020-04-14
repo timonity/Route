@@ -32,6 +32,11 @@ extension UINavigationController: ContainerController {
 
 extension UINavigationController {
     
+    var root: UIViewController? {
+        
+        return viewControllers.first
+    }
+    
     func push(
         controller: UIViewController,
         animated: Bool = true,
