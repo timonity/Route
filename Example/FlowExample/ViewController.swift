@@ -9,11 +9,93 @@
 import UIKit
 import Flow
 
+enum Action: Int, CaseIterable {
+    
+    case push
+    case present
+    
+    case replace
+    case setWindowRoot
+    
+    case back
+    case backTo
+    case backToWindowRoot
+    case backToNavigationRoot
+    
+    
+    var title: String {
+        
+        switch self {
+            
+        case .push:
+            return "Push"
+            
+        case .present:
+            return "Present"
+            
+        case .replace:
+            return "Replace"
+            
+        case .setWindowRoot:
+            return "Set Window Root"
+            
+        case .back:
+            return "Back"
+            
+        case .backTo:
+            return "Back to 3"
+            
+        case .backToWindowRoot:
+            return "Back to Window Root"
+            
+        case .backToNavigationRoot:
+            return "Back to Current Nav. Root"
+        }
+    }
+}
+
+class Button: UIButton {
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        layer.cornerRadius = frame.size.height / 2
+//        layer.cornerRadius = 15
+        layer.masksToBounds = true
+    }
+    
+    func setupWith(action: Action) {
+        
+        setTitleColor(.white, for: .normal)
+        setTitleColor(.gray, for: .highlighted)
+        titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        
+        if #available(iOS 11.0, *) {
+            backgroundColor = UIColor(named: "main_button")!
+        } else {
+            
+        }
+        
+        
+        
+        setTitle(action.title, for: .normal)
+        tag = action.rawValue
+    }
+}
+
 class ViewController: UIViewController {
     
     // MARK: Private properties
     
     @IBOutlet var navigationTreeLabel: UILabel!
+    
+    private let actions = Action.allCases
+    @IBOutlet weak var stackView: UIStackView!
     
     // MARK: Public properties
     
@@ -26,18 +108,69 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if #available(iOS 12.0, *) {
+        setupButtons()
+        
+        if #available(iOS 13.0, *) {
             navigationTreeLabel.font = UIFont.monospacedSystemFont(ofSize: 15, weight: .regular)
         } else {
             
         }
+        
+        title = String(id)
+        
+        navigationTreeLabel.backgroundColor = .white
     
         plotTree()
     }
     
     // MARK: Private methods
     
-    @IBAction func pushButtonTouched(_ sender: Any) {
+    private func setupButtons() {
+        
+        actions.forEach { (action) in
+            
+            let button = Button()
+            button.setupWith(action: action)
+            button.addTarget(self, action: #selector(self.actionButtonTouched(_:)), for: .touchUpInside)
+            
+            stackView.addArrangedSubview(button)
+            
+        }
+    }
+    
+    @objc private func actionButtonTouched(_ sender: Button) {
+        
+        guard let action = Action(rawValue: sender.tag) else { return }
+        
+        switch action {
+            
+        case .push:
+            push()
+            
+        case .present:
+            present()
+            
+        case .replace:
+            replace()
+            
+        case .setWindowRoot:
+            setWindowRoot()
+            
+        case .back:
+            back()
+            
+        case .backTo:
+            backTo(3)
+            
+        case .backToWindowRoot:
+            backToWindowRoot()
+            
+        case .backToNavigationRoot:
+            backToNavigationRoot()
+        }
+    }
+    
+    private func push() {
         
         let controller = ViewController.initiate()
         
@@ -51,17 +184,7 @@ class ViewController: UIViewController {
         )
     }
     
-    @IBAction func presentButtonTouched(_ sender: Any) {
-        
-        let controller = ViewController.initiate()
-        
-        controller.id = generateNewId()
-        controller.tree = growTreeForPresent()
-        
-        router.present(controller)
-    }
-    
-    @IBAction func presentInNavigationButtonTouched(_ sender: Any) {
+    private func present() {
         
         let controller = ViewController.initiate()
         
@@ -73,12 +196,7 @@ class ViewController: UIViewController {
         router.present(nc)
     }
     
-    @IBAction func exitButtonTouched(_ sender: Any) {
-        
-        router.back()
-    }
-    
-    @IBAction func replaceButtonTouched(_ sender: Any) {
+    private func replace() {
         
         let controller = ViewController.initiate()
         controller.id = generateNewId()
@@ -91,17 +209,59 @@ class ViewController: UIViewController {
         )
     }
     
-    @IBAction func backToButtonTouched(_ sender: Any) {
+    private func setWindowRoot() {
+        
+        let root = ViewController.initiate()
+        root.title = "Root"
+        root.id = 0
+        root.tree.append("->[\(root.id)]")
+        
+        let navigation = UINavigationController(rootViewController: root)
+        
+        router.setWindowRoot(navigation, animated: true, completion: { })
+    }
+
+    
+    private func back() {
+        
+        router.back()
+    }
+    
+    private func backTo(_ id: Int) {
         
         let title = "From \(id)"
         
         router.backTo(
             to: ViewController.self,
             animated: true,
-            condition: { $0.id == 3 },
+            condition: { $0.id == id },
             prepare: { $0.title = title }
         )
     }
+    
+    private func backToWindowRoot() {
+        
+        router.backToWindowRoot()
+    }
+    
+    private func backToNavigationRoot() {
+        
+        router.backToKeyNavigationRoot()
+    }
+    
+    
+    
+    
+    @IBAction func presentButtonTouched(_ sender: Any) {
+        
+        let controller = ViewController.initiate()
+        
+        controller.id = generateNewId()
+        controller.tree = growTreeForPresent()
+        
+        router.present(controller)
+    }
+
     
     private func presentTabBar() {
         
