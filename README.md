@@ -1,4 +1,23 @@
+https://medium.com/flawless-app-stories/exploring-view-hierarchy-332ea63262e9
+
+
+
 # Flow
+# FlowX
+# Compass
+# Mars
+# Neks
+# FlowBox
+# HyperFlow
+# Tavigation
+# Lighthouse
+# Nebuchadnezzar
+# Maze
+# Eith
+# RocketX
+# Pipe
+# PipePiper
+
 <p align="left">
     <a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/language-Swift_4.0-green" alt="Swift5" /></a>
 	<a href="https://cocoapods.org/pods/tablekit"><img src="https://img.shields.io/badge/pod-2.10.0-blue.svg" alt="CocoaPods compatible" /></a>
@@ -12,11 +31,12 @@ Simple and flexible navigation library.
 ## Features
 - Simple navigation commands
 - Provide back navigation results
-- Can be added to ongoing project
+- Can be painlesly added to ongoing project
 - Can be used alongside segues and default view controllers navigation
 - Architecture agnostic
 - Unificate back navigation comands
 - Back navigation to arbitrary controller
+- Can be used alongside accesability navigation (back, dismiss)
 
 
 ## Adding
@@ -130,7 +150,7 @@ protocol ContainerController {
 
 ### Functionality Extension
 
-Feel free to subclass `Router` and add new navigation commands to existing ones or override them.
+Feel free to subclass or extend `Router` in order to add new navigation commands or override them.
 
 
 ## Requirements
