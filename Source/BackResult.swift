@@ -16,7 +16,9 @@ struct BackAction {
 
 struct BackResult {
     
+    var action: BackAction
+    
     var target: UIViewController?
     
-    var action: BackAction?
+    var lastContentController: UIViewController?
 }
