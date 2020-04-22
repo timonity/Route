@@ -6,3 +6,10 @@ target 'FlowExample' do
   pod 'Flow', :path => '../'
   
 end
+
+target 'FlowExampleTests' do
+  use_frameworks!
+
+  pod 'Flow', :path => '../'
+  
+end

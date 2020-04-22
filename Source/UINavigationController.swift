@@ -30,7 +30,7 @@ extension UINavigationController: ContainerController {
 
 // MARK: Forward Navigation
 
-extension UINavigationController {
+public extension UINavigationController {
     
     var root: UIViewController? {
         

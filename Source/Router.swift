@@ -77,7 +77,7 @@ open class Router: NSObject {
         }
     }
     
-    private func findController<T: UIViewController>(
+    private func findControllerInNavigationTree<T: UIViewController>(
         type: T.Type,
         condition: ((T) -> Bool)? = nil
     ) -> BackResult {
@@ -122,17 +122,17 @@ open class Router: NSObject {
         result: BackResult
     ) -> BackResult {
         
+        var newResult = result
+        newResult.stack.append(current)
+        
         if condition(current) {
             
-            return BackResult(
-                action: result.action,
-                target: current,
-                lastContentController: result.lastContentController
-            )
+            newResult.target = current
+            
+            return newResult
+
             
         } else if let parent = current.parent {
-            
-            var newResult = result
             
             if
                 let navigation = parent as? UINavigationController,
@@ -154,7 +154,6 @@ open class Router: NSObject {
         
         } else if let presenting = current.presentingViewController {
             
-            var newResult = result
             newResult.action.dismiss = presenting
             newResult.action.popTo = nil
             
@@ -173,16 +172,20 @@ open class Router: NSObject {
             
         } else {
             
-            return BackResult(
-                action: result.action,
-                target: nil,
-                lastContentController: result.lastContentController
-            )
+            newResult.target = nil
+            
+            return newResult
         }
     }
-
     
-    private func navigate(
+    // MARK: - Public methods
+    
+    public init(window: UIWindow?) {
+        
+        self.window = window
+    }
+    
+    open func navigate(
         with action: BackAction,
         animated: Bool = true,
         completion: Completion? = nil
@@ -190,7 +193,9 @@ open class Router: NSObject {
         
         if let controllerToDismiss = action.dismiss {
             
-            controllerToDismiss.dismiss(animated: animated, completion: completion)
+            let c = (action.popTo == nil) ? completion : nil
+            
+            controllerToDismiss.dismiss(animated: animated, completion: c)
         }
         
         if let controllerToPop = action.popTo {
@@ -203,13 +208,6 @@ open class Router: NSObject {
                 completion: completion
             )
         }
-    }
-    
-    // MARK: - Public methods
-    
-    public init(window: UIWindow?) {
-        
-        self.window = window
     }
     
     // MARK: Forward
@@ -239,9 +237,9 @@ open class Router: NSObject {
             
             let root = RootViewController()
             
-            root.insert(controller: controller)
-            
             window.rootViewController = root
+            
+            root.insert(controller: controller)
             
             completion?()
         }
@@ -276,7 +274,7 @@ open class Router: NSObject {
         completion: Completion? = nil
     ) {
         
-        keyNavigationController?.push(controller: controller, animated: true, completion: completion)
+        keyNavigationController?.push(controller: controller, animated: animated, completion: completion)
     }
     
     public func present(
@@ -337,7 +335,7 @@ open class Router: NSObject {
         completion: ((T) -> Void)? = nil
     ) {
         
-        let navigationResult = findController(type: to, condition: condition)
+        let navigationResult = findControllerInNavigationTree(type: to, condition: condition)
         
         guard let targetController = navigationResult.target as? T else {
             
@@ -383,7 +381,7 @@ open class Router: NSObject {
         completion: ((T) -> Void)? = nil
     ) {
         
-        var navigationResult = findController(type: T.self) { _ in
+        var navigationResult = findControllerInNavigationTree(type: T.self) { _ in
             
             return false
         }
@@ -418,6 +416,54 @@ open class Router: NSObject {
             prepare: prepare,
             completion: completion
         )
+    }
+    
+    // MARK: Other
+    
+    public func findController<T: UIViewController>(
+        type: T.Type,
+        condition: ((T) -> Bool)? = nil
+    ) -> T? {
+        
+        return findControllerInNavigationTree(type: type, condition: condition).target as? T
+    }
+    
+    public func findTopController() -> UIViewController? {
+        
+        guard let root = windowRootController else { return nil}
+        
+        return getNextController(for: root)
+    }
+    
+    private func getNextController(for controller: UIViewController) -> UIViewController {
+        
+        if let presented = controller.presentedViewController {
+            
+            return getNextController(for: presented)
+            
+        } else if let container = controller as? ContainerController, let visible = container.visibleController {
+            
+            return getNextController(for: visible)
+            
+        } else {
+            
+            return controller
+        }
+    }
+    
+    public func getControllersStack() -> [UIViewController] {
+        
+        let res = findControllerInNavigationTree(type: UIViewController.self) { _ in
+            
+            return false
+        }
+        
+        return res.stack.reversed()
+    }
+    
+    public var stack: [UIViewController] {
+        
+        return getControllersStack().filter { !($0 is RootViewController) }
     }
 }
 

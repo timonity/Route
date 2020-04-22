@@ -7,11 +7,11 @@
 
 import UIKit
 
-struct BackAction {
+public struct BackAction {
     
-    var dismiss: UIViewController?
+    public var dismiss: UIViewController?
     
-    var popTo: UIViewController?
+    public var popTo: UIViewController?
 }
 
 struct BackResult {
@@ -21,4 +21,6 @@ struct BackResult {
     var target: UIViewController?
     
     var lastContentController: UIViewController?
+    
+    var stack: [UIViewController] = []
 }
