@@ -45,7 +45,7 @@ class RouterTestCase: XCTestCase {
     
     var router: Router {
         
-        routerInstance.currentController = routerInstance.findTopController()
+        routerInstance.currentController = routerInstance.topController
         
         return routerInstance
     }
@@ -79,7 +79,7 @@ class RouterTestCase: XCTestCase {
     
     func checkTopController() {
         
-        XCTAssert(router.findTopController() === (stack.last as! UIViewController), "Mismatch top controlers")
+        XCTAssert(router.topController === (stack.last as! UIViewController), "Mismatch top controlers")
     }
     
     func checkStack() {

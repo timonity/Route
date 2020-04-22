@@ -17,7 +17,7 @@ open class Router: NSObject {
     
     private var transitions: Set<Transition> = []
     
-    // MARK: Private properties
+    // MARK: - Private properties
     
     private let window: UIWindow?
     
@@ -25,12 +25,6 @@ open class Router: NSObject {
         
         return window?.rootViewController
     }
-    
-    // MARK: Public properties
-    
-    public weak var currentController: UIViewController?
-    
-    // MARK: - Private methods
     
     private var keyController: UIViewController? {
         
@@ -55,6 +49,54 @@ open class Router: NSObject {
         
         return navigation
     }
+    
+    // MARK: - Public properties
+    
+    public weak var currentController: UIViewController?
+    
+    public var topController: UIViewController? {
+        
+        guard let root = windowRootController else { return nil }
+        
+        return getTopController(for: root)
+    }
+    
+    public var stack: [UIViewController] {
+        
+        return getControllersStack().filter { !($0 is RootViewController) }
+    }
+    
+    // MARK: - Private methods
+    
+    private func getControllersStack() -> [UIViewController] {
+        
+        let res = findControllerInNavigationTree(type: UIViewController.self) { _ in
+            
+            return false
+        }
+        
+        return res.stack.reversed()
+    }
+    
+    // MARK: Forward Search
+    
+    private func getTopController(for controller: UIViewController) -> UIViewController {
+        
+        if let presented = controller.presentedViewController {
+            
+            return getTopController(for: presented)
+            
+        } else if let container = controller as? ContainerController, let visible = container.visibleController {
+            
+            return getTopController(for: visible)
+            
+        } else {
+            
+            return controller
+        }
+    }
+    
+    // MARK: Backward Search
     
     private func findPreviousContentController(
         for controller: UIViewController
@@ -210,7 +252,7 @@ open class Router: NSObject {
         }
     }
     
-    // MARK: Forward
+    // MARK: Forward Navigation
     
     // https://qnoid.com/2019/02/15/How_to_replace_the_-rootViewController-_of_the_-UIWindow-_in_iOS.html
     public func setWindowRoot(
@@ -286,7 +328,7 @@ open class Router: NSObject {
         keyController?.present(controller, animated: animated, completion: completion)
     }
     
-    // MARK: Replace
+    // MARK: Inplace Navigation
     
     public func replace(
         to controller: UIViewController,
@@ -325,7 +367,7 @@ open class Router: NSObject {
         }
     }
     
-    // MARK: Back
+    // MARK: Backward Navigation
     
     public func backTo<T: UIViewController>(
         to: T.Type,
@@ -416,217 +458,5 @@ open class Router: NSObject {
             prepare: prepare,
             completion: completion
         )
-    }
-    
-    // MARK: Other
-    
-    public func findController<T: UIViewController>(
-        type: T.Type,
-        condition: ((T) -> Bool)? = nil
-    ) -> T? {
-        
-        return findControllerInNavigationTree(type: type, condition: condition).target as? T
-    }
-    
-    public func findTopController() -> UIViewController? {
-        
-        guard let root = windowRootController else { return nil}
-        
-        return getNextController(for: root)
-    }
-    
-    private func getNextController(for controller: UIViewController) -> UIViewController {
-        
-        if let presented = controller.presentedViewController {
-            
-            return getNextController(for: presented)
-            
-        } else if let container = controller as? ContainerController, let visible = container.visibleController {
-            
-            return getNextController(for: visible)
-            
-        } else {
-            
-            return controller
-        }
-    }
-    
-    public func getControllersStack() -> [UIViewController] {
-        
-        let res = findControllerInNavigationTree(type: UIViewController.self) { _ in
-            
-            return false
-        }
-        
-        return res.stack.reversed()
-    }
-    
-    public var stack: [UIViewController] {
-        
-        return getControllersStack().filter { !($0 is RootViewController) }
-    }
-}
-
-// MARK: - Akk
-
-extension Router {
-    
-    private func findNextController(
-        for controller: UIViewController
-    ) -> UIViewController {
-        
-        if let p = controller.presentedViewController {
-            
-            return findNextController(for: p)
-            
-        } else if let t = controller as? TopControllerProvider, let c = t.top {
-            
-            return findNextController(for: c)
-            
-        } else {
-            
-            return controller
-        }
-    }
-}
-
-// MARK: - Transition methods
-
-extension Router {
-    
-    private func getTransitionFor(source: UIViewController, target: UIViewController) -> Transition? {
-        
-        return transitions.filter { $0.from === source && $0.to === target }.first
-    }
-    
-    private func getTransitionForSource(_ controller: UIViewController) -> Transition? {
-        
-        return transitions.filter { $0.from === controller }.first
-    }
-    
-    private func getTransitionForTarger(_ controller: UIViewController) -> Transition? {
-        
-        return transitions.filter { $0.to === controller }.first
-    }
-    
-    private func deleteFineshedTransitions() {
-        
-        let finishedTransitions = transitions.filter { $0.isFinished }
-        
-        transitions = transitions.subtracting(finishedTransitions)
-        
-        print("Transitions count after clear: \(transitions.count)")
-    }
-    
-    private func getAllControllersInStack() -> Set<UIViewController> {
-
-        var result: Set<UIViewController> = [currentController!]
-
-        _ = findControllerInNavigationTree(for: currentController!) { (controller) -> Bool in
-
-            result.insert(controller)
-
-            return false
-        }
-
-        return result
-    }
-}
-
-// MARK: UINavigationControllerDelegate
-
-extension Router: UINavigationControllerDelegate {
-    
-    public func navigationController(
-        _ navigationController: UINavigationController,
-        willShow viewController: UIViewController,
-        animated: Bool
-    ) {
-        
-    }
-
-    public func navigationController(
-        _ navigationController: UINavigationController,
-        didShow viewController: UIViewController,
-        animated: Bool
-    ) {
-        
-    }
-    
-    public func navigationController(
-        _ navigationController: UINavigationController,
-        animationControllerFor operation: UINavigationController.Operation,
-        from fromVC: UIViewController,
-        to toVC: UIViewController
-    ) -> UIViewControllerAnimatedTransitioning? {
-        
-        let animator: Animator?
-        
-        switch operation {
-            
-        case .none:
-            animator = nil
-            
-        case .push:
-            animator = getTransitionFor(source: fromVC, target: toVC)?.animator
-            animator?.isOpening = true
-            
-        case .pop:
-            animator = getTransitionFor(source: toVC, target: fromVC)?.animator
-            animator?.isOpening = false
-        }
-        
-        return animator
-    }
-    
-    public func navigationController(
-        _ navigationController: UINavigationController,
-        interactionControllerFor animationController: UIViewControllerAnimatedTransitioning
-    ) -> UIViewControllerInteractiveTransitioning? {
-        
-        return nil
-    }
-}
-
-// MARK: UIViewControllerTransitioningDelegate
-
-extension Router: UIViewControllerTransitioningDelegate {
-    
-    public func animationController(
-        forPresented presented: UIViewController,
-        presenting: UIViewController,
-        source: UIViewController
-    ) -> UIViewControllerAnimatedTransitioning? {
-        
-        let animator = getTransitionFor(source: source, target: presented)?.animator
-        
-        animator?.isOpening = true
-        
-        return animator
-    }
-    
-    public func animationController(
-        forDismissed dismissed: UIViewController
-    ) -> UIViewControllerAnimatedTransitioning? {
-        
-        let animator = getTransitionForTarger(dismissed)?.animator
-        
-        animator?.isOpening = false
-        
-        return animator
-    }
-    
-    public func interactionControllerForPresentation(
-        using animator: UIViewControllerAnimatedTransitioning
-    ) -> UIViewControllerInteractiveTransitioning? {
-        
-        return nil
-    }
-    
-    public func interactionControllerForDismissal(
-        using animator: UIViewControllerAnimatedTransitioning
-    ) -> UIViewControllerInteractiveTransitioning? {
-        
-        return nil
     }
 }

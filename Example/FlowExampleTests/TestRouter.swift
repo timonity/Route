@@ -26,7 +26,7 @@ class TestRouter: Router {
         } else {
             
             pop(with: action, animated: animated, completion: completion)
-        }    
+        }
     }
     
     private func pop(
