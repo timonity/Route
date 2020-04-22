@@ -10,6 +10,52 @@ import XCTest
 
 class NavigationTestCase: RouterTestCase {
     
+    func testBaclToKeyNavRoot() {
+        
+        setWindowRoot()
+        
+        push()
+        push()
+        
+        backToKeyNavRoot()
+        
+        present()
+        
+        replace()
+        
+        push()
+        push()
+        
+        backToKeyNavRoot()
+        
+        checkStack()
+    }
+    
+    func testInplaceNavigation() {
+        
+        setWindowRoot()
+        
+        push()
+        
+        replace()
+        
+        present()
+        
+        replace()
+        
+        push()
+        
+        present()
+        
+        present()
+        
+        replace()
+        
+        back()
+        
+        checkStack()
+    }
+    
     
      func testBackTo() {
          

@@ -164,6 +164,24 @@ class RouterTestCase: XCTestCase {
         backStepTo(id: id)
     }
     
+    func backToKeyNavRoot() {
+        
+        let expectation = XCTestExpectation(description: "Back to current navigation root")
+        
+        var id = 0
+        
+        router.backToKeyNavigationRoot(animated: false, completion: { (contoller: ContentController) in
+            
+            id = contoller.id
+            
+            expectation.fulfill()
+        })
+        
+        wait(for: [expectation], timeout: 1)
+        
+        backStepTo(id: id)
+    }
+    
     // MARK: Stack/Steps
     
     func backStepTo(id: Int) {
