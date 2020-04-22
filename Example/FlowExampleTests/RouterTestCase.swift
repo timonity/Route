@@ -191,4 +191,18 @@ class RouterTestCase: XCTestCase {
         
         steps.append([navigation, controller])
     }
+    
+    func replace() {
+        
+        let contoller = ContentController(id: currentId)
+        
+        let expectation = XCTestExpectation(description: "Replace completion")
+        
+        router.replace(to: contoller, animated: false, completion: { expectation.fulfill() })
+        
+        wait(for: [expectation], timeout: 1)
+        
+        steps[steps.count - 1].removeLast()
+        steps[steps.count - 1].append(contoller)
+    }
 }
