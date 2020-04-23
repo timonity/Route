@@ -61,14 +61,14 @@ open class Router: NSObject {
         return getTopController(for: root)
     }
     
-    public var stack: [UIViewController] {
+    public var backStack: [UIViewController] {
         
-        return getControllersStack().filter { !($0 is RootViewController) }
+        return getBackStack().filter { !($0 is RootViewController) }
     }
     
     // MARK: - Private methods
     
-    private func getControllersStack() -> [UIViewController] {
+    private func getBackStack() -> [UIViewController] {
         
         let res = findControllerInNavigationTree(type: UIViewController.self) { _ in
             

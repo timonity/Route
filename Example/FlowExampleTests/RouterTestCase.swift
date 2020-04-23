@@ -84,10 +84,10 @@ class RouterTestCase: XCTestCase {
     
     func checkStack() {
         
-        let result = stack.map { $0.id } == (router.stack as! [Controller]).map { $0.id }
+        let result = stack.map { $0.id } == (router.backStack as! [Controller]).map { $0.id }
         
         print("Router stack:")
-        (router.stack as! [Controller]).show()
+        (router.backStack as! [Controller]).show()
         
         print("\nActual stack:")
         stack.show()
