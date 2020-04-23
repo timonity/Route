@@ -9,93 +9,14 @@
 import UIKit
 import Flow
 
-enum Action: Int, CaseIterable {
-    
-    case push
-    case present
-    
-    case replace
-    case setWindowRoot
-    
-    case back
-    case backTo
-    case backToWindowRoot
-    case backToNavigationRoot
-    
-    
-    var title: String {
-        
-        switch self {
-            
-        case .push:
-            return "Push"
-            
-        case .present:
-            return "Present"
-            
-        case .replace:
-            return "Replace"
-            
-        case .setWindowRoot:
-            return "Set Window Root"
-            
-        case .back:
-            return "Back"
-            
-        case .backTo:
-            return "Back to 3"
-            
-        case .backToWindowRoot:
-            return "Back to Window Root"
-            
-        case .backToNavigationRoot:
-            return "Back to Current Nav. Root"
-        }
-    }
-}
-
-class Button: UIButton {
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        layer.cornerRadius = frame.size.height / 2
-//        layer.cornerRadius = 15
-        layer.masksToBounds = true
-    }
-    
-    func setupWith(action: Action) {
-        
-        setTitleColor(.white, for: .normal)
-        setTitleColor(.gray, for: .highlighted)
-        titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
-        
-        if #available(iOS 11.0, *) {
-            backgroundColor = UIColor(named: "main_button")!
-        } else {
-            
-        }
-        
-        
-        
-        setTitle(action.title, for: .normal)
-        tag = action.rawValue
-    }
-}
-
 class ViewController: UIViewController {
     
     // MARK: Private properties
     
-    @IBOutlet var navigationTreeLabel: UILabel!
+    @IBOutlet private var navigationTreeLabel: UILabel!
+    @IBOutlet private weak var stackView: UIStackView!
     
     private let actions = Action.allCases
-    @IBOutlet weak var stackView: UIStackView!
     
     // MARK: Public properties
     
@@ -133,8 +54,7 @@ class ViewController: UIViewController {
             button.setupWith(action: action)
             button.addTarget(self, action: #selector(self.actionButtonTouched(_:)), for: .touchUpInside)
             
-            stackView.addArrangedSubview(button)
-            
+            stackView.addArrangedSubview(button)   
         }
     }
     
@@ -249,20 +169,6 @@ class ViewController: UIViewController {
         router.backToKeyNavigationRoot()
     }
     
-    
-    
-    
-    @IBAction func presentButtonTouched(_ sender: Any) {
-        
-        let controller = ViewController.initiate()
-        
-        controller.id = generateNewId()
-        controller.tree = growTreeForPresent()
-        
-        router.present(controller)
-    }
-
-    
     private func presentTabBar() {
         
         let first = ViewController.initiate()
@@ -307,7 +213,7 @@ extension ViewController {
     }
 }
 
-// MARK: Navigation Tree
+// MARK: Plot Navigation Tree
 
 extension ViewController {
     
@@ -375,13 +281,5 @@ extension ViewController {
         
         navigationTreeLabel.text = t
         navigationTreeLabel.numberOfLines = tree.count + 1
-    }
-}
-
-extension String {
-    
-    func duplicate(_ times: Int) -> String {
-           
-        return String(repeating: self, count: times)
     }
 }

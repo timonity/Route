@@ -42,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 // MARK: Router
 
-extension UIViewController {
+public extension UIViewController {
     
     var router: Router {
         
