@@ -30,25 +30,51 @@ class RootViewController: UIViewController {
     
     // MARK: Public methods
     
-    func transition(from: UIViewController, to: UIViewController, completion: Completion? = nil) {
+    func transition(
+        from: UIViewController,
+        to: UIViewController,
+        animated: Bool = true,
+        completion: Completion? = nil
+    ) {
         
         from.willMove(toParentViewController: nil)
-        self.addChildViewController(to)
+        addChildViewController(to)
         
-        transition(
-            from: from,
-            to: to,
-            duration: transitionCoordinator?.transitionDuration ?? 0.4,
-            options: [.transitionFlipFromTop],
-            animations: { },
-            completion: { (finished) in
+        view.addSubview(to.view)
+        
+        to.view.frame = CGRect(
+            x: 0,
+            y: from.view.frame.height,
+            width: from.view.frame.width,
+            height: from.view.frame.height
+        )
+        
+        let isDismissNeeded = from.presentedViewController != nil
+        
+        let duration = (animated && !isDismissNeeded) ? 0.25 : 0
+        
+        UIView.animate(withDuration: duration, animations: {
+            
+            to.view.frame = from.view.frame
+            
+        }, completion: { _ in
+            
+            if isDismissNeeded {
                 
-                from.removeFromParentViewController()
-                to.didMove(toParentViewController: self)
+                from.dismiss(animated: animated) {
+                    
+                    completion?()
+                }
+            }
+            
+            from.removeFromParentViewController()
+            to.didMove(toParentViewController: self)
+            
+            if isDismissNeeded == false {
                 
                 completion?()
             }
-        )
+        })
     }
 }
 
