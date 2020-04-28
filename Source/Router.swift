@@ -23,7 +23,26 @@ open class Router: NSObject {
     
     private var windowRootController: UIViewController? {
         
-        return window?.rootViewController
+        guard let windowRoot = keyWindow?.rootViewController else {
+            
+            print("Root view controller for window not found")
+            
+            return nil
+        }
+        
+        return windowRoot
+    }
+    
+    private var keyWindow: UIWindow? {
+        
+        guard let window = window else {
+            
+            print("Current window not found. In order to use ... functionality Router must be inited with window")
+            
+            return nil
+        }
+        
+        return window
     }
     
     private var keyController: UIViewController? {
@@ -70,12 +89,12 @@ open class Router: NSObject {
     
     private func getBackStack() -> [UIViewController] {
         
-        let res = findControllerInNavigationTree(type: UIViewController.self) { _ in
+        let result = findControllerInNavigationTree(type: UIViewController.self) { _ in
             
             return false
         }
         
-        return res.stack.reversed()
+        return result.stack.reversed()
     }
     
     // MARK: Forward Search
@@ -254,53 +273,6 @@ open class Router: NSObject {
     
     // MARK: Forward Navigation
     
-    // https://qnoid.com/2019/02/15/How_to_replace_the_-rootViewController-_of_the_-UIWindow-_in_iOS.html
-    public func setWindowRoot(
-        _ controller: UIViewController,
-        animated: Bool = true,
-        completion: Completion? = nil
-    ) {
-        
-        guard let window = window else {
-            
-            print("Current window not found")
-            
-            return
-        }
-        
-        if
-            let root = window.rootViewController as? RootViewController,
-            let child = root.childViewControllers.first
-        {
-            
-            root.transition(from: child, to: controller, completion: completion)
-            
-        } else {
-            
-            let root = RootViewController()
-            
-            window.rootViewController = root
-            
-            root.insert(controller: controller)
-            
-            completion?()
-        }
-        
-        
-//        window.rootViewController = controller
-//        window.rootViewController?.dismiss(animated: false, completion: nil)
-//
-//
-//        UIView.transition(
-//            with: window,
-//            duration: 0.3,
-//            options: .transitionCrossDissolve,
-//            animations: {  },
-//            completion: { isCompleted in completion?() }
-//        )
-    }
-    
-    
     public func push(
         _ controllers: [UIViewController],
         animated: Bool = true,
@@ -364,6 +336,35 @@ open class Router: NSObject {
             || findPreviousContentController(for: current)?.target is RootViewController
         {
             setWindowRoot(controller, animated: animated)
+        }
+    }
+    
+    public func setWindowRoot(
+        _ controller: UIViewController,
+        animated: Bool = true,
+        completion: Completion? = nil
+    ) {
+        
+        if
+            let root = windowRootController as? RootViewController,
+            let current = root.current
+        {
+            root.transition(
+                from: current,
+                to: controller,
+                animated: animated,
+                completion: completion
+            )
+
+        } else {
+
+            let root = RootViewController()
+
+            keyWindow?.rootViewController = root
+
+            root.insert(controller: controller)
+
+            completion?()
         }
     }
     
@@ -451,10 +452,12 @@ open class Router: NSObject {
         completion: ((T) -> Void)? = nil
     ) {
         
+        guard let navigationRoot = keyNavigationController?.root else { return }
+        
         backTo(
             to: T.self,
             animated: animated,
-            condition: { $0 === self.keyNavigationController?.root },
+            condition: { $0 === navigationRoot },
             prepare: prepare,
             completion: completion
         )
