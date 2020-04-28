@@ -30,6 +30,17 @@ class RootViewController: UIViewController {
     
     // MARK: Public methods
     
+    func insert(_ controller: UIViewController) {
+        
+        addChildViewController(controller)
+        
+        controller.view.frame = view.frame
+        
+        view.addSubview(controller.view)
+        
+        controller.didMove(toParentViewController: self)   
+    }
+    
     func transition(
         from: UIViewController,
         to: UIViewController,
@@ -53,27 +64,29 @@ class RootViewController: UIViewController {
         
         let duration = (animated && !isDismissNeeded) ? 0.25 : 0
         
-        UIView.animate(withDuration: duration, animations: {
+        UIView.animate(
+            withDuration: duration,
+            animations: {
             
-            to.view.frame = from.view.frame
+                to.view.frame = from.view.frame
+            },
+            completion: { _ in
             
-        }, completion: { _ in
-            
-            if isDismissNeeded {
+                if isDismissNeeded {
+                    
+                    from.dismiss(animated: animated) {
+                        
+                        completion?()
+                    }
+                }
                 
-                from.dismiss(animated: animated) {
+                from.removeFromParentViewController()
+                to.didMove(toParentViewController: self)
+                
+                if isDismissNeeded == false {
                     
                     completion?()
                 }
-            }
-            
-            from.removeFromParentViewController()
-            to.didMove(toParentViewController: self)
-            
-            if isDismissNeeded == false {
-                
-                completion?()
-            }
         })
     }
 }

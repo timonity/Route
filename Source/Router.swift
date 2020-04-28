@@ -377,7 +377,7 @@ open class Router: NSObject {
 
             keyWindow?.rootViewController = root
 
-            root.insert(controller: controller)
+            root.insert(controller)
 
             completion?()
         }
