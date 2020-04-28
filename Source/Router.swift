@@ -259,7 +259,6 @@ open class Router: NSObject {
     // MARK: - Public methods
     
     public init(window: UIWindow?) {
-        
         self.window = window
     }
     
@@ -268,11 +267,8 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        
         if let controllerToDismiss = action.dismiss {
-            
             let c = (action.popTo == nil) ? completion : nil
-            
             controllerToDismiss.dismiss(animated: animated, completion: c)
         }
         
@@ -281,7 +277,6 @@ open class Router: NSObject {
             let container = controllerToPop.parent as? ContainerController
         {
             let isAnimated = (action.dismiss == nil) ? animated : false
-            
             container.backTo(controllerToPop, animated: isAnimated, completion: completion)
         }
     }
@@ -293,7 +288,6 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        
         keyNavigationController?.push(controllers: controllers, animated: animated, completion: completion)
     }
     
@@ -302,7 +296,6 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        
         keyNavigationController?.push(controller: controller, animated: animated, completion: completion)
     }
     
@@ -311,7 +304,6 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        
         keyController?.present(controller, animated: animated, completion: completion)
     }
     
@@ -322,34 +314,21 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        
         guard let current = keyController else { return }
         
-        if let navigationController = keyController?.navigationController {
-            
-            if controller.navigationController != nil {
-                
-                print("Replacing controller in navigation stack with controller in another navigation stack is not supported")
-                
-                return
-            }
-            
-            navigationController.replace(
+        if let container = current.parent as? ContainerController {
+            container.replace(
+                current,
                 with: controller,
                 animated: animated,
                 completion: completion
             )
             
         } else if let presenting = current.presentingViewController {
-            
             current.dismiss(animated: animated, completion: nil)
-            
             presenting.present(controller, animated: animated, completion: completion)
-        
-        }
-        else if findPreviousContentController(for: current)?.target == nil
-            || findPreviousContentController(for: current)?.target is RootViewController
-        {
+            
+        } else if findPreviousContentController(for: current)?.target == nil {
             setWindowRoot(controller, animated: animated)
         }
     }
@@ -359,25 +338,19 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        
-        if
-            let root = keyWindow?.rootViewController as? RootViewController,
-            let current = root.current
-        {
+        if let root = keyWindow?.rootViewController as? RootViewController, let currentRoot = root.current {
             root.transition(
-                from: current,
+                from: currentRoot,
                 to: controller,
                 animated: animated,
                 completion: completion
             )
-
+            
         } else {
-
             let root = RootViewController()
-
-            keyWindow?.rootViewController = root
-
             root.insert(controller)
+            
+            keyWindow?.rootViewController = root
 
             completion?()
         }
@@ -392,20 +365,16 @@ open class Router: NSObject {
         prepare: ((T) -> Void)? = nil,
         completion: ((T) -> Void)? = nil
     ) {
-        
         let navigationResult = findControllerInNavigationTree(type: to, condition: condition)
         
         guard let targetController = navigationResult.target as? T else {
-            
             print("Target controller of type `\(to)` not found in navigation tree")
-            
             return
         }
         
         prepare?(targetController)
         
         navigate(with: navigationResult.action, animated: animated) {
-            
             completion?(targetController)
         }
     }
@@ -415,16 +384,11 @@ open class Router: NSObject {
         prepare: ((T) -> Void)? = nil,
         completion: ((T) -> Void)? = nil
     ) {
-        
         backTo(
             to: T.self,
             animated: animated,
             condition: { [weak self] (controller) -> Bool in
-                
-                if controller is ContainerController {
-                    
-                    return false
-                }
+                if controller is ContainerController { return false }
                 
                 return self?.keyController !== controller
             },
@@ -438,25 +402,20 @@ open class Router: NSObject {
         prepare: ((T) -> Void)? = nil,
         completion: ((T) -> Void)? = nil
     ) {
-        
         var navigationResult = findControllerInNavigationTree(type: T.self) { _ in
-            
             return false
         }
         
         navigationResult.target = navigationResult.lastContentController
         
         guard let targetController = navigationResult.target as? T else {
-            
             print("Target controller of type not found in navigation tree")
-            
             return
         }
         
         prepare?(targetController)
         
         navigate(with: navigationResult.action, animated: animated) {
-            
             completion?(targetController)
         }
     }
@@ -466,7 +425,6 @@ open class Router: NSObject {
         prepare: ((T) -> Void)? = nil,
         completion: ((T) -> Void)? = nil
     ) {
-        
         guard let navigationRoot = keyNavigationController?.root else { return }
         
         backTo(

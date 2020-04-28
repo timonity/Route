@@ -38,6 +38,29 @@ extension UINavigationController: ContainerController {
         
         pop(to: controller, animated: animated, completion: completion)
     }
+    
+    func replace(
+        _ oldController: UIViewController,
+        with newController: UIViewController,
+        animated: Bool,
+        completion: Completion?
+    ) {
+        guard let oldIdx = viewControllers.firstIndex(of: oldController) else {
+            
+            print("Controller `\(oldController)` not found in navigation controller `\(self)` stack")
+            
+            return
+        }
+        
+        var controllers = viewControllers
+        controllers[oldIdx] = newController
+
+        push(
+            controllers: controllers,
+            animated: animated,
+            completion: completion
+        )
+    }
 }
 
 // MARK: Forward Navigation

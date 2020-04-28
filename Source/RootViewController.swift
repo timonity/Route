@@ -99,4 +99,18 @@ extension RootViewController: ContainerController {
         
         return current
     }
+    
+    func replace(
+        _ controller: UIViewController,
+        with newController: UIViewController,
+        animated: Bool,
+        completion: Completion?
+    ) {
+        transition(
+            from: controller,
+            to: newController,
+            animated: animated,
+            completion: completion
+        )
+    }
 }

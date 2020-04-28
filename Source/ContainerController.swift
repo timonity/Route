@@ -20,6 +20,13 @@ protocol ContainerController {
     func getPreviousController(for controller: UIViewController) -> UIViewController?
     
     func backTo(_ controller: UIViewController, animated: Bool, completion: Completion?)
+    
+    func replace(
+        _ controller: UIViewController,
+        with newController: UIViewController,
+        animated: Bool,
+        completion: Completion?
+    )
 }
 
 // MARK: Default Implementation
@@ -39,6 +46,13 @@ extension ContainerController {
     }
     
     func backTo(_ controller: UIViewController, animated: Bool, completion: Completion?) { }
+    
+    func replace(
+        _ controller: UIViewController,
+        with newController: UIViewController,
+        animated: Bool,
+        completion: Completion?
+    ) { }
     
     // MARK: Private
     
