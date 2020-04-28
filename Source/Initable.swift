@@ -63,3 +63,15 @@ public extension XibInitable where Self: UIViewController {
         return Self(nibName: xibName, bundle: nil)
     }
 }
+
+// MARK: CodeInitable
+
+public protocol CodeInitable: Initable { }
+
+public extension CodeInitable where Self: UIViewController {
+    
+    static func initiate() -> Self {
+    
+        return Self()
+    }
+}

@@ -11,6 +11,7 @@
 		A11A09D92452283500756D4A /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A09D82452283500756D4A /* Action.swift */; };
 		A11A09DB2452284D00756D4A /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A09DA2452284D00756D4A /* Button.swift */; };
 		A11A09DD2452288600756D4A /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A09DC2452288600756D4A /* String.swift */; };
+		A11A09F424584ECF00756D4A /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A09F324584ECF00756D4A /* Controller.swift */; };
 		A140F9102450574000C2A2EA /* TestRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A140F90F2450574000C2A2EA /* TestRouter.swift */; };
 		A140F91224505ACD00C2A2EA /* NavigationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A140F91124505ACD00C2A2EA /* NavigationTestCase.swift */; };
 		A140F91424505C3000C2A2EA /* ContentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A140F91324505C3000C2A2EA /* ContentController.swift */; };
@@ -43,6 +44,7 @@
 		A11A09D82452283500756D4A /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		A11A09DA2452284D00756D4A /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		A11A09DC2452288600756D4A /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
+		A11A09F324584ECF00756D4A /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		A140F90F2450574000C2A2EA /* TestRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRouter.swift; sourceTree = "<group>"; };
 		A140F91124505ACD00C2A2EA /* NavigationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationTestCase.swift; sourceTree = "<group>"; };
 		A140F91324505C3000C2A2EA /* ContentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentController.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				A1DC4967244B9E5E002D5CE4 /* RouterTestCase.swift */,
+				A11A09F324584ECF00756D4A /* Controller.swift */,
 				A140F91124505ACD00C2A2EA /* NavigationTestCase.swift */,
 				A140F91324505C3000C2A2EA /* ContentController.swift */,
 				A140F91524505C6700C2A2EA /* NavigationController.swift */,
@@ -338,6 +341,7 @@
 				A140F9102450574000C2A2EA /* TestRouter.swift in Sources */,
 				A140F91424505C3000C2A2EA /* ContentController.swift in Sources */,
 				A140F91624505C6700C2A2EA /* NavigationController.swift in Sources */,
+				A11A09F424584ECF00756D4A /* Controller.swift in Sources */,
 				A1DC4968244B9E5E002D5CE4 /* RouterTestCase.swift in Sources */,
 				A140F91224505ACD00C2A2EA /* NavigationTestCase.swift in Sources */,
 			);

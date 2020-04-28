@@ -10,31 +10,6 @@ import XCTest
 import FlowExample
 import Flow
 
-protocol Controller {
-    
-    var id: Int { get }
-}
-
-extension Int: Controller {
-    
-    var id: Int {
-        
-        return self
-    }
-}
-
-extension Array where Element == Controller {
-    
-    func show() {
-        
-        forEach { (element) in
-            
-            print(element)
-        }
-    }
-}
-
-
 class RouterTestCase: XCTestCase {
     
     // MARK: Public properties

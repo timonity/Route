@@ -13,10 +13,6 @@ public typealias Completion = () -> Void
 
 open class Router: NSObject {
     
-    // MARK: Akk
-    
-    private var transitions: Set<Transition> = []
-    
     // MARK: - Private properties
     
     private let window: UIWindow?
@@ -365,7 +361,7 @@ open class Router: NSObject {
     ) {
         
         if
-            let root = windowRootController as? RootViewController,
+            let root = keyWindow?.rootViewController as? RootViewController,
             let current = root.current
         {
             root.transition(

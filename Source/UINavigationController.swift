@@ -8,15 +8,35 @@
 
 import UIKit
 
-// TODO: remove
+// MARK: ContainerController
 
-// MARK: TopControllerProvider
-
-extension UINavigationController: TopControllerProvider {
+extension UINavigationController: ContainerController {
     
-    var top: UIViewController? {
+    var visibleController: UIViewController? {
         
-        return visibleViewController
+        return topViewController
+    }
+    
+    func getPreviousController(
+        for controller: UIViewController
+    ) -> UIViewController? {
+        
+        let controllers: [UIViewController] = viewControllers.reversed()
+        
+        for i in 0..<controllers.count {
+            
+            if controllers[i] === controller && i < controllers.count - 1 {
+                
+                return controllers[i + 1]
+            }
+        }
+        
+        return nil
+    }
+    
+    func backTo(_ controller: UIViewController, animated: Bool, completion: Completion?) {
+        
+        pop(to: controller, animated: animated, completion: completion)
     }
 }
 
@@ -94,37 +114,5 @@ public extension UINavigationController {
             animated: animated,
             completion: completion
         )
-    }
-}
-
-// MARK: ContainerController
-
-extension UINavigationController: ContainerController {
-    
-    var visibleController: UIViewController? {
-        
-        return topViewController
-    }
-    
-    func getPreviousController(
-        for controller: UIViewController
-    ) -> UIViewController? {
-        
-        let controllers: [UIViewController] = viewControllers.reversed()
-        
-        for i in 0..<controllers.count {
-            
-            if controllers[i] === controller && i < controllers.count - 1 {
-                
-                return controllers[i + 1]
-            }
-        }
-        
-        return nil
-    }
-    
-    func backTo(_ controller: UIViewController, animated: Bool, completion: Completion?) {
-        
-        pop(to: controller, animated: animated, completion: completion)
     }
 }

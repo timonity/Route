@@ -8,16 +8,6 @@
 
 import UIKit
 
-// MARK: TopControllerProvider
-
-extension UITabBarController: TopControllerProvider {
-    
-    var top: UIViewController? {
-        
-        return selectedViewController
-    }
-}
-
 // MARK: ContainerController
 
 extension UITabBarController: ContainerController {
