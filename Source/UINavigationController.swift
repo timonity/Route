@@ -8,6 +8,8 @@
 
 import UIKit
 
+// TODO: remove
+
 // MARK: TopControllerProvider
 
 extension UINavigationController: TopControllerProvider {
@@ -15,16 +17,6 @@ extension UINavigationController: TopControllerProvider {
     var top: UIViewController? {
         
         return visibleViewController
-    }
-}
-
-// MARK: ContainerController
-
-extension UINavigationController: ContainerController {
-    
-    var visibleController: UIViewController? {
-        
-        return topViewController
     }
 }
 
@@ -105,11 +97,16 @@ public extension UINavigationController {
     }
 }
 
-// MARK: Previous Controller
+// MARK: ContainerController
 
-extension UINavigationController {
+extension UINavigationController: ContainerController {
     
-    func findPrevioudController(
+    var visibleController: UIViewController? {
+        
+        return topViewController
+    }
+    
+    func getPreviousController(
         for controller: UIViewController
     ) -> UIViewController? {
         
@@ -124,5 +121,10 @@ extension UINavigationController {
         }
         
         return nil
+    }
+    
+    func backTo(_ controller: UIViewController, animated: Bool, completion: Completion?) {
+        
+        pop(to: controller, animated: animated, completion: completion)
     }
 }

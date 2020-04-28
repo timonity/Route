@@ -183,59 +183,80 @@ open class Router: NSObject {
         result: BackResult
     ) -> BackResult {
         
-        var newResult = result
-        newResult.stack.append(current)
+        var nextResult = result
+        nextResult.stack.append(current)
         
         if condition(current) {
             
-            newResult.target = current
+            nextResult.target = current
             
-            return newResult
+            return nextResult
 
-            
         } else if let parent = current.parent {
             
-            if
-                let navigation = parent as? UINavigationController,
-                let prevController = navigation.findPrevioudController(for: current)
-            {
-                
-                newResult.action.popTo = prevController
-                newResult.lastContentController = prevController
-                
-                return findControllerInNavigationTree(condition: condition, current: prevController, result: newResult)
+            let next: UIViewController
+            
+            if let container = parent as? ContainerController {
+                            
+                if let previous = container.getPreviousController(for: current) {
+                    
+                    next = previous
+                    
+                    nextResult.action.popTo = previous
+                    nextResult.lastContentController = previous
+                    
+                } else {
+                    
+//                    Не покрывает кейс когда парент является и контейнерои и контент контроллером
+//                    nextResult.lastContentController = parent
+                    next = parent
+                }
                 
             } else {
                 
-                // Не покрывает кейс когда парент контент контроллер для lastContentController
-                
-                // Возможно это покрыват кейс, когда парент = табБарКонтроллер
-                return findControllerInNavigationTree(condition: condition, current: parent, result: newResult)
+                nextResult.lastContentController = parent
+                next = parent
             }
+            
+            return findControllerInNavigationTree(
+                 condition: condition,
+                 current: next,
+                 result: nextResult
+             )
         
         } else if let presenting = current.presentingViewController {
             
-            newResult.action.dismiss = presenting
-            newResult.action.popTo = nil
+            nextResult.action.dismiss = presenting
+            nextResult.action.popTo = nil
             
-            if let container = presenting as? ContainerController, let content = container.visibleContentController {
+            if
+                let container = presenting as? ContainerController,
+                let content = container.visibleContentController
+            {
+                nextResult.lastContentController = content
                 
-                newResult.lastContentController = content
-                
-                return findControllerInNavigationTree(condition: condition, current: content, result: newResult)
+                return findControllerInNavigationTree(
+                    condition: condition,
+                    current: content,
+                    result: nextResult
+                )
                 
             } else {
                 
-                newResult.lastContentController = presenting
+                nextResult.lastContentController = presenting
                 
-                return findControllerInNavigationTree(condition: condition, current: presenting, result: newResult)
+                return findControllerInNavigationTree(
+                    condition: condition,
+                    current: presenting,
+                    result: nextResult
+                )
             }
             
         } else {
             
-            newResult.target = nil
+            nextResult.target = nil
             
-            return newResult
+            return nextResult
         }
     }
     
@@ -259,15 +280,13 @@ open class Router: NSObject {
             controllerToDismiss.dismiss(animated: animated, completion: c)
         }
         
-        if let controllerToPop = action.popTo {
-            
+        if
+            let controllerToPop = action.popTo,
+            let container = controllerToPop.parent as? ContainerController
+        {
             let isAnimated = (action.dismiss == nil) ? animated : false
             
-            controllerToPop.navigationController?.pop(
-                to: controllerToPop,
-                animated: isAnimated,
-                completion: completion
-            )
+            container.backTo(controllerToPop, animated: isAnimated, completion: completion)
         }
     }
     
