@@ -16,7 +16,7 @@ open class Router: NSObject {
     // MARK: - Private properties
     
     private let window: UIWindow?
-    
+
     private var windowRootController: UIViewController? {
         
         guard let windowRoot = keyWindow?.rootViewController else {

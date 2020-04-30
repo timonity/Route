@@ -7,10 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A1B92384245AFC7C003D2EC3 /* ContainerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B92377245AFC7C003D2EC3 /* ContainerController.swift */; };
+		A1B92385245AFC7C003D2EC3 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B92378245AFC7C003D2EC3 /* Router.swift */; };
+		A1B92386245AFC7C003D2EC3 /* UINavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B92379245AFC7C003D2EC3 /* UINavigationController.swift */; };
+		A1B92387245AFC7C003D2EC3 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B9237A245AFC7C003D2EC3 /* RootViewController.swift */; };
+		A1B92388245AFC7C003D2EC3 /* UITabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B9237B245AFC7C003D2EC3 /* UITabBarController.swift */; };
+		A1B92389245AFC7C003D2EC3 /* Initable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B9237C245AFC7C003D2EC3 /* Initable.swift */; };
+		A1B9238A245AFC7C003D2EC3 /* BackResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B9237D245AFC7C003D2EC3 /* BackResult.swift */; };
 		A1F8519F24182DEA00284CBD /* Flow.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F8519D24182DEA00284CBD /* Flow.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A1B92377245AFC7C003D2EC3 /* ContainerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainerController.swift; sourceTree = "<group>"; };
+		A1B92378245AFC7C003D2EC3 /* Router.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		A1B92379245AFC7C003D2EC3 /* UINavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UINavigationController.swift; sourceTree = "<group>"; };
+		A1B9237A245AFC7C003D2EC3 /* RootViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
+		A1B9237B245AFC7C003D2EC3 /* UITabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UITabBarController.swift; sourceTree = "<group>"; };
+		A1B9237C245AFC7C003D2EC3 /* Initable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Initable.swift; sourceTree = "<group>"; };
+		A1B9237D245AFC7C003D2EC3 /* BackResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackResult.swift; sourceTree = "<group>"; };
 		A1F8519A24182DEA00284CBD /* Flow.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Flow.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1F8519D24182DEA00284CBD /* Flow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Flow.h; sourceTree = "<group>"; };
 		A1F8519E24182DEA00284CBD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -46,6 +60,13 @@
 		A1F8519C24182DEA00284CBD /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				A1B9237D245AFC7C003D2EC3 /* BackResult.swift */,
+				A1B92377245AFC7C003D2EC3 /* ContainerController.swift */,
+				A1B9237C245AFC7C003D2EC3 /* Initable.swift */,
+				A1B9237A245AFC7C003D2EC3 /* RootViewController.swift */,
+				A1B92378245AFC7C003D2EC3 /* Router.swift */,
+				A1B92379245AFC7C003D2EC3 /* UINavigationController.swift */,
+				A1B9237B245AFC7C003D2EC3 /* UITabBarController.swift */,
 				A1F8519D24182DEA00284CBD /* Flow.h */,
 				A1F8519E24182DEA00284CBD /* Info.plist */,
 			);
@@ -95,6 +116,7 @@
 				TargetAttributes = {
 					A1F8519924182DEA00284CBD = {
 						CreatedOnToolsVersion = 11.2.1;
+						LastSwiftMigration = 1140;
 					};
 				};
 			};
@@ -131,6 +153,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1B92388245AFC7C003D2EC3 /* UITabBarController.swift in Sources */,
+				A1B92387245AFC7C003D2EC3 /* RootViewController.swift in Sources */,
+				A1B9238A245AFC7C003D2EC3 /* BackResult.swift in Sources */,
+				A1B92385245AFC7C003D2EC3 /* Router.swift in Sources */,
+				A1B92384245AFC7C003D2EC3 /* ContainerController.swift in Sources */,
+				A1B92386245AFC7C003D2EC3 /* UINavigationController.swift in Sources */,
+				A1B92389245AFC7C003D2EC3 /* Initable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,6 +289,7 @@
 		A1F851A324182DEA00284CBD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -276,7 +306,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = ru.home.Flow;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -284,6 +315,7 @@
 		A1F851A424182DEA00284CBD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -300,7 +332,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = ru.home.Flow;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

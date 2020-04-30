@@ -11,12 +11,12 @@ class RootViewController: UIViewController {
     
     // MARK: Override properties
     
-    override var childViewControllerForStatusBarStyle: UIViewController? {
+    override var childForStatusBarStyle: UIViewController? {
         
         return current
     }
     
-    override var childViewControllerForStatusBarHidden: UIViewController? {
+    override var childForStatusBarHidden: UIViewController? {
         
         return current
     }
@@ -25,22 +25,22 @@ class RootViewController: UIViewController {
     
     public var current: UIViewController? {
         
-        return childViewControllers.first
+        return children.first
     }
     
     // MARK: Public methods
     
     func insert(_ controller: UIViewController) {
         
-        addChildViewController(controller)
-        
+        addChild(controller)
+
         controller.view.frame = view.frame
-        
+
         view.addSubview(controller.view)
         
-        controller.didMove(toParentViewController: self)   
+        controller.didMove(toParent: self)
     }
-    
+
     func transition(
         from: UIViewController,
         to: UIViewController,
@@ -48,8 +48,8 @@ class RootViewController: UIViewController {
         completion: Completion? = nil
     ) {
         
-        from.willMove(toParentViewController: nil)
-        addChildViewController(to)
+        from.willMove(toParent: nil)
+        addChild(to)
         
         view.addSubview(to.view)
         
@@ -80,8 +80,8 @@ class RootViewController: UIViewController {
                     }
                 }
                 
-                from.removeFromParentViewController()
-                to.didMove(toParentViewController: self)
+                from.removeFromParent()
+                to.didMove(toParent: self)
                 
                 if isDismissNeeded == false {
                     
