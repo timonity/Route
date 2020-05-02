@@ -120,7 +120,7 @@ class ViewController: UIViewController {
         
         let controller = ViewController.initiate()
         controller.id = generateNewId()
-        controller.tree = treeWithReplacedLeave()
+        controller.tree = growTreeForReplace()
         
         router.replace(
             to: controller,
@@ -141,7 +141,6 @@ class ViewController: UIViewController {
         router.setWindowRoot(navigation, animated: true, completion: { })
     }
 
-    
     private func back() {
         
         router.back()
@@ -203,13 +202,13 @@ extension ViewController {
     
     func showAlert(with message: String) {
         
-        let c = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
+        let controller = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
         
         let cancel = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
         
-        c.addAction(cancel)
+        controller.addAction(cancel)
         
-        router.present(c)
+        router.present(controller)
     }
 }
 
@@ -254,7 +253,7 @@ extension ViewController {
         return newTree
     }
     
-    private func treeWithReplacedLeave() -> [String] {
+    private func growTreeForReplace() -> [String] {
         
         var newTree = tree
         

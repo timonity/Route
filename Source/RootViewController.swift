@@ -87,7 +87,8 @@ class RootViewController: UIViewController {
                     
                     completion?()
                 }
-        })
+             }
+        )
     }
 }
 

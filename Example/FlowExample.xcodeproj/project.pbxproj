@@ -180,6 +180,7 @@
 			buildConfigurationList = A1F851C224182FE700284CBD /* Build configuration list for PBXNativeTarget "FlowExample" */;
 			buildPhases = (
 				C18FC0FDCECCE28775990E3A /* [CP] Check Pods Manifest.lock */,
+				A1AB95D9245B30EA0030FD7E /* SwiftLint */,
 				A1F851AA24182FE400284CBD /* Sources */,
 				A1F851AB24182FE400284CBD /* Frameworks */,
 				A1F851AC24182FE400284CBD /* Resources */,
@@ -308,6 +309,24 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FlowExample/Pods-FlowExample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		A1AB95D9245B30EA0030FD7E /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint --config ../.swiftlint.yml\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 		C18FC0FDCECCE28775990E3A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

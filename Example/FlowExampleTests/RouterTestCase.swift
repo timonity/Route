@@ -49,7 +49,6 @@ class RouterTestCase: XCTestCase {
         steps = []
     }
     
-    
     // MARK: Checks
     
     func checkTopController() {
@@ -147,10 +146,11 @@ class RouterTestCase: XCTestCase {
         
         router.backToKeyNavigationRoot(animated: false, completion: { (contoller: ContentController) in
             
-            id = contoller.id
-            
-            expectation.fulfill()
-        })
+                id = contoller.id
+
+                expectation.fulfill()
+            }
+        )
         
         wait(for: [expectation], timeout: 1)
         

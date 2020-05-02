@@ -115,4 +115,3 @@ extension Navigator: UINavigationControllerDelegate {
         }
     }
 }
-

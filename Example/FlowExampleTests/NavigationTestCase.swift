@@ -56,7 +56,6 @@ class NavigationTestCase: RouterTestCase {
         checkStack()
     }
     
-    
      func testBackTo() {
          
         setWindowRoot()
@@ -104,7 +103,7 @@ class NavigationTestCase: RouterTestCase {
              [12]
          ]
      
-         for id in stack.reversed().map { $0.id } {
+         for id in stack.reversed().map({ $0.id }) {
              
              backStepTo(id: id)
              

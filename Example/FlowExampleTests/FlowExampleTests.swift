@@ -75,7 +75,6 @@ extension Array where Element == Controller {
     }
 }
 
-
 class RouterTestCase: XCTestCase {
     
     // MARK: Public properties
@@ -118,13 +117,7 @@ class RouterTestCase: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-    
-    
-    
 
-    
-
-    
     func testBackTo() {
         
         setWindowRoot()
@@ -173,7 +166,6 @@ class RouterTestCase: XCTestCase {
             XCTAssert(stack.last?.id == id, "Fail on id: \(id)")
         }
     }
-    
     
     // MARK: Checks
     
@@ -292,7 +284,6 @@ class RouterTestCase: XCTestCase {
         steps.append([navigation, controller])
     }
     
-
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
         measure {

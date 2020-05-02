@@ -92,6 +92,7 @@
 			buildConfigurationList = A1F851A224182DEA00284CBD /* Build configuration list for PBXNativeTarget "Flow" */;
 			buildPhases = (
 				A1F8519524182DEA00284CBD /* Headers */,
+				A1AB95D8245B27550030FD7E /* SwiftLint */,
 				A1F8519624182DEA00284CBD /* Sources */,
 				A1F8519724182DEA00284CBD /* Frameworks */,
 				A1F8519824182DEA00284CBD /* Resources */,
@@ -111,6 +112,7 @@
 		A1F8519124182DEA00284CBD /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1140;
 				LastUpgradeCheck = 1120;
 				ORGANIZATIONNAME = HOME;
 				TargetAttributes = {
@@ -147,6 +149,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A1AB95D8245B27550030FD7E /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A1F8519624182DEA00284CBD /* Sources */ = {

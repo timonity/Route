@@ -28,11 +28,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         root.id = 0
         root.tree.append("->[\(root.id)]")
         
-        router.setWindowRoot(
-            root,
-            animated: false,
-            completion: {}
-        )
+//        router.setWindowRoot(
+//            root,
+//            animated: false,
+//            completion: {}
+//        )
+        
+        window?.rootViewController = root
+        
+//        window?.layer.speed = 0.2
         
         window?.makeKeyAndVisible()
         
@@ -53,7 +57,6 @@ public extension UIViewController {
         return keyRouter
     }
 }
-
 
 extension UITabBarController: StoryboadInitable {
     
