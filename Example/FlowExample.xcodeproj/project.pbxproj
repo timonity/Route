@@ -16,6 +16,7 @@
 		A140F91224505ACD00C2A2EA /* NavigationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A140F91124505ACD00C2A2EA /* NavigationTestCase.swift */; };
 		A140F91424505C3000C2A2EA /* ContentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A140F91324505C3000C2A2EA /* ContentController.swift */; };
 		A140F91624505C6700C2A2EA /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A140F91524505C6700C2A2EA /* NavigationController.swift */; };
+		A1AB95DB245EBD080030FD7E /* NavigationTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AB95DA245EBD080030FD7E /* NavigationTree.swift */; };
 		A1DC4968244B9E5E002D5CE4 /* RouterTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DC4967244B9E5E002D5CE4 /* RouterTestCase.swift */; };
 		A1F851B224182FE400284CBD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F851B124182FE400284CBD /* AppDelegate.swift */; };
 		A1F851B624182FE400284CBD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F851B524182FE400284CBD /* ViewController.swift */; };
@@ -49,6 +50,7 @@
 		A140F91124505ACD00C2A2EA /* NavigationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationTestCase.swift; sourceTree = "<group>"; };
 		A140F91324505C3000C2A2EA /* ContentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentController.swift; sourceTree = "<group>"; };
 		A140F91524505C6700C2A2EA /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
+		A1AB95DA245EBD080030FD7E /* NavigationTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationTree.swift; sourceTree = "<group>"; };
 		A1DC4965244B9E5E002D5CE4 /* FlowExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlowExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1DC4967244B9E5E002D5CE4 /* RouterTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterTestCase.swift; sourceTree = "<group>"; };
 		A1DC4969244B9E5E002D5CE4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -102,6 +104,26 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		A1AB95DC245F2EDC0030FD7E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A11A09D82452283500756D4A /* Action.swift */,
+				A1AB95DA245EBD080030FD7E /* NavigationTree.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A1AB95DD245F2F0F0030FD7E /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				A1F851B524182FE400284CBD /* ViewController.swift */,
+				A11A09DA2452284D00756D4A /* Button.swift */,
+				A1F851B724182FE400284CBD /* Main.storyboard */,
+				A1F851BC24182FE700284CBD /* LaunchScreen.storyboard */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 		A1DC4966244B9E5E002D5CE4 /* FlowExampleTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -139,15 +161,12 @@
 		A1F851B024182FE400284CBD /* FlowExample */ = {
 			isa = PBXGroup;
 			children = (
-				A1F851B124182FE400284CBD /* AppDelegate.swift */,
-				A1F851B524182FE400284CBD /* ViewController.swift */,
-				A11A09D82452283500756D4A /* Action.swift */,
-				A11A09DA2452284D00756D4A /* Button.swift */,
-				A11A09DC2452288600756D4A /* String.swift */,
-				A1F851B724182FE400284CBD /* Main.storyboard */,
-				A1F851BA24182FE700284CBD /* Assets.xcassets */,
-				A1F851BC24182FE700284CBD /* LaunchScreen.storyboard */,
 				A1F851BF24182FE700284CBD /* Info.plist */,
+				A1F851B124182FE400284CBD /* AppDelegate.swift */,
+				A11A09DC2452288600756D4A /* String.swift */,
+				A1F851BA24182FE700284CBD /* Assets.xcassets */,
+				A1AB95DC245F2EDC0030FD7E /* Models */,
+				A1AB95DD245F2F0F0030FD7E /* UI */,
 			);
 			path = FlowExample;
 			sourceTree = "<group>";
@@ -373,6 +392,7 @@
 				A1F851B624182FE400284CBD /* ViewController.swift in Sources */,
 				A11A09D92452283500756D4A /* Action.swift in Sources */,
 				A11A09DD2452288600756D4A /* String.swift in Sources */,
+				A1AB95DB245EBD080030FD7E /* NavigationTree.swift in Sources */,
 				A1F851B224182FE400284CBD /* AppDelegate.swift in Sources */,
 				A11A09DB2452284D00756D4A /* Button.swift in Sources */,
 			);

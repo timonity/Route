@@ -20,9 +20,12 @@ class ViewController: UIViewController {
     
     // MARK: Public properties
     
-    var id: Int = 0
-    
-    var tree: [String] = []
+    var id: Int {
+
+        return navigationTree.id
+    }
+
+    var navigationTree: NavigationTree!
     
     // MARK: Override methods
 
@@ -32,16 +35,18 @@ class ViewController: UIViewController {
         setupButtons()
         
         if #available(iOS 13.0, *) {
-            navigationTreeLabel.font = UIFont.monospacedSystemFont(ofSize: 15, weight: .regular)
-        } else {
-            
+            navigationTreeLabel.font = UIFont.monospacedSystemFont(
+                ofSize: 15,
+                weight: .regular
+            )
         }
-        
-        title = String(id)
-        
-        navigationTreeLabel.backgroundColor = .white
-    
-        plotTree()
+
+        let plot = navigationTree.plot()
+
+        navigationTreeLabel.text = plot.0
+        navigationTreeLabel.numberOfLines = plot.1
+
+        title = String(navigationTree.id)
     }
     
     // MARK: Private methods
@@ -51,8 +56,13 @@ class ViewController: UIViewController {
         actions.forEach { (action) in
             
             let button = Button()
+
             button.setupWith(action: action)
-            button.addTarget(self, action: #selector(self.actionButtonTouched(_:)), for: .touchUpInside)
+            button.addTarget(
+                self,
+                action: #selector(self.actionButtonTouched(_:)),
+                for: .touchUpInside
+            )
             
             stackView.addArrangedSubview(button)   
         }
@@ -93,9 +103,11 @@ class ViewController: UIViewController {
     private func push() {
         
         let controller = ViewController.initiate()
-        
-        controller.id = generateNewId()
-        controller.tree = growTreeForPush()
+
+        var tree = navigationTree
+        tree?.growWithPush()
+
+        controller.navigationTree = tree
         
         router.push(
             controller,
@@ -107,9 +119,11 @@ class ViewController: UIViewController {
     private func present() {
         
         let controller = ViewController.initiate()
-        
-        controller.id = generateNewId()
-        controller.tree = growTreeForPresent()
+
+        var tree = navigationTree
+        tree?.growWithPresent()
+
+        controller.navigationTree = tree
         
         let nc = UINavigationController(rootViewController: controller)
         
@@ -119,8 +133,11 @@ class ViewController: UIViewController {
     private func replace() {
         
         let controller = ViewController.initiate()
-        controller.id = generateNewId()
-        controller.tree = growTreeForReplace()
+
+        var tree = navigationTree
+        tree?.growWithReplace()
+
+        controller.navigationTree = tree
         
         router.replace(
             to: controller,
@@ -132,9 +149,7 @@ class ViewController: UIViewController {
     private func setWindowRoot() {
         
         let root = ViewController.initiate()
-        root.title = "Root"
-        root.id = 0
-        root.tree.append("->[\(root.id)]")
+        root.navigationTree = NavigationTree.root
         
         let navigation = UINavigationController(rootViewController: root)
         
@@ -146,14 +161,14 @@ class ViewController: UIViewController {
         router.back()
     }
     
-    private func backTo(_ id: Int) {
+    private func backTo(_ controllerId: Int) {
         
         let title = "From \(id)"
         
         router.backTo(
             to: ViewController.self,
             animated: true,
-            condition: { $0.id == id },
+            condition: { $0.id == controllerId },
             prepare: { $0.title = title }
         )
     }
@@ -168,22 +183,22 @@ class ViewController: UIViewController {
         router.backToKeyNavigationRoot()
     }
     
-    private func presentTabBar() {
-        
-        let first = ViewController.initiate()
-        
-        first.id = generateNewId()
-        first.tree = growTreeForPresent()
-        
-        first.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 0)
-        
-        let firstNav = UINavigationController(rootViewController: first)
-        
-        let tabBarCotroller = UITabBarController()
-        tabBarCotroller.setViewControllers([firstNav], animated: false)
-        
-        router.present(tabBarCotroller)
-    }
+//    private func presentTabBar() {
+//        
+//        let first = ViewController.initiate()
+//        
+//        first.id = generateNewId()
+//        first.tree = growTreeForPresent()
+//        
+//        first.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 0)
+//
+//        let firstNav = UINavigationController(rootViewController: first)
+//        
+//        let tabBarCotroller = UITabBarController()
+//        tabBarCotroller.setViewControllers([firstNav], animated: false)
+//        
+//        router.present(tabBarCotroller)
+//    }
 }
 
 // MARK: StoryboardInitable
@@ -199,7 +214,7 @@ extension ViewController: StoryboadInitable {
 // MARK: Alert
 
 extension ViewController {
-    
+
     func showAlert(with message: String) {
         
         let controller = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
@@ -209,76 +224,5 @@ extension ViewController {
         controller.addAction(cancel)
         
         router.present(controller)
-    }
-}
-
-// MARK: Plot Navigation Tree
-
-extension ViewController {
-    
-    private func generateNewId() -> Int {
-        
-        return id + 1
-    }
-    
-    private func growTreeForPush() -> [String] {
-        
-        var newTree = tree
-        
-        var s = newTree.last!
-        
-        s.append("––[\(generateNewId())]")
-        
-        newTree[newTree.count - 1] = s
-        
-        return newTree
-    }
-    
-    private func growTreeForPresent() -> [String] {
-        
-        var newTree = tree
-        
-        let last = newTree.last!
-        
-        let lastLength = last.count - 1
-        
-        newTree.append(
-            " ".duplicate(lastLength - 1) + "|"
-        )
-        
-        newTree.append(
-            " ".duplicate(lastLength - 2) + "[\(generateNewId())]"
-        )
-        
-        return newTree
-    }
-    
-    private func growTreeForReplace() -> [String] {
-        
-        var newTree = tree
-        
-        var last = newTree.last!
-        
-        let offset = -2 - String(id).count
-        
-        let s = last.index(last.endIndex, offsetBy: offset)
-        let e = last.index(last.endIndex, offsetBy: 0)
-        
-        last.replaceSubrange(s..<e, with: "[\(generateNewId())]")
-        
-        newTree[newTree.count - 1] = last
-        
-        return newTree
-    }
-    
-    private func plotTree() {
-        
-        let t = tree.reversed().map { $0.appending("\n") }.reduce("") { (res, ns) -> String in
-            
-            return res + ns
-        }
-        
-        navigationTreeLabel.text = t
-        navigationTreeLabel.numberOfLines = tree.count + 1
     }
 }
