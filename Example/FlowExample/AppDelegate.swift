@@ -24,19 +24,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         
         let root = ViewController.initiate()
-        root.title = "Root"
-        root.id = 0
-        root.tree.append("->[\(root.id)]")
+        root.navigationTree = NavigationTree.root
         
-//        router.setWindowRoot(
-//            root,
-//            animated: false,
-//            completion: {}
-//        )
-        
-        window?.rootViewController = root
-        
-//        window?.layer.speed = 0.2
+        router.setWindowRoot(
+            root,
+            animated: false,
+            completion: { }
+        )
         
         window?.makeKeyAndVisible()
         
