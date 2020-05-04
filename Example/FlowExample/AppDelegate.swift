@@ -23,11 +23,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window = UIWindow(frame: UIScreen.main.bounds)
         
-        let root = ViewController.initiate()
-        root.navigationTree = NavigationTree.root
+        let controller = ViewController.initiate()
+        controller.navigationTree = NavigationTree.root
         
         router.setWindowRoot(
-            root,
+            controller,
             animated: false,
             completion: { }
         )
