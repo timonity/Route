@@ -16,6 +16,11 @@ extension UINavigationController: ContainerController {
         
         return topViewController
     }
+
+    var root: UIViewController? {
+
+        return viewControllers.first
+    }
     
     func getPreviousController(
         for controller: UIViewController
@@ -33,12 +38,38 @@ extension UINavigationController: ContainerController {
         
         return nil
     }
-    
-    func backTo(_ controller: UIViewController, animated: Bool, completion: Completion?) {
-        
-        pop(to: controller, animated: animated, completion: completion)
+
+    // MARK: Forward Navigation
+
+    func push(
+        controller: UIViewController,
+        animated: Bool = true,
+        completion: (() -> Void)? = nil
+    ) {
+
+        CATransaction.begin()
+
+        CATransaction.setCompletionBlock(completion)
+        pushViewController(controller, animated: animated)
+
+        CATransaction.commit()
     }
-    
+
+    func push(
+        controllers: [UIViewController],
+        animated: Bool = true,
+        completion: (() -> Void)? = nil
+    ) {
+        CATransaction.begin()
+
+        CATransaction.setCompletionBlock(completion)
+        setViewControllers(controllers, animated: animated)
+
+        CATransaction.commit()
+    }
+
+    // MARK: Inplace Navigation
+
     func replace(
         _ oldController: UIViewController,
         with newController: UIViewController,
@@ -46,12 +77,10 @@ extension UINavigationController: ContainerController {
         completion: Completion?
     ) {
         guard let oldIdx = viewControllers.firstIndex(of: oldController) else {
-            
             print("Controller `\(oldController)` not found in navigation controller `\(self)` stack")
-            
             return
         }
-        
+
         var controllers = viewControllers
         controllers[oldIdx] = newController
 
@@ -61,81 +90,19 @@ extension UINavigationController: ContainerController {
             completion: completion
         )
     }
-}
 
-// MARK: Forward Navigation
+    // MARK: Backward Navigation
+    
+    func backTo(
+        _ controller: UIViewController,
+        animated: Bool,
+        completion: Completion?
+    ) {
+        CATransaction.begin()
 
-public extension UINavigationController {
-    
-    var root: UIViewController? {
-        
-        return viewControllers.first
-    }
-    
-    func push(
-        controller: UIViewController,
-        animated: Bool = true,
-        completion: (() -> Void)? = nil
-    ) {
-                
-        CATransaction.begin()
-        
-        CATransaction.setCompletionBlock(completion)
-        pushViewController(controller, animated: animated)
-
-        CATransaction.commit()
-    }
-    
-    func push(
-        controllers: [UIViewController],
-        animated: Bool = true,
-        completion: (() -> Void)? = nil
-    ) {
-        CATransaction.begin()
-        
-        CATransaction.setCompletionBlock(completion)
-        setViewControllers(controllers, animated: animated)
-        
-        CATransaction.commit()
-    }
-    
-    func pop(
-        animated: Bool = true,
-        completion: (() -> Void)? = nil
-    ) {
-        CATransaction.begin()
-        
-        CATransaction.setCompletionBlock(completion)
-        popViewController(animated: animated)
-        
-        CATransaction.commit()
-    }
-    
-    func pop(
-        to controller: UIViewController,
-        animated: Bool = true,
-        completion: (() -> Void)? = nil
-    ) {
-        CATransaction.begin()
-        
         CATransaction.setCompletionBlock(completion)
         popToViewController(controller, animated: animated)
-        
-        CATransaction.commit()
-    }
-    
-    func replace(
-        with controller: UIViewController,
-        animated: Bool,
-        completion: Completion? = nil
-    ) {
-        var controllers = viewControllers
-        controllers[controllers.count - 1] = controller
 
-        push(
-            controllers: controllers,
-            animated: animated,
-            completion: completion
-        )
+        CATransaction.commit()
     }
 }

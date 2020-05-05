@@ -53,16 +53,16 @@ open class Router: NSObject {
         return controller
     }
     
-    private var keyNavigationController: UINavigationController? {
+    private var keyContainerController: ContainerController? {
         
-        guard let navigation = keyController?.navigationController else {
+        guard let container = keyController?.parent as? ContainerController else {
             
             print("Missing `UINavigationController` for current controller")
             
             return nil
         }
         
-        return navigation
+        return container
     }
     
     // MARK: - Public properties
@@ -288,7 +288,7 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        keyNavigationController?.push(controllers: controllers, animated: animated, completion: completion)
+        keyContainerController?.push(controllers: controllers, animated: animated, completion: completion)
     }
     
     public func push(
@@ -296,7 +296,7 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        keyNavigationController?.push(controller: controller, animated: animated, completion: completion)
+        keyContainerController?.push(controller: controller, animated: animated, completion: completion)
     }
     
     public func present(
@@ -425,7 +425,7 @@ open class Router: NSObject {
         prepare: ((T) -> Void)? = nil,
         completion: ((T) -> Void)? = nil
     ) {
-        guard let navigationRoot = keyNavigationController?.root else { return }
+        guard let navigationRoot = keyContainerController?.root else { return }
         
         backTo(
             to: T.self,
