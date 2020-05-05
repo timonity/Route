@@ -14,74 +14,174 @@ struct NavigationTree {
 
     static var root: NavigationTree {
 
-        return NavigationTree(id: 0, levels: ["->[0]"])
+        return NavigationTree(levels: [[0]])
     }
 
-    var id: Int
+    var id: Int {
 
-    var levels: [String]
+        return stackIds.last ?? 0
+    }
+
+    var nextId: Int {
+
+        return id + 1
+    }
+
+    var previousId: Int? {
+
+        return stackIds[stackIds.count - 2]
+    }
+
+    var stackIds: [Int] {
+
+        return levels.flatMap { $0 }
+    }
+
+    var levels: [[Int]] = []
 
     // MARK: Private methdos
 
-    func getControllerIcon(with id: Int) -> String {
+    private func getControllerIcon(with id: Int) -> String {
 
         return "[\(id)]"
     }
 
-    // MARK: Public methods
+    // MARK: - Public methods
 
-    mutating func growWithPush() {
+    // MARK: Forward Navigation
 
-        guard var lastLevel = levels.last else { return }
+    mutating func push() {
 
-        id += 1
-
-        lastLevel.append("––")
-        lastLevel.append(getControllerIcon(with: id))
-
-        levels[levels.count - 1] = lastLevel
+        levels[levels.count - 1].append(nextId)
     }
 
-    mutating func growWithPresent() {
+    mutating func present() {
 
-        guard let lastLevel = levels.last else { return }
-
-        id += 1
-
-        let lastLength = lastLevel.count - 1
-
-        levels.append(
-            " ".duplicate(lastLength - 1) + "|"
-        )
-
-        levels.append(
-            " ".duplicate(lastLength - 2) + getControllerIcon(with: id)
-        )
+        levels.append([nextId])
     }
 
-    mutating func growWithReplace() {
+    // MARK: Inplace Navigation
 
-        guard var lastLevel = levels.last else { return }
+    mutating func replace() {
 
-        id += 1
+        levels[levels.count - 1].removeLast()
+        levels[levels.count - 1].append(nextId)
+    }
 
-        let offset = -2 - String(id).count
+    mutating func setWindowRoot() {
 
-        let leftBound = lastLevel.index(lastLevel.endIndex, offsetBy: offset)
-        let rightBound = lastLevel.index(lastLevel.endIndex, offsetBy: 0)
+        levels = [[0]]
+    }
 
-        lastLevel.replaceSubrange(leftBound..<rightBound, with: getControllerIcon(with: id))
+    // MARK: Backward Navigation
 
-        levels[levels.count - 1] = lastLevel
+    mutating func back() {
+
+        guard let prev = previousId else {
+
+            print("Previous id not found for id: \(id)")
+
+            return
+        }
+
+        backTo(prev)
+    }
+
+    mutating func backToRoot() {
+
+        backTo(stackIds[0])
+    }
+
+    mutating func backToKeyLevelRoot() {
+
+        backTo(levels[levels.count - 1][0])
+    }
+
+    mutating func backTo(_ id: Int) {
+
+        for levelIdx in (0..<levels.count).reversed() {
+
+            let level = levels[levelIdx]
+
+            if level.contains(id) == false {
+                levels.remove(at: levelIdx)
+
+            } else {
+                levels[levelIdx].removeAll { $0 > id }
+                break
+            }
+        }
     }
 
     func plot() -> (String, Int) {
 
-        let tree = levels
+        var lvls: [String] = []
+
+        for level in levels {
+
+            var lvl = ""
+
+            if let count = lvls.last?.count {
+
+                lvls.append(
+                    " ".duplicate(count - 2) + "|"
+                )
+
+                lvl.append(
+                    " ".duplicate(count - 3)
+                )
+            }
+
+            for id in level {
+
+                lvl.append(getControllerIcon(with: id))
+
+                if id == level.last { break }
+
+                lvl.append("––")
+            }
+
+            lvls.append(lvl)
+        }
+
+        let tree = lvls
             .reversed()
             .map { $0.appending("\n") }
             .reduce("") { $0 + $1 }
 
-        return (tree, levels.count + 1)
+        return (tree, lvls.count + 1)
+    }
+}
+
+extension NavigationTree {
+
+    mutating func performAction(_ action: Action) {
+
+        switch action {
+
+        case .push:
+            push()
+
+        case .present:
+            present()
+
+        case .replace:
+            replace()
+
+        case .setWindowRoot:
+            setWindowRoot()
+
+        case .back:
+            back()
+
+        case .backTo(let id):
+            backTo(id)
+
+        case .backToWindowRoot:
+            backToRoot()
+
+        case .backToNavigationRoot:
+            backToKeyLevelRoot()
+        }
     }
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum Action: Int, CaseIterable {
+enum Action {
     
     case push
     case present
@@ -17,7 +17,7 @@ enum Action: Int, CaseIterable {
     case setWindowRoot
     
     case back
-    case backTo
+    case backTo(Int)
     case backToWindowRoot
     case backToNavigationRoot
     
@@ -40,8 +40,8 @@ enum Action: Int, CaseIterable {
         case .back:
             return "Back"
             
-        case .backTo:
-            return "Back to 3"
+        case .backTo(let id):
+            return "Back to \(id)"
             
         case .backToWindowRoot:
             return "Back to Window Root"

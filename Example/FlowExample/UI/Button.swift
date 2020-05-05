@@ -33,8 +33,5 @@ class Button: UIButton {
         } else {
             
         }
-        
-        setTitle(action.title, for: .normal)
-        tag = action.rawValue
     }
 }

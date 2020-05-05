@@ -16,7 +16,16 @@ class ViewController: UIViewController {
     @IBOutlet private var navigationTreeLabel: UILabel!
     @IBOutlet private weak var stackView: UIStackView!
     
-    private let actions = Action.allCases
+    private let actions: [Action] = [
+        .push,
+        .present,
+        .replace,
+        .setWindowRoot,
+        .back,
+        .backTo(3),
+        .backToWindowRoot,
+        .backToNavigationRoot
+    ]
     
     // MARK: Public properties
     
@@ -46,33 +55,42 @@ class ViewController: UIViewController {
         navigationTreeLabel.text = plot.0
         navigationTreeLabel.numberOfLines = plot.1
 
+        navigationTreeLabel.accessibilityIdentifier = "\(id)-Tree"
+
         title = String(navigationTree.id)
     }
     
     // MARK: Private methods
     
     private func setupButtons() {
-        
-        actions.forEach { (action) in
-            
+
+        for idx in 0..<actions.count {
+
+            let action = actions[idx]
+
             let button = Button()
 
+            button.accessibilityIdentifier = "\(id)-\(action.title)"
+
             button.setupWith(action: action)
+
+            button.tag = idx
+
+            button.setTitle(action.title, for: .normal)
+
             button.addTarget(
                 self,
                 action: #selector(self.actionButtonTouched(_:)),
                 for: .touchUpInside
             )
-            
-            stackView.addArrangedSubview(button)   
+
+            stackView.addArrangedSubview(button)
         }
     }
     
     @objc private func actionButtonTouched(_ sender: Button) {
         
-        guard let action = Action(rawValue: sender.tag) else { return }
-        
-        switch action {
+        switch actions[sender.tag] {
             
         case .push:
             push()
@@ -89,8 +107,8 @@ class ViewController: UIViewController {
         case .back:
             back()
             
-        case .backTo:
-            backTo(3)
+        case .backTo(let id):
+            backTo(id)
             
         case .backToWindowRoot:
             backToWindowRoot()
@@ -105,7 +123,7 @@ class ViewController: UIViewController {
         let controller = ViewController.initiate()
 
         var tree = navigationTree
-        tree?.growWithPush()
+        tree?.push()
 
         controller.navigationTree = tree
         
@@ -121,7 +139,7 @@ class ViewController: UIViewController {
         let controller = ViewController.initiate()
 
         var tree = navigationTree
-        tree?.growWithPresent()
+        tree?.present()
 
         controller.navigationTree = tree
         
@@ -135,7 +153,7 @@ class ViewController: UIViewController {
         let controller = ViewController.initiate()
 
         var tree = navigationTree
-        tree?.growWithReplace()
+        tree?.replace()
 
         controller.navigationTree = tree
         
