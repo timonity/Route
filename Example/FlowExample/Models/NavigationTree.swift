@@ -13,27 +13,22 @@ struct NavigationTree {
     // MARK: Public properties
 
     static var root: NavigationTree {
-
         return NavigationTree(levels: [[0]])
     }
 
     var id: Int {
-
         return stackIds.last ?? 0
     }
 
     var nextId: Int {
-
         return id + 1
     }
 
     var previousId: Int? {
-
         return stackIds[stackIds.count - 2]
     }
 
     var stackIds: [Int] {
-
         return levels.flatMap { $0 }
     }
 
@@ -42,7 +37,6 @@ struct NavigationTree {
     // MARK: Private methdos
 
     private func getControllerIcon(with id: Int) -> String {
-
         return "[\(id)]"
     }
 
@@ -51,36 +45,31 @@ struct NavigationTree {
     // MARK: Forward Navigation
 
     mutating func push() {
-
         levels[levels.count - 1].append(nextId)
     }
 
     mutating func present() {
-
         levels.append([nextId])
     }
 
     // MARK: Inplace Navigation
 
     mutating func replace() {
+        let newId = nextId
 
         levels[levels.count - 1].removeLast()
-        levels[levels.count - 1].append(nextId)
+        levels[levels.count - 1].append(newId)
     }
 
     mutating func setWindowRoot() {
-
         levels = [[0]]
     }
 
     // MARK: Backward Navigation
 
     mutating func back() {
-
         guard let prev = previousId else {
-
             print("Previous id not found for id: \(id)")
-
             return
         }
 
@@ -88,12 +77,10 @@ struct NavigationTree {
     }
 
     mutating func backToRoot() {
-
         backTo(stackIds[0])
     }
 
     mutating func backToKeyLevelRoot() {
-
         backTo(levels[levels.count - 1][0])
     }
 
@@ -156,7 +143,6 @@ struct NavigationTree {
 extension NavigationTree {
 
     mutating func performAction(_ action: Action) {
-
         switch action {
 
         case .push:

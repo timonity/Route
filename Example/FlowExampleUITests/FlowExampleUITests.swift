@@ -83,14 +83,21 @@ class FlowExampleUITests: XCTestCase {
     // MARK: Tests
 
     func testBack() {
+        let actions: [Action] = [
+            .present,
+            .push,
+            .push,
+            .backToNavigationRoot,
+            .present,
+            .back,
+            .backToWindowRoot,
+            .present,
+            .present,
+            .push,
+            .push,
+            .backTo(3)
+        ]
 
-        perform(
-            [
-                .present,
-                .push,
-                .push,
-                .backToWindowRoot
-            ]
-        )
+        perform(actions)
     }
 }

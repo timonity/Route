@@ -65,18 +65,7 @@ class ViewController: UIViewController {
     private func setupButtons() {
 
         for idx in 0..<actions.count {
-
-            let action = actions[idx]
-
-            let button = Button()
-
-            button.accessibilityIdentifier = "\(id)-\(action.title)"
-
-            button.setupWith(action: action)
-
-            button.tag = idx
-
-            button.setTitle(action.title, for: .normal)
+            let button = Button(action: actions[idx], id: id, tag: idx)
 
             button.addTarget(
                 self,

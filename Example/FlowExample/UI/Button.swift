@@ -9,29 +9,32 @@
 import UIKit
 
 class Button: UIButton {
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-    }
-    
+
+    // MARK: Override methods
+
     override func layoutSubviews() {
         super.layoutSubviews()
-        
+
         layer.cornerRadius = frame.size.height / 2
         layer.masksToBounds = true
     }
-    
-    func setupWith(action: Action) {
-        
+
+    // MARK: Public methods
+
+    convenience init(action: Action, id: Int, tag: Int) {
+        self.init()
+
+        self.tag = tag
+        accessibilityIdentifier = "\(id)-\(action.title)"
+
+        setTitle(action.title, for: .normal)
         setTitleColor(.white, for: .normal)
         setTitleColor(.gray, for: .highlighted)
+
         titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
-        
+
         if #available(iOS 11.0, *) {
-            backgroundColor = UIColor(named: "main_button")!
-        } else {
-            
+            backgroundColor = UIColor(named: "main_button")
         }
     }
 }
