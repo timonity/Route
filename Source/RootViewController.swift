@@ -47,7 +47,6 @@ class RootViewController: UIViewController {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        
         from.willMove(toParent: nil)
         addChild(to)
         
@@ -66,25 +65,21 @@ class RootViewController: UIViewController {
         
         UIView.animate(
             withDuration: duration,
-            animations: {
-            
-                to.view.frame = from.view.frame
-            },
+            animations: { to.view.frame = from.view.frame },
             completion: { _ in
-            
+
                 if isDismissNeeded {
-                    
                     from.dismiss(animated: animated) {
-                        
                         completion?()
                     }
                 }
-                
+
+                from.view.removeFromSuperview()
                 from.removeFromParent()
+
                 to.didMove(toParent: self)
                 
                 if isDismissNeeded == false {
-                    
                     completion?()
                 }
              }
