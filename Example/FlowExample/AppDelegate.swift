@@ -43,12 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 public extension UIViewController {
     
     var router: Router {
-        
-        let keyRouter = (UIApplication.shared.delegate as! AppDelegate).router
-        
-        keyRouter.currentController = self
-        
-        return keyRouter
+        return Router(window: UIApplication.shared.keyWindow, controller: self)
     }
 }
 
