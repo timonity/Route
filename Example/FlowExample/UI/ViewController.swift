@@ -21,6 +21,7 @@ class ViewController: UIViewController {
         .present,
         .replace,
         .setWindowRoot,
+        .jumpTo(3),
         .back,
         .backTo(3),
         .backToWindowRoot,
@@ -34,7 +35,7 @@ class ViewController: UIViewController {
         return navigationTree.id
     }
 
-    var navigationTree: NavigationTree!
+    var navigationTree: NavigationTree! = NavigationTree.root
     
     // MARK: Override methods
 
@@ -59,7 +60,7 @@ class ViewController: UIViewController {
 
         title = String(navigationTree.id)
     }
-    
+
     // MARK: Private methods
     
     private func setupButtons() {
@@ -92,6 +93,9 @@ class ViewController: UIViewController {
             
         case .setWindowRoot:
             setWindowRoot()
+
+        case .jumpTo(let id):
+            jumpTo(id)
             
         case .back:
             back()
@@ -154,13 +158,22 @@ class ViewController: UIViewController {
     }
     
     private func setWindowRoot() {
+        let controller = UITabBarController.initiate()
         
-        let root = ViewController.initiate()
-        root.navigationTree = NavigationTree.root
-        
-        let navigation = UINavigationController(rootViewController: root)
-        
-        router.setWindowRoot(navigation, animated: true, completion: { })
+        router.setWindowRoot(controller, animated: true, completion: { })
+    }
+
+    private func jumpTo(_ id: Int) {
+        let title = "Jumped from \(id)"
+
+        router.jumpTo(
+            ViewController.self,
+            animated: true,
+            condition: { $0.id == id },
+            prepare: { $0.title = title },
+            completion: { _ in },
+            failure: { self.showAlert(with: "Not found") }
+        )
     }
 
     private func back() {
@@ -173,10 +186,12 @@ class ViewController: UIViewController {
         let title = "From \(id)"
         
         router.backTo(
-            to: ViewController.self,
+            ViewController.self,
             animated: true,
             condition: { $0.id == controllerId },
-            prepare: { $0.title = title }
+            prepare: { $0.title = title },
+            completion: { _ in  },
+            failure: { self.showAlert(with: "Not found") }
         )
     }
     
@@ -189,23 +204,6 @@ class ViewController: UIViewController {
         
         router.backToKeyNavigationRoot()
     }
-    
-//    private func presentTabBar() {
-//        
-//        let first = ViewController.initiate()
-//        
-//        first.id = generateNewId()
-//        first.tree = growTreeForPresent()
-//        
-//        first.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 0)
-//
-//        let firstNav = UINavigationController(rootViewController: first)
-//        
-//        let tabBarCotroller = UITabBarController()
-//        tabBarCotroller.setViewControllers([firstNav], animated: false)
-//        
-//        router.present(tabBarCotroller)
-//    }
 }
 
 // MARK: StoryboardInitable

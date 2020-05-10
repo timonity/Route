@@ -10,12 +10,13 @@ import UIKit
 
 public typealias Condition = (UIViewController) -> Bool
 public typealias Completion = () -> Void
+public typealias Tree = Any
 
 open class Router: NSObject {
     
     // MARK: - Private properties
     
-    private let window: UIWindow?
+    private weak var window: UIWindow?
 
     private var windowRootController: UIViewController? {
         
@@ -70,15 +71,21 @@ open class Router: NSObject {
     public weak var currentController: UIViewController?
     
     public var topController: UIViewController? {
-        
         guard let root = windowRootController else { return nil }
         
         return getTopController(for: root)
     }
     
     public var backStack: [UIViewController] {
-        
         return getBackStack().filter { !($0 is RootViewController) }
+    }
+
+    public var stack: [UIViewController] {
+        fatalError("Not implemented")
+    }
+
+    public var tree: Tree {
+        fatalError("Not imlemented")
     }
     
     // MARK: - Private methods
@@ -144,18 +151,9 @@ open class Router: NSObject {
         return findControllerInNavigationTree(for: current) { (controller) -> Bool in
             
             if let candidate = controller as? T {
-                
-                if let condition = condition {
-                    
-                    return condition(candidate)
-                    
-                } else {
-                    
-                    return true
-                }
+                return condition?(candidate) ?? true
                 
             } else {
-                
                 return false
             }
         }
@@ -261,6 +259,12 @@ open class Router: NSObject {
     public init(window: UIWindow?) {
         self.window = window
     }
+
+    public convenience init(window: UIWindow?, controller: UIViewController) {
+        self.init(window: window)
+
+        currentController = controller
+    }
     
     open func navigate(
         with action: BackAction,
@@ -288,7 +292,11 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        keyContainerController?.push(controllers: controllers, animated: animated, completion: completion)
+        keyContainerController?.push(
+            controllers: controllers,
+            animated: animated,
+            completion: completion
+        )
     }
     
     public func push(
@@ -296,7 +304,11 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        keyContainerController?.push(controller: controller, animated: animated, completion: completion)
+        keyContainerController?.push(
+            controller: controller,
+            animated: animated,
+            completion: completion
+        )
     }
     
     public func present(
@@ -355,20 +367,34 @@ open class Router: NSObject {
             completion?()
         }
     }
+
+    public func jumpTo<T: UIViewController>(
+        _ controller: T.Type,
+        animated: Bool = true,
+        condition: ((T) -> Bool)? = nil,
+        prepare: ((T) -> Void)? = nil,
+        completion: ((T) -> Void)? = nil,
+        failure: Completion
+    ) {
+        fatalError("Not implemented yet")
+    }
     
     // MARK: Backward Navigation
     
     public func backTo<T: UIViewController>(
-        to: T.Type,
+        _ controllerType: T.Type,
         animated: Bool = true,
         condition: ((T) -> Bool)? = nil,
         prepare: ((T) -> Void)? = nil,
-        completion: ((T) -> Void)? = nil
+        completion: ((T) -> Void)? = nil,
+        failure: Completion? = nil
     ) {
-        let navigationResult = findControllerInNavigationTree(type: to, condition: condition)
+        let navigationResult = findControllerInNavigationTree(type: controllerType, condition: condition)
         
         guard let targetController = navigationResult.target as? T else {
-            print("Target controller of type `\(to)` not found in navigation tree")
+            failure?()
+
+            print("Target controller of type `\(controllerType)` not found in navigation tree")
             return
         }
         
@@ -382,10 +408,11 @@ open class Router: NSObject {
     public func back<T: UIViewController>(
         animated: Bool = true,
         prepare: ((T) -> Void)? = nil,
-        completion: ((T) -> Void)? = nil
+        completion: ((T) -> Void)? = nil,
+        failure: Completion? = nil
     ) {
         backTo(
-            to: T.self,
+            T.self,
             animated: animated,
             condition: { [weak self] (controller) -> Bool in
                 if controller is ContainerController { return false }
@@ -393,7 +420,8 @@ open class Router: NSObject {
                 return self?.keyController !== controller
             },
             prepare: prepare,
-            completion: completion
+            completion: completion,
+            failure: failure
         )
     }
     
@@ -428,7 +456,7 @@ open class Router: NSObject {
         guard let navigationRoot = keyContainerController?.root else { return }
         
         backTo(
-            to: T.self,
+            T.self,
             animated: animated,
             condition: { $0 === navigationRoot },
             prepare: prepare,

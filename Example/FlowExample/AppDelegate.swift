@@ -22,9 +22,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         
         window = UIWindow(frame: UIScreen.main.bounds)
-        
-        let controller = ViewController.initiate()
-        controller.navigationTree = NavigationTree.root
+
+        let controller = UITabBarController.initiate()
         
         router.setWindowRoot(
             controller,
