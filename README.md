@@ -1,4 +1,4 @@
-# Flow
+# Route
 
 <p align="left">
     <a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/language-Swift_4.2-green" alt="Swift5" /></a>
@@ -8,68 +8,32 @@
  <a href="https://mobileup.ru/"><img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT" /></a>
 </p>
 
-Simple and flexible navigation library.
-
-## Names
-
-- Flow
-- FlowX
-- Compass
-- Mars
-- Neks
-- FlowBox
-- HyperFlow
-- Tavigation
-- Lighthouse
-- Nebuchadnezzar
-- Maze
-- Eith
-- RocketX
-- Pipe
-- PipePiper
+Easy navigation in iOS application. Just works as expected. Designed to be extended.
 
 ## Features
 
-- Simple navigation commands
-- Provide back navigation results
-- Can be painlesly added to ongoing project
-- Can be used alongside segues and default view controllers navigation
+- Simple and unified navigation commands
+- Navigate back to **any** controller with result
 - Architecture agnostic
-- Unifide all navigation comands
-- Navigate back to arbitrary controller
-- Can be used alongside accesability navigation (back, dismiss)
+- Super friendly to existing project navigation
+- Easy to extend
+- Can be painlessly added to ongoing project
+- Lightweight & Stateless
 
-## Adding
+Router - proxy to default controller navigation. It doesn't hold any state, all values such as back target controller, top controller or back navigation stack are calculated on the fly based on `UIViewController` properties. So it's fully compatible with existing project navigation system (default, storyboard or custom) and accesability gestures navigation. Thus can be painlesly added to ongoing project.
 
-Init router, for example in AppDelegate:
+## Add
 
-```swift
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    var window: UIWindow?
-
-    lazy var router = Router(window: window)
-}
-```
-
-**Note:** actually router can be created **without** window. Window only required for setting window root controller functionality.
-
-Then provide access point to router. In order to use router navigation commands you must provide controller, from which navigation performs, i.e. `currentController` property.
+Provide access point to router (from view controller, for example):
 
 ```swift
 extension UIViewController {
 
     var router: Router {
-        let keyRouter = (UIApplication.shared.delegate as! AppDelegate).router
-
-        keyRouter.currentController = self
-
-        return keyRouter
+        return Router(window: UIApplication.shared.keyWindow, controller: self)
     }
 }
 ```
-
-**Note:** in case of multy window application we can simply provide routere for current visible window.
 
 ## Basic Usage
 
@@ -137,7 +101,7 @@ router.backToWindowRoot(
 )
 ```
 
-**Note:** prepare block gets called just before transition begins and can be used for returning some data to target controller.
+**Note:** prepare block gets called just before the transition begins and can be used for returning some data to target controller.
 
 ### Inplace Navigation
 
@@ -147,12 +111,58 @@ router.backToWindowRoot(
 router.replace(to: controller, animated: true, completion: { ... })
 ```
 
-Works even with window root view controller.
+**Note:** replace even window root view controller.
 
 #### Set current window root view controller
 
+##### From any view controller
+
 ```swift
 router.setWindowRoot(controller, animated: true, completion: { ... })
+```
+
+##### From AppDelegate
+
+```swift
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    var window: UIWindow?
+
+    lazy var router = Router(window: window)
+
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        // Setup window
+
+        router.setWindowRoot(controller, animated: true, completion: { ... })
+
+        return true
+    }
+}
+```
+
+### Navigation Stack Info
+
+#### Top view controller
+
+```swift
+let controller = router.topController
+```
+
+#### Back stack
+
+Get back navigation stack from current controller to window root:
+
+```swift
+let controllers = router.backStack
+```
+
+#### Stack from root to top controller
+
+```swift
+let controllers = router.stack
 ```
 
 ## Advanced Usage
@@ -164,6 +174,13 @@ In case of custom contrainer controllers in navigation tree, developer shoud ado
 ### Functionality Extension
 
 Feel free to extend or subclass `Router` in order to add new navigation commands or override them.
+
+### Router creation
+
+Actually router can be created **without** window. Window only required for setting window root controller functionality.
+
+Router can be created without **controller**, which is ok to set window root view controller.
+
 
 ## Requirements
 
