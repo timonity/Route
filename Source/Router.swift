@@ -54,9 +54,9 @@ open class Router: NSObject {
         return controller
     }
     
-    private var keyContainerController: ContainerController? {
+    private var keyStackContainerController: StackContainerController? {
         
-        guard let container = keyController?.parent as? ContainerController else {
+        guard let container = keyController?.parent as? StackContainerController else {
             
             print("Missing `UINavigationController` for current controller")
             
@@ -190,7 +190,7 @@ open class Router: NSObject {
             
             let next: UIViewController
             
-            if let container = parent as? ContainerController {
+            if let container = parent as? StackContainerController {
                             
                 if let previous = container.getPreviousController(for: current) {
                     
@@ -278,7 +278,7 @@ open class Router: NSObject {
         
         if
             let controllerToPop = action.popTo,
-            let container = controllerToPop.parent as? ContainerController
+            let container = controllerToPop.parent as? StackContainerController
         {
             let isAnimated = (action.dismiss == nil) ? animated : false
             container.backTo(controllerToPop, animated: isAnimated, completion: completion)
@@ -292,7 +292,7 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        keyContainerController?.push(
+        keyStackContainerController?.push(
             controllers: controllers,
             animated: animated,
             completion: completion
@@ -304,7 +304,7 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        keyContainerController?.push(
+        keyStackContainerController?.push(
             controller: controller,
             animated: animated,
             completion: completion
@@ -453,7 +453,7 @@ open class Router: NSObject {
         prepare: ((T) -> Void)? = nil,
         completion: ((T) -> Void)? = nil
     ) {
-        guard let navigationRoot = keyContainerController?.root else { return }
+        guard let navigationRoot = keyStackContainerController?.root else { return }
         
         backTo(
             T.self,

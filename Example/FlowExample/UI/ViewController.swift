@@ -112,14 +112,14 @@ class ViewController: UIViewController {
     }
     
     private func push() {
-        
+
         let controller = ViewController.initiate()
 
         var tree = navigationTree
         tree?.push()
 
         controller.navigationTree = tree
-        
+
         router.push(
             controller,
             animated: true,

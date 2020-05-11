@@ -8,9 +8,7 @@
 
 import UIKit
 
-// MARK: ContainerController
-
-extension UINavigationController: ContainerController {
+extension UINavigationController: StackContainerController {
     
     var visibleController: UIViewController? {
         
