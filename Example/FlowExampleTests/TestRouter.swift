@@ -41,10 +41,10 @@ class TestRouter: Router {
             return
         }
 
-        controllerToPop.navigationController?.pop(
-            to: controllerToPop,
-            animated: animated,
-            completion: completion
-        )
+//        controllerToPop.navigationController?.pop(
+//            to: controllerToPop,
+//            animated: animated,
+//            completion: completion
+//        )
     }
 }

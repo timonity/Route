@@ -127,7 +127,7 @@ class RouterTestCase: XCTestCase {
         let expectation = XCTestExpectation(description: "Back to controller with id: \(id) completion")
         
         router.backTo(
-            to: ContentController.self,
+            ContentController.self,
             animated: false,
             condition: {  $0.id == id },
             completion: { _ in expectation.fulfill() }

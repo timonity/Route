@@ -43,6 +43,8 @@ class FlowExampleUITests: XCTestCase {
         tapButton(for: action)
         navigationTree.performAction(action)
 
+        sleep(1)
+
         check()
     }
 
@@ -82,6 +84,17 @@ class FlowExampleUITests: XCTestCase {
 
     // MARK: Tests
 
+    func testWindowRoot() {
+
+        let actions: [Action] = [
+            .setWindowRoot,
+            .push,
+            .present
+        ]
+
+        perform(actions)
+    }
+
     func testBack() {
         let actions: [Action] = [
             .present,
@@ -89,13 +102,19 @@ class FlowExampleUITests: XCTestCase {
             .push,
             .backToNavigationRoot,
             .present,
+            .replace,
             .back,
             .backToWindowRoot,
             .present,
             .present,
             .push,
             .push,
-            .backTo(3)
+            .push,
+            .replace,
+            .backTo(3),
+            .replace,
+            .setWindowRoot,
+            .replace
         ]
 
         perform(actions)
