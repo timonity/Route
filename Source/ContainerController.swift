@@ -63,6 +63,8 @@ protocol FlatContainerController: ContainerController {
 
 protocol StackContainerController: ContainerController {
 
+    var controllers: [UIViewController] { get }
+
     var root: UIViewController? { get }
 
     func getPreviousController(for controller: UIViewController) -> UIViewController?

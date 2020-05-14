@@ -10,7 +10,6 @@ import UIKit
 
 public typealias Condition = (UIViewController) -> Bool
 public typealias Completion = () -> Void
-public typealias Tree = Any
 
 open class Router: NSObject {
     
@@ -82,10 +81,6 @@ open class Router: NSObject {
 
     public var stack: [UIViewController] {
         fatalError("Not implemented")
-    }
-
-    public var tree: Tree {
-        fatalError("Not imlemented")
     }
     
     // MARK: - Private methods
@@ -464,3 +459,82 @@ open class Router: NSObject {
         )
     }
 }
+
+// MARK: Tree
+
+typealias TraceNode = Node<Trace>
+
+extension Router {
+
+    public var tree: Node<Trace>? {
+
+        guard let root = windowRootController else { return nil }
+
+        let rootTrace = Trace(
+            controller: root,
+            openType: .windowRoot,
+            isOnTopWay: true
+        )
+
+        let rootNode = Node<Trace>(value: rootTrace)
+
+        growTree(leaf: rootNode, shouldCheckPresent: true)
+
+        return rootNode
+    }
+
+    public func growTree(leaf: Node<Trace>, shouldCheckPresent: Bool) {
+        let lastController = leaf.value.controller
+
+        if let stackContaier = lastController as? StackContainerController {
+            var lastInStack = leaf
+
+            for i in 0..<stackContaier.controllers.count {
+                let controller = stackContaier.controllers[i]
+
+                let trace = Trace(
+                    controller: controller,
+                    openType: .pushed(stackContaier),
+                    isOnTopWay: shouldCheckPresent
+                )
+
+                let node = Node<Trace>(value: trace)
+                lastInStack.addChild(node)
+
+                lastInStack = node
+
+                // Check childs for container in case:
+                // |->[content]->[container]->[content]
+                let isLast = i == stackContaier.controllers.count - 1
+
+                if controller is ContainerController && isLast == false {
+                    growTree(leaf: node, shouldCheckPresent: false)
+                }
+            }
+
+            growTree(leaf: lastInStack, shouldCheckPresent: shouldCheckPresent)
+
+        } else if let flatContaier = lastController as? FlatContainerController {
+
+        } else if let generalContainer = lastController as? ContainerController {
+
+        } else if let presented = lastController.presentedViewController {
+
+            // Only top controller go for presented
+            if shouldCheckPresent {
+                let trace = Trace(
+                    controller: presented,
+                    openType: .presented(lastController),
+                    isOnTopWay: true
+                )
+
+                let node = TraceNode(value: trace)
+                leaf.addChild(node)
+
+                growTree(leaf: node, shouldCheckPresent: true)
+            }
+
+        }
+    }
+}
+
