@@ -345,7 +345,10 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        if let root = keyWindow?.rootViewController as? RootViewController, let currentRoot = root.current {
+        if
+            let root = keyWindow?.rootViewController as? RootViewController,
+            let currentRoot = root.current
+        {
             root.transition(
                 from: currentRoot,
                 to: controller,
@@ -370,6 +373,13 @@ open class Router: NSObject {
         prepare: ((T) -> Void)? = nil,
         completion: ((T) -> Void)? = nil,
         failure: Completion
+    ) {
+        fatalError("Not implemented yet")
+    }
+
+    public func makeVisible<T: UIViewController>(
+        prepare: ((T) -> Void)? = nil,
+        completion: Completion? = nil
     ) {
         fatalError("Not implemented yet")
     }
@@ -467,7 +477,6 @@ typealias TraceNode = Node<Trace>
 extension Router {
 
     public var tree: Node<Trace>? {
-
         guard let root = windowRootController else { return nil }
 
         let rootTrace = Trace(
@@ -489,26 +498,24 @@ extension Router {
         if let stackContaier = lastController as? StackContainerController {
             var lastInStack = leaf
 
-            for i in 0..<stackContaier.controllers.count {
-                let controller = stackContaier.controllers[i]
-
+            for controller in stackContaier.controllers {
                 let trace = Trace(
                     controller: controller,
                     openType: .pushed(stackContaier),
                     isOnTopWay: shouldCheckPresent
                 )
 
-                let node = Node<Trace>(value: trace)
-                lastInStack.addChild(node)
+                let newNode = Node<Trace>(value: trace)
+                lastInStack.addChild(newNode)
 
-                lastInStack = node
+                lastInStack = newNode
 
                 // Check childs for container in case:
                 // |->[content]->[container]->[content]
-                let isLast = i == stackContaier.controllers.count - 1
+                let isLast = controller == stackContaier.controllers.last
 
                 if controller is ContainerController && isLast == false {
-                    growTree(leaf: node, shouldCheckPresent: false)
+                    growTree(leaf: newNode, shouldCheckPresent: false)
                 }
             }
 
@@ -516,24 +523,50 @@ extension Router {
 
         } else if let flatContaier = lastController as? FlatContainerController {
 
-        } else if let generalContainer = lastController as? ContainerController {
+            for controller in flatContaier.controllers {
+                let isVisible = controller == flatContaier.visibleController
 
-        } else if let presented = lastController.presentedViewController {
-
-            // Only top controller go for presented
-            if shouldCheckPresent {
                 let trace = Trace(
-                    controller: presented,
-                    openType: .presented(lastController),
-                    isOnTopWay: true
+                    controller: controller,
+                    openType: .sibling(flatContaier),
+                    isOnTopWay: isVisible
                 )
 
-                let node = TraceNode(value: trace)
-                leaf.addChild(node)
+                let newNode = Node<Trace>(value: trace)
+                leaf.addChild(newNode)
 
-                growTree(leaf: node, shouldCheckPresent: true)
+                growTree(leaf: newNode, shouldCheckPresent: isVisible)
             }
 
+        } else if
+            let generalContainer = lastController as? ContainerController,
+            let controller = generalContainer.visibleController
+        {
+            let trace = Trace(
+                controller: controller,
+                openType: .child(generalContainer),
+                isOnTopWay: true
+            )
+
+            let newNode = Node<Trace>(value: trace)
+            leaf.addChild(newNode)
+
+            growTree(leaf: newNode, shouldCheckPresent: true)
+
+        } else if
+            let presented = lastController.presentedViewController,
+            shouldCheckPresent
+        {
+            let trace = Trace(
+                controller: presented,
+                openType: .presented(lastController),
+                isOnTopWay: true
+            )
+
+            let node = TraceNode(value: trace)
+            leaf.addChild(node)
+
+            growTree(leaf: node, shouldCheckPresent: true)
         }
     }
 }
