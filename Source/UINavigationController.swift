@@ -9,13 +9,13 @@
 import UIKit
 
 extension UINavigationController: StackContainerController {
-    
-    var visibleController: UIViewController {
+
+    var visibleController: UIViewController? {
         
         return topViewController
     }
 
-    var controllers: [UIViewController]? {
+    var controllers: [UIViewController] {
 
         return viewControllers
     }

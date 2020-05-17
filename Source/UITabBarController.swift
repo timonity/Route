@@ -10,8 +10,8 @@ import UIKit
 
 extension UITabBarController: FlatContainerController {
 
-    var controllers: [UIViewController]? {
-        return viewControllers
+    var controllers: [UIViewController] {
+        return viewControllers ?? []
     }
 
     var visibleController: UIViewController? {
