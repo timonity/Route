@@ -54,9 +54,23 @@ extension ContainerController {
 
 protocol FlatContainerController: ContainerController {
 
-    var controllers: [UIViewController]? { get }
+    var controllers: [UIViewController] { get }
 
     func selectController(at index: Int)
+}
+
+extension FlatContainerController {
+
+    func selectController(_ controller: UIViewController) {
+        guard let index = controllers.firstIndex(of: controller) else {
+            print("Error: couldn't select \(controller) in \(self). Controller index not found.")
+
+            return
+        }
+
+        selectController(at: index)
+    }
+
 }
 
 // MARK: StackContainerController
