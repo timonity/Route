@@ -372,16 +372,23 @@ open class Router: NSObject {
         condition: ((T) -> Bool)? = nil,
         prepare: ((T) -> Void)? = nil,
         completion: ((T) -> Void)? = nil,
-        failure: Completion
+        failure: Completion? = nil
     ) {
         fatalError("Not implemented yet")
     }
 
-    public func makeVisible<T: UIViewController>(
-        prepare: ((T) -> Void)? = nil,
+    public func makeVisible(
+        animated: Bool = true,
         completion: Completion? = nil
     ) {
-        fatalError("Not implemented yet")
+        jumpTo(
+            UIViewController.self,
+            animated: animated,
+            condition: { $0 == self },
+            prepare: nil,
+            completion: { _ in completion?() },
+            failure: nil
+        )
     }
     
     // MARK: Backward Navigation
