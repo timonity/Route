@@ -13,8 +13,7 @@ enum OpenType {
     case presented(UIViewController)
     case child(ContainerController)
     case pushed(StackContainerController)
-    case rootInStack(StackContainerController) // mb redundant
-    case sibling(FlatContainerController, Int)
+    case sibling(FlatContainerController)
 }
 
 enum Type {
