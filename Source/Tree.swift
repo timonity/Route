@@ -15,7 +15,15 @@ public class Node<T> {
 
     var children: [Node<T>] = []
 
-    var parent: Node<T>?
+    weak var parent: Node<T>?
+
+    var isLeaf: Bool {
+        return children.isEmpty
+    }
+
+    var isRoot: Bool {
+        return parent == nil
+    }
 
     // MARK: Public methods
 
@@ -87,4 +95,69 @@ extension Node: CustomStringConvertible {
         return result
     }
 
+}
+
+// MARK: Find Path
+
+extension Node {
+
+    func findPath(
+        condition: (T) -> Bool
+    ) -> Node<T>? {
+        assert(isRoot, "Try to find path not from root node")
+
+        var isSuccess = false
+
+        let result = Node<T>(value: value)
+
+        findPath(
+            condition: condition,
+            node: self,
+            result: result,
+            isSuccess: &isSuccess
+        )
+
+        if isSuccess {
+            return result
+
+        } else {
+            return nil
+        }
+    }
+
+    func findPath(
+        condition: (T) -> Bool,
+        node: Node<T>,
+        result: Node<T>,
+        isSuccess: inout Bool
+    ) {
+        if condition(node.value) {
+            isSuccess = true
+
+            return
+
+        } else if node.isLeaf {
+            isSuccess = false
+
+            return
+        }
+
+        for child in node.children {
+            var isSuccessForChild: Bool = false
+
+            findPath(
+                condition: condition,
+                node: child,
+                result: result,
+                isSuccess: &isSuccessForChild
+            )
+
+            if isSuccessForChild {
+                let newNode = Node<T>(value: child.value)
+                result.addChild(newNode)
+
+                break
+            }
+        }
+    }
 }
