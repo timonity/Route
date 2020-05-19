@@ -37,6 +37,8 @@ public class Node<T> {
     }
 }
 
+// MARK: Search & Map
+
 public extension Node {
 
     func search(condition: (T) -> Bool) -> Node? {
@@ -101,7 +103,7 @@ extension Node: CustomStringConvertible {
 
 extension Node {
 
-    func findPath(
+    public func findPath(
         condition: (T) -> Bool
     ) -> Node<T>? {
         assert(isRoot, "Try to find path not from root node")
@@ -125,7 +127,7 @@ extension Node {
         }
     }
 
-    func findPath(
+    private func findPath(
         condition: (T) -> Bool,
         node: Node<T>,
         result: Node<T>,
