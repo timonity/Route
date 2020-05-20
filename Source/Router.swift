@@ -11,7 +11,7 @@ import UIKit
 public typealias Condition = (UIViewController) -> Bool
 public typealias Completion = () -> Void
 
-open class Router: NSObject {
+open class Router {
     
     // MARK: - Private properties
     
@@ -384,7 +384,7 @@ open class Router: NSObject {
         jumpTo(
             UIViewController.self,
             animated: animated,
-            condition: { $0 == self },
+            condition: { $0 == self.currentController },
             prepare: nil,
             completion: { _ in completion?() },
             failure: nil
