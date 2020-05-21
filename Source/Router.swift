@@ -314,83 +314,6 @@ open class Router {
         keyController?.present(controller, animated: animated, completion: completion)
     }
     
-    // MARK: Inplace Navigation
-    
-    public func replace(
-        to controller: UIViewController,
-        animated: Bool = true,
-        completion: Completion? = nil
-    ) {
-        guard let current = keyController else { return }
-        
-        if let container = current.parent as? ContainerController {
-            container.replace(
-                current,
-                with: controller,
-                animated: animated,
-                completion: completion
-            )
-            
-        } else if let presenting = current.presentingViewController {
-            current.dismiss(animated: animated, completion: nil)
-            presenting.present(controller, animated: animated, completion: completion)
-            
-        } else if findPreviousContentController(for: current)?.target == nil {
-            setWindowRoot(controller, animated: animated)
-        }
-    }
-    
-    public func setWindowRoot(
-        _ controller: UIViewController,
-        animated: Bool = true,
-        completion: Completion? = nil
-    ) {
-        if
-            let root = keyWindow?.rootViewController as? RootViewController,
-            let currentRoot = root.current
-        {
-            root.transition(
-                from: currentRoot,
-                to: controller,
-                animated: animated,
-                completion: completion
-            )
-            
-        } else {
-            let root = RootViewController()
-            root.insert(controller)
-            
-            keyWindow?.rootViewController = root
-
-            completion?()
-        }
-    }
-
-    public func jumpTo<T: UIViewController>(
-        _ controller: T.Type,
-        animated: Bool = true,
-        condition: ((T) -> Bool)? = nil,
-        prepare: ((T) -> Void)? = nil,
-        completion: ((T) -> Void)? = nil,
-        failure: Completion? = nil
-    ) {
-        fatalError("Not implemented yet")
-    }
-
-    public func makeVisible(
-        animated: Bool = true,
-        completion: Completion? = nil
-    ) {
-        jumpTo(
-            UIViewController.self,
-            animated: animated,
-            condition: { $0 == self.currentController },
-            prepare: nil,
-            completion: { _ in completion?() },
-            failure: nil
-        )
-    }
-    
     // MARK: Backward Navigation
     
     public func backTo<T: UIViewController>(
@@ -477,11 +400,13 @@ open class Router {
     }
 }
 
-// MARK: Tree
+// MARK: - Inplace Navigation
 
 typealias TraceNode = Node<Trace>
 
 extension Router {
+
+    // MARK: Public properties
 
     public var tree: Node<Trace>? {
         guard let root = windowRootController else { return nil }
@@ -499,7 +424,9 @@ extension Router {
         return rootNode
     }
 
-    public func growTree(leaf: Node<Trace>, shouldCheckPresent: Bool) {
+    // MARK: Private methods
+
+    private func growTree(leaf: Node<Trace>, shouldCheckPresent: Bool) {
         let lastController = leaf.value.controller
 
         if let stackContaier = lastController as? StackContainerController {
@@ -576,5 +503,176 @@ extension Router {
             growTree(leaf: node, shouldCheckPresent: true)
         }
     }
+
+    // MARK: Public methods
+
+    public func replace(
+        to controller: UIViewController,
+        animated: Bool = true,
+        completion: Completion? = nil
+    ) {
+        guard let current = keyController else { return }
+
+        if let container = current.parent as? ContainerController {
+            container.replace(
+                current,
+                with: controller,
+                animated: animated,
+                completion: completion
+            )
+
+        } else if let presenting = current.presentingViewController {
+            current.dismiss(animated: animated, completion: nil)
+            presenting.present(controller, animated: animated, completion: completion)
+
+        } else if findPreviousContentController(for: current)?.target == nil {
+            setWindowRoot(controller, animated: animated)
+        }
+    }
+
+    public func setWindowRoot(
+        _ controller: UIViewController,
+        animated: Bool = true,
+        completion: Completion? = nil
+    ) {
+        if
+            let root = keyWindow?.rootViewController as? RootViewController,
+            let currentRoot = root.current
+        {
+            root.transition(
+                from: currentRoot,
+                to: controller,
+                animated: animated,
+                completion: completion
+            )
+
+        } else {
+            let root = RootViewController()
+            root.insert(controller)
+
+            keyWindow?.rootViewController = root
+
+            completion?()
+        }
+    }
+
+    public func jumpTo<T: UIViewController>(
+        _ controller: T.Type,
+        animated: Bool = true,
+        condition: ((T) -> Bool)? = nil,
+        prepare: ((T) -> Void)? = nil,
+        completion: ((T) -> Void)? = nil,
+        failure: Completion? = nil
+    ) {
+        var pathToVisible = tree?.findPath { $0.controller == self.topController }
+
+        var pathToTarget = tree?.findPath { (trace) -> Bool in
+            guard let pretender = trace.controller as? T else { return false }
+
+            return condition?(pretender) ?? true
+        }
+
+        while pathToVisible?.children.first == pathToTarget?.children.first {
+            assert((pathToVisible?.children.count ?? 0) < 2, "Invalid children count")
+            assert((pathToTarget?.children.count ?? 0) < 2, "Invalid chilrden count")
+
+            pathToVisible = pathToVisible?.children.first
+            pathToTarget = pathToTarget?.children.first
+        }
+
+        // Go back animations
+
+        var backActions = [Action]()
+
+        for node in NodeIterator(root: pathToVisible!) {
+            if case let OpenType.presented(controller) = node.value.openType {
+                backActions.append(.dismiss(controller))
+
+                break
+            }
+        }
+
+        // Go forward animations
+
+        var forwardActions: [Action] = []
+
+        for node in NodeIterator(root: pathToTarget!) {
+
+            switch node.value.openType {
+
+            case .windowRoot:
+                break
+
+            case .presented(_):
+                assertionFailure("In forward pass shouldn't be presented controllers")
+
+            case .child(_):
+                break
+
+            case .pushed(_):
+                if node.isLeaf {
+                    forwardActions.append(
+                        .popTo(node.value.controller)
+                    )
+                }
+
+            case .sibling(_):
+                forwardActions.append(
+                    .select(node.value.controller)
+                )
+            }
+        }
+
+        // Performs actions
+
+        let allActions = backActions + forwardActions
+
+        performActions(allActions)
+    }
+
+    private func performActions(_ actions: [Action]) {
+
+        actions.forEach { (action) in
+            action.apply()
+        }
+    }
+
+    public func makeVisible(
+        animated: Bool = true,
+        completion: Completion? = nil
+    ) {
+        jumpTo(
+            UIViewController.self,
+            animated: animated,
+            condition: { $0 == self.currentController },
+            prepare: nil,
+            completion: { _ in completion?() },
+            failure: nil
+        )
+    }
 }
 
+// MARK: Animation Action
+
+enum Action {
+
+    case dismiss(UIViewController)
+    case popTo(UIViewController)
+    case select(UIViewController)
+
+    func apply() {
+
+        switch self {
+
+        case .dismiss(let controller):
+            controller.dismiss(animated: true, completion: nil)
+
+        case .popTo(let controller):
+            controller.stackContaier?.backTo(controller, animated: true, completion: nil)
+
+        case .select(let controller):
+            controller.flatContainer?.selectController(controller)
+        }
+
+    }
+}

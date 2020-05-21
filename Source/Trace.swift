@@ -35,3 +35,39 @@ public struct Trace {
         fatalError("Implement base on protocol conformance")
     }
 }
+
+// MARK: Equatable
+
+extension Trace: Equatable {
+
+    public static func == (lhs: Trace, rhs: Trace) -> Bool {
+        return lhs.controller == rhs.controller
+    }
+}
+
+// MARK: To Action
+
+extension Trace {
+
+    var action: Action? {
+
+        switch openType {
+
+        case .windowRoot:
+            return nil
+
+        case .presented(let presented):
+            return .dismiss(controller)
+
+        case .child(let container):
+            return nil
+
+        case .pushed(let stackContainer):
+            return .popTo(controller)
+
+        case .sibling(let flatContainer):
+            return .select(controller)
+
+        }
+    }
+}

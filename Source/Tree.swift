@@ -35,6 +35,10 @@ public class Node<T> {
         children.append(node)
         node.parent = self
     }
+
+    func removeChilds() {
+        children.removeAll()
+    }
 }
 
 // MARK: Search & Map
@@ -99,6 +103,15 @@ extension Node: CustomStringConvertible {
 
 }
 
+// MARK: Equatable
+
+extension Node: Equatable where T: Equatable {
+
+    public static func == (lhs: Node<T>, rhs: Node<T>) -> Bool {
+        return lhs.value == rhs.value
+    }
+}
+
 // MARK: Find Path
 
 extension Node {
@@ -147,19 +160,43 @@ extension Node {
         for child in node.children {
             var isSuccessForChild: Bool = false
 
+            let newNode = Node<T>(value: child.value)
+            result.addChild(newNode)
+
             findPath(
                 condition: condition,
                 node: child,
-                result: result,
+                result: newNode,
                 isSuccess: &isSuccessForChild
             )
 
             if isSuccessForChild {
-                let newNode = Node<T>(value: child.value)
-                result.addChild(newNode)
-
+                isSuccess = true
                 break
+
+            } else {
+                result.removeChilds()
             }
         }
+    }
+}
+
+// MARK: IteratorProtocol
+
+public struct NodeIterator<T>: IteratorProtocol, Sequence {
+
+    public typealias Element = Node<T>
+
+    private var current: Element?
+
+    init(root: Node<T>) {
+        current = root
+    }
+
+    public mutating func next() -> Element? {
+        let node = current
+        current = node?.children.first
+
+        return node
     }
 }
