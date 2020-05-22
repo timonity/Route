@@ -18,8 +18,17 @@ extension UITabBarController: FlatContainerController {
         return selectedViewController
     }
 
-    func selectController(at index: Int) {
+    func selectController(
+        at index: Int,
+        animated: Bool,
+        completion: Completion?
+    ) {
+        CATransaction.begin()
+
+        CATransaction.setCompletionBlock(completion)
         selectedIndex = index
+
+        CATransaction.commit()
     }
 
     func replace(

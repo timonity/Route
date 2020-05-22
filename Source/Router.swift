@@ -572,6 +572,8 @@ extension Router {
             return condition?(pretender) ?? true
         }
 
+        // Cut common path
+
         while pathToVisible?.children.first == pathToTarget?.children.first {
             assert((pathToVisible?.children.count ?? 0) < 2, "Invalid children count")
             assert((pathToTarget?.children.count ?? 0) < 2, "Invalid chilrden count")
@@ -580,21 +582,21 @@ extension Router {
             pathToTarget = pathToTarget?.children.first
         }
 
-        // Go back animations
+        var action = AnimationAction()
 
-        var backActions = [Action]()
+        // Go back animations actions
 
         for node in NodeIterator(root: pathToVisible!) {
             if case let OpenType.presented(controller) = node.value.openType {
-                backActions.append(.dismiss(controller))
+                action.controllerToDismiss = controller
 
                 break
             }
         }
 
-        // Go forward animations
+        // Go forward animations actions
 
-        var forwardActions: [Action] = []
+        var targetController: UIViewController?
 
         for node in NodeIterator(root: pathToTarget!) {
 
@@ -611,29 +613,75 @@ extension Router {
 
             case .pushed(_):
                 if node.isLeaf {
-                    forwardActions.append(
-                        .popTo(node.value.controller)
-                    )
+                    action.controllerBackTo = node.value.controller
                 }
 
             case .sibling(_):
-                forwardActions.append(
-                    .select(node.value.controller)
-                )
+                action.controllersToSelect.append(node.value.controller)
+            }
+
+            targetController = node.value.controller
+        }
+
+        guard let target = targetController as? T else { return }
+
+        prepare?(target)
+
+        performAction(action, animated: animated) {
+            completion?(target)
+        }
+    }
+
+    private func performAction(
+        _ action: AnimationAction,
+        animated: Bool = true,
+        completion: Completion? = nil
+    ) {
+        var isSelectAnimated = animated
+        var isBackToAnimated = animated
+
+        let group = DispatchGroup()
+
+        if let controllerToDismiss =  action.controllerToDismiss {
+            group.enter()
+
+            controllerToDismiss.dismiss(animated: animated) {
+                group.leave()
+            }
+
+            isSelectAnimated = false
+            isBackToAnimated = false
+        }
+
+        for controllerToSelect in action.controllersToSelect {
+            group.enter()
+
+            let isLast = controllerToSelect == action.controllersToSelect.last
+            let isAnimated = isLast && isSelectAnimated
+
+            controllerToSelect.flatContainer?.selectController(
+                controllerToSelect,
+                animated: isAnimated
+            ) {
+                group.leave()
+            }
+
+            isBackToAnimated = false
+        }
+
+        if let controllerBackTo = action.controllerBackTo {
+            group.enter()
+
+            controllerBackTo.stackContaier?.backTo(
+                controllerBackTo,
+                animated: isBackToAnimated
+            ) {
+                group.leave()
             }
         }
 
-        // Performs actions
-
-        let allActions = backActions + forwardActions
-
-        performActions(allActions)
-    }
-
-    private func performActions(_ actions: [Action]) {
-
-        actions.forEach { (action) in
-            action.apply()
+        group.notify(queue: DispatchQueue.main) {
+            completion?()
         }
     }
 
@@ -652,27 +700,9 @@ extension Router {
     }
 }
 
-// MARK: Animation Action
+struct AnimationAction {
 
-enum Action {
-
-    case dismiss(UIViewController)
-    case popTo(UIViewController)
-    case select(UIViewController)
-
-    func apply() {
-
-        switch self {
-
-        case .dismiss(let controller):
-            controller.dismiss(animated: true, completion: nil)
-
-        case .popTo(let controller):
-            controller.stackContaier?.backTo(controller, animated: true, completion: nil)
-
-        case .select(let controller):
-            controller.flatContainer?.selectController(controller)
-        }
-
-    }
+    var controllerToDismiss: UIViewController?
+    var controllerBackTo: UIViewController?
+    var controllersToSelect: [UIViewController] = []
 }

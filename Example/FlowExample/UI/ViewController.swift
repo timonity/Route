@@ -171,7 +171,7 @@ class ViewController: UIViewController {
             animated: true,
             condition: { $0.id == id },
             prepare: { $0.title = title },
-            completion: { _ in },
+            completion: { $0.view.backgroundColor = .red },
             failure: { self.showAlert(with: "Not found") }
         )
     }
