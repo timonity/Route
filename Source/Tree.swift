@@ -118,17 +118,17 @@ extension Node {
 
     public func findPath(
         condition: (T) -> Bool
-    ) -> Node<T>? {
+    ) -> [T]? {
         assert(isRoot, "Try to find path not from root node")
 
-        var isSuccess = false
+        var result = [value]
 
-        let result = Node<T>(value: value)
+        var isSuccess = false
 
         findPath(
             condition: condition,
             node: self,
-            result: result,
+            result: &result,
             isSuccess: &isSuccess
         )
 
@@ -143,30 +143,24 @@ extension Node {
     private func findPath(
         condition: (T) -> Bool,
         node: Node<T>,
-        result: Node<T>,
+        result: inout [T],
         isSuccess: inout Bool
     ) {
         if condition(node.value) {
             isSuccess = true
 
             return
-
-        } else if node.isLeaf {
-            isSuccess = false
-
-            return
         }
 
         for child in node.children {
-            var isSuccessForChild: Bool = false
+            var isSuccessForChild = false
 
-            let newNode = Node<T>(value: child.value)
-            result.addChild(newNode)
+            result.append(child.value)
 
             findPath(
                 condition: condition,
                 node: child,
-                result: newNode,
+                result: &result,
                 isSuccess: &isSuccessForChild
             )
 
@@ -175,28 +169,8 @@ extension Node {
                 break
 
             } else {
-                result.removeChilds()
+                result.removeLast()
             }
         }
-    }
-}
-
-// MARK: IteratorProtocol
-
-public struct NodeIterator<T>: IteratorProtocol, Sequence {
-
-    public typealias Element = Node<T>
-
-    private var current: Element?
-
-    init(root: Node<T>) {
-        current = root
-    }
-
-    public mutating func next() -> Element? {
-        let node = current
-        current = node?.children.first
-
-        return node
     }
 }

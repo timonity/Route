@@ -432,6 +432,7 @@ extension Router {
         if let stackContaier = lastController as? StackContainerController {
             var lastInStack = leaf
 
+            // Add all controllers in stack to tree
             for controller in stackContaier.controllers {
                 let trace = Trace(
                     controller: controller,
@@ -444,7 +445,7 @@ extension Router {
 
                 lastInStack = newNode
 
-                // Check childs for container in case:
+                // Check childs for container in the midle of stack:
                 // |->[content]->[container]->[content]
                 let isLast = controller == stackContaier.controllers.last
 
@@ -564,9 +565,11 @@ extension Router {
         completion: ((T) -> Void)? = nil,
         failure: Completion? = nil
     ) {
-        var pathToVisible = tree?.findPath { $0.controller == self.topController }
+        let currentTree = tree
 
-        var pathToTarget = tree?.findPath { (trace) -> Bool in
+        var pathToVisible = currentTree?.findPath { $0.controller == self.topController }
+
+        var pathToTarget = currentTree?.findPath { (trace) -> Bool in
             guard let pretender = trace.controller as? T else { return false }
 
             return condition?(pretender) ?? true
@@ -574,20 +577,25 @@ extension Router {
 
         // Cut common path
 
-        while pathToVisible?.children.first == pathToTarget?.children.first {
-            assert((pathToVisible?.children.count ?? 0) < 2, "Invalid children count")
-            assert((pathToTarget?.children.count ?? 0) < 2, "Invalid chilrden count")
+        var indicesToRemove: [Int] = []
 
-            pathToVisible = pathToVisible?.children.first
-            pathToTarget = pathToTarget?.children.first
+        for i in 0..<min(pathToVisible!.count, pathToTarget!.count) - 2 {
+            if pathToVisible![i + 1] == pathToTarget![i + 1] {
+                indicesToRemove.append(i)
+            }
+        }
+
+        indicesToRemove.reversed().forEach { (idx) in
+            pathToVisible?.remove(at: idx)
+            pathToTarget?.remove(at: idx)
         }
 
         var action = AnimationAction()
 
         // Go back animations actions
 
-        for node in NodeIterator(root: pathToVisible!) {
-            if case let OpenType.presented(controller) = node.value.openType {
+        for trace in pathToVisible! {
+            if case let OpenType.presented(controller) = trace.openType {
                 action.controllerToDismiss = controller
 
                 break
@@ -598,9 +606,9 @@ extension Router {
 
         var targetController: UIViewController?
 
-        for node in NodeIterator(root: pathToTarget!) {
+        for trace in pathToTarget! {
 
-            switch node.value.openType {
+            switch trace.openType {
 
             case .windowRoot:
                 break
@@ -612,15 +620,15 @@ extension Router {
                 break
 
             case .pushed(_):
-                if node.isLeaf {
-                    action.controllerBackTo = node.value.controller
+                if trace == pathToTarget!.last {
+                    action.controllerBackTo = trace.controller
                 }
 
             case .sibling(_):
-                action.controllersToSelect.append(node.value.controller)
+                action.controllersToSelect.append(trace.controller)
             }
 
-            targetController = node.value.controller
+            targetController = trace.controller
         }
 
         guard let target = targetController as? T else { return }
