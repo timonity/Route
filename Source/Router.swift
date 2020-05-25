@@ -557,6 +557,37 @@ extension Router {
         }
     }
 
+    private func getPathes<T: UIViewController>(
+        _ controller: T.Type,
+        condition: ((T) -> Bool)? = nil
+    ) -> (toTop: [Trace], toTarget: [Trace])? {
+        let currentTree = tree
+
+        let pathToVisible = currentTree?.findPath { $0.controller == self.topController }
+
+        let pathToTarget = currentTree?.findPath { (trace) -> Bool in
+            guard let pretender = trace.controller as? T else {
+                return false
+            }
+
+            return condition?(pretender) ?? true
+        }
+
+        guard let toVisible = pathToVisible else {
+            Logger.logError(
+                withMsg: "Couldn't built path to current top controller"
+            )
+            return nil
+        }
+
+        guard let toTarget = pathToTarget else {
+            Logger.log(info: "Target controller of type `\(controller)` not found in navigation tree")
+            return nil
+        }
+
+        return (toVisible, toTarget)
+    }
+
     public func jumpTo<T: UIViewController>(
         _ controller: T.Type,
         animated: Bool = true,
@@ -565,131 +596,32 @@ extension Router {
         completion: ((T) -> Void)? = nil,
         failure: Completion? = nil
     ) {
-        let currentTree = tree
-
-        var pathToVisible = currentTree?.findPath { $0.controller == self.topController }
-
-        var pathToTarget = currentTree?.findPath { (trace) -> Bool in
-            guard let pretender = trace.controller as? T else { return false }
-
-            return condition?(pretender) ?? true
+        guard let pathes = getPathes(controller, condition: condition) else {
+            failure?()
+            return
         }
 
-        // Cut common path
+        var jumpTraces = JumpTraces(
+            pathToVisible: pathes.toTop,
+            pathToTarget: pathes.toTarget
+        )
 
-        var indicesToRemove: [Int] = []
+        jumpTraces.cutMutualParts()
 
-        for i in 0..<min(pathToVisible!.count, pathToTarget!.count) - 2 {
-            if pathToVisible![i + 1] == pathToTarget![i + 1] {
-                indicesToRemove.append(i)
-            }
+        guard let action = jumpTraces.action else {
+            failure?()
+            return
         }
 
-        indicesToRemove.reversed().forEach { (idx) in
-            pathToVisible?.remove(at: idx)
-            pathToTarget?.remove(at: idx)
+        guard let target = jumpTraces.target as? T else {
+            failure?()
+            return
         }
-
-        var action = AnimationAction()
-
-        // Go back animations actions
-
-        for trace in pathToVisible! {
-            if case let OpenType.presented(controller) = trace.openType {
-                action.controllerToDismiss = controller
-
-                break
-            }
-        }
-
-        // Go forward animations actions
-
-        var targetController: UIViewController?
-
-        for trace in pathToTarget! {
-
-            switch trace.openType {
-
-            case .windowRoot:
-                break
-
-            case .presented(_):
-                assertionFailure("In forward pass shouldn't be presented controllers")
-
-            case .child(_):
-                break
-
-            case .pushed(_):
-                if trace == pathToTarget!.last {
-                    action.controllerBackTo = trace.controller
-                }
-
-            case .sibling(_):
-                action.controllersToSelect.append(trace.controller)
-            }
-
-            targetController = trace.controller
-        }
-
-        guard let target = targetController as? T else { return }
 
         prepare?(target)
 
-        performAction(action, animated: animated) {
+        action.perform(animated: animated) {
             completion?(target)
-        }
-    }
-
-    private func performAction(
-        _ action: AnimationAction,
-        animated: Bool = true,
-        completion: Completion? = nil
-    ) {
-        var isSelectAnimated = animated
-        var isBackToAnimated = animated
-
-        let group = DispatchGroup()
-
-        if let controllerToDismiss =  action.controllerToDismiss {
-            group.enter()
-
-            controllerToDismiss.dismiss(animated: animated) {
-                group.leave()
-            }
-
-            isSelectAnimated = false
-            isBackToAnimated = false
-        }
-
-        for controllerToSelect in action.controllersToSelect {
-            group.enter()
-
-            let isLast = controllerToSelect == action.controllersToSelect.last
-            let isAnimated = isLast && isSelectAnimated
-
-            controllerToSelect.flatContainer?.selectController(
-                controllerToSelect,
-                animated: isAnimated
-            ) {
-                group.leave()
-            }
-
-            isBackToAnimated = false
-        }
-
-        if let controllerBackTo = action.controllerBackTo {
-            group.enter()
-
-            controllerBackTo.stackContaier?.backTo(
-                controllerBackTo,
-                animated: isBackToAnimated
-            ) {
-                group.leave()
-            }
-        }
-
-        group.notify(queue: DispatchQueue.main) {
-            completion?()
         }
     }
 
@@ -708,9 +640,72 @@ extension Router {
     }
 }
 
-struct AnimationAction {
+struct JumpTraces {
 
-    var controllerToDismiss: UIViewController?
-    var controllerBackTo: UIViewController?
-    var controllersToSelect: [UIViewController] = []
+    var pathToVisible: [Trace]
+    var pathToTarget: [Trace]
+
+    var target: UIViewController? {
+        return pathToTarget.last?.controller
+    }
+
+    var action: AnimationAction? {
+        return getAnimationAction()
+    }
+
+    mutating func cutMutualParts() {
+        var indicesToRemove: [Int] = []
+
+        for i in 0..<min(pathToVisible.count, pathToTarget.count) - 1 {
+            if pathToVisible[i + 1] == pathToTarget[i + 1] {
+                indicesToRemove.append(i)
+            }
+        }
+
+        indicesToRemove.reversed().forEach { (idx) in
+            pathToVisible.remove(at: idx)
+            pathToTarget.remove(at: idx)
+        }
+    }
+
+    func getAnimationAction() -> AnimationAction? {
+        var action = AnimationAction()
+
+        // Go back animations actions
+
+        traceLoop: for trace in pathToVisible {
+
+            switch trace.openType {
+
+            case .windowRoot, .child, .pushed, .sibling:
+                break
+
+            case .presented(let controller):
+                action.controllerToDismiss = controller
+                
+                break traceLoop
+            }
+        }
+
+        // Go forward animations actions
+
+        for trace in pathToTarget {
+
+            switch trace.openType {
+
+            case .windowRoot, .presented, .child:
+                break
+
+            case .pushed:
+                if trace == pathToTarget.last {
+                    action.controllerBackTo = trace.controller
+                }
+
+            case .sibling:
+                action.controllersToSelect.append(trace.controller)
+            }
+        }
+
+        return action
+    }
 }
