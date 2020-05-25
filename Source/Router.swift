@@ -144,13 +144,9 @@ open class Router {
         guard let current = keyController else { return BackResult(action: BackAction()) }
         
         return findControllerInNavigationTree(for: current) { (controller) -> Bool in
-            
-            if let candidate = controller as? T {
-                return condition?(candidate) ?? true
-                
-            } else {
-                return false
-            }
+            guard let candidate = controller as? T else { return false }
+
+            return condition?(candidate) ?? true
         }
     }
     
@@ -682,7 +678,7 @@ struct JumpTraces {
 
             case .presented(let controller):
                 action.controllerToDismiss = controller
-                
+
                 break traceLoop
             }
         }
