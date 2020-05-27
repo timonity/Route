@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 final class Logger {
 
     // MARK: Types
@@ -19,15 +18,15 @@ final class Logger {
 
     // MARK: Public methods
 
-    static func log(msg: String, level: Level) {
+    static func log(_ msg: String, level: Level) {
         print(msg)
     }
 
-    static func logError(withMsg msg: String) {
-        log(msg: msg, level: .error)
+    static func error(_ msg: String) {
+        log(msg, level: .error)
     }
 
-    static func log(info: String) {
-        log(msg: info, level: .warning)
+    static func warning(_ msg: String) {
+        log(msg, level: .warning)
     }
 }
