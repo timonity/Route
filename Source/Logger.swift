@@ -13,8 +13,7 @@ final class Logger {
     // MARK: Types
 
     enum Level {
-
-        case info
+        case warning
         case error
     }
 
@@ -29,6 +28,6 @@ final class Logger {
     }
 
     static func log(info: String) {
-        log(msg: info, level: .info)
+        log(msg: info, level: .warning)
     }
 }
