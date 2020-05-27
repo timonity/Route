@@ -202,7 +202,7 @@ class ViewController: UIViewController {
     
     private func backToNavigationRoot() {
         
-        router.backToKeyNavigationRoot()
+        router.backToKeyStackRoot()
     }
 }
 
