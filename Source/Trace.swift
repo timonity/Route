@@ -16,13 +16,16 @@ enum OpenType {
     case sibling(FlatContainerController)
 }
 
-enum Type {
+enum ControllerType {
 
-    case undefind
     case content
     case container
     case flatContainer
     case stackContaier
+
+    var isContent: Bool {
+        return self == .content
+    }
 }
 
 public struct Trace {
@@ -31,8 +34,19 @@ public struct Trace {
     let openType: OpenType
     let isOnTopWay: Bool
 
-    var type: Type {
-        fatalError("Implement base on protocol conformance")
+    var type: ControllerType {
+        if controller is StackContainerController {
+            return .stackContaier
+
+        } else if controller is FlatContainerController {
+            return .flatContainer
+
+        } else if controller is ContainerController {
+            return .container
+
+        } else {
+            return .content
+        }
     }
 }
 
