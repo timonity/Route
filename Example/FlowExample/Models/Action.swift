@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum Action {
+enum Action: Equatable {
     
     case push
     case present
