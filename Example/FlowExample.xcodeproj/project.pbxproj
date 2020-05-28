@@ -19,6 +19,7 @@
 		A158032724607CF100FD7FF3 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A09DC2452288600756D4A /* String.swift */; };
 		A188220C24606F1F004A7729 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A09D82452283500756D4A /* Action.swift */; };
 		A188220D24607BCC004A7729 /* NavigationTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AB95DA245EBD080030FD7E /* NavigationTree.swift */; };
+		A1A8ADE124805C3400F45FB5 /* FlatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A8ADE024805C3400F45FB5 /* FlatViewController.swift */; };
 		A1AB95DB245EBD080030FD7E /* NavigationTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AB95DA245EBD080030FD7E /* NavigationTree.swift */; };
 		A1AB95E52460326F0030FD7E /* FlowExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AB95E42460326F0030FD7E /* FlowExampleUITests.swift */; };
 		A1DC4968244B9E5E002D5CE4 /* RouterTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DC4967244B9E5E002D5CE4 /* RouterTestCase.swift */; };
@@ -61,6 +62,7 @@
 		A140F91124505ACD00C2A2EA /* NavigationTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationTestCase.swift; sourceTree = "<group>"; };
 		A140F91324505C3000C2A2EA /* ContentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentController.swift; sourceTree = "<group>"; };
 		A140F91524505C6700C2A2EA /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
+		A1A8ADE024805C3400F45FB5 /* FlatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlatViewController.swift; sourceTree = "<group>"; };
 		A1AB95DA245EBD080030FD7E /* NavigationTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationTree.swift; sourceTree = "<group>"; };
 		A1AB95E22460326F0030FD7E /* FlowExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlowExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1AB95E42460326F0030FD7E /* FlowExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowExampleUITests.swift; sourceTree = "<group>"; };
@@ -138,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				A1F851B524182FE400284CBD /* ViewController.swift */,
+				A1A8ADE024805C3400F45FB5 /* FlatViewController.swift */,
 				A11A09DA2452284D00756D4A /* Button.swift */,
 				A1F851B724182FE400284CBD /* Main.storyboard */,
 				A1F851BC24182FE700284CBD /* LaunchScreen.storyboard */,
@@ -462,6 +465,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1A8ADE124805C3400F45FB5 /* FlatViewController.swift in Sources */,
 				A1F851B624182FE400284CBD /* ViewController.swift in Sources */,
 				A11A09D92452283500756D4A /* Action.swift in Sources */,
 				A11A09DD2452288600756D4A /* String.swift in Sources */,

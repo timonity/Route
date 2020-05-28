@@ -94,6 +94,63 @@
             </objects>
             <point key="canvasLocation" x="1930.4000000000001" y="24.7376311844078"/>
         </scene>
+        <!--Flat View Controller-->
+        <scene sceneID="XQa-Dj-8Zb">
+            <objects>
+                <viewController storyboardIdentifier="FlatViewController" id="zQd-Vl-gFr" customClass="FlatViewController" customModule="FlowExample" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="YgM-3i-c65">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="krF-Fo-UE2">
+                                <rect key="frame" x="0.0" y="41" width="375" height="569"/>
+                                <connections>
+                                    <segue destination="Bto-1s-6pS" kind="embed" id="yOc-9J-tJh"/>
+                                </connections>
+                            </containerView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CuY-jc-qgQ">
+                                <rect key="frame" x="10" y="10" width="355" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="wgh-JO-ht1">
+                                <rect key="frame" x="168" y="620" width="39" height="37"/>
+                                <color key="pageIndicatorTintColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="currentPageIndicatorTintColor" red="0.0078431372550000003" green="0.23529411759999999" blue="0.46274509800000002" alpha="1" colorSpace="calibratedRGB"/>
+                            </pageControl>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="fuo-zC-crR" firstAttribute="trailing" secondItem="CuY-jc-qgQ" secondAttribute="trailing" constant="10" id="4OW-ht-0io"/>
+                            <constraint firstItem="CuY-jc-qgQ" firstAttribute="leading" secondItem="fuo-zC-crR" secondAttribute="leading" constant="10" id="BBM-Cf-rsE"/>
+                            <constraint firstItem="fuo-zC-crR" firstAttribute="trailing" secondItem="krF-Fo-UE2" secondAttribute="trailing" id="DO7-AI-usC"/>
+                            <constraint firstItem="wgh-JO-ht1" firstAttribute="centerX" secondItem="YgM-3i-c65" secondAttribute="centerX" id="Png-r8-YJ4"/>
+                            <constraint firstItem="CuY-jc-qgQ" firstAttribute="top" secondItem="fuo-zC-crR" secondAttribute="top" constant="10" id="glf-Ed-rdY"/>
+                            <constraint firstItem="fuo-zC-crR" firstAttribute="bottom" secondItem="wgh-JO-ht1" secondAttribute="bottom" constant="10" id="jH1-mm-c3F"/>
+                            <constraint firstItem="wgh-JO-ht1" firstAttribute="top" secondItem="krF-Fo-UE2" secondAttribute="bottom" constant="10" id="onQ-be-WfP"/>
+                            <constraint firstItem="krF-Fo-UE2" firstAttribute="top" secondItem="CuY-jc-qgQ" secondAttribute="bottom" constant="10" id="w09-vk-YkI"/>
+                            <constraint firstItem="krF-Fo-UE2" firstAttribute="leading" secondItem="fuo-zC-crR" secondAttribute="leading" id="zbv-x0-r2m"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="fuo-zC-crR"/>
+                    </view>
+                    <connections>
+                        <outlet property="pageControl" destination="wgh-JO-ht1" id="4RU-TH-9Nr"/>
+                        <outlet property="titleLabel" destination="CuY-jc-qgQ" id="xzp-M2-t1U"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cET-sy-bJs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="983" y="1452"/>
+        </scene>
+        <!--Page View Controller-->
+        <scene sceneID="31z-3K-fcv">
+            <objects>
+                <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="pageCurl" navigationOrientation="horizontal" spineLocation="min" id="Bto-1s-6pS" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Va1-ka-s2C" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1764" y="1451"/>
+        </scene>
         <!--Second-->
         <scene sceneID="6cY-5N-BPb">
             <objects>
