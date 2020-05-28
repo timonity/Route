@@ -66,6 +66,10 @@ open class Router {
     private var pathToTopController: [Trace]? {
         return tree?.findPath { $0.controller == self.topController }
     }
+
+    private var tree: Node<Trace>? {
+        return getNavigationTree()
+    }
     
     // MARK: - Public properties
     
@@ -80,11 +84,6 @@ open class Router {
     public var backStack: [UIViewController] {
         return getBackStack().filter { !($0 is RootViewController) }
     }
-
-    public var tree: Node<Trace>? {
-        return getNavigationTree()
-    }
-
     
     // MARK: - Private methods
     
