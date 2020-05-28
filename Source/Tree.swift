@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class Node<T> {
+class Node<T> {
 
     // MARK: Public properties
 
@@ -43,7 +43,7 @@ public class Node<T> {
 
 // MARK: Search & Map
 
-public extension Node {
+extension Node {
 
     func search(condition: (T) -> Bool) -> Node? {
 
@@ -60,23 +60,9 @@ public extension Node {
             return nil
         }
     }
-
-    func map<P>(_ transform: (T) throws -> P) rethrows -> Node<P> {
-        let newValue = try transform(value)
-
-        let result = Node<P>(value: newValue)
-
-        for child in children {
-            let newChild = try child.map(transform)
-            result.addChild(newChild)
-        }
-
-        return result
-    }
 }
 
-
-public extension Node where T: Equatable {
+extension Node where T: Equatable {
 
     func search(value: T) -> Node? {
         return search { $0 == value }
@@ -107,7 +93,7 @@ extension Node: CustomStringConvertible {
 
 extension Node: Equatable where T: Equatable {
 
-    public static func == (lhs: Node<T>, rhs: Node<T>) -> Bool {
+    static func == (lhs: Node<T>, rhs: Node<T>) -> Bool {
         return lhs.value == rhs.value
     }
 }

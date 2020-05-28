@@ -144,7 +144,7 @@ class RouterTestCase: XCTestCase {
         
         var id = 0
         
-        router.backToKeyNavigationRoot(animated: false, completion: { (contoller: ContentController) in
+        router.backToKeyStackRoot(animated: false, completion: { (contoller: ContentController) in
             
                 id = contoller.id
 
