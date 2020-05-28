@@ -8,13 +8,14 @@
 
 import Foundation
 
-enum Action {
+enum Action: Equatable {
     
     case push
     case present
     
     case replace
     case setWindowRoot
+    case jumpTo(Int)
     
     case back
     case backTo(Int)
@@ -36,6 +37,9 @@ enum Action {
             
         case .setWindowRoot:
             return "Set Window Root"
+
+        case .jumpTo(let id):
+            return "Jump to \(id)"
             
         case .back:
             return "Back"

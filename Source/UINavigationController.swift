@@ -8,13 +8,16 @@
 
 import UIKit
 
-// MARK: ContainerController
+extension UINavigationController: StackContainerController {
 
-extension UINavigationController: ContainerController {
-    
     var visibleController: UIViewController? {
         
         return topViewController
+    }
+
+    var controllers: [UIViewController] {
+
+        return viewControllers
     }
 
     var root: UIViewController? {

@@ -43,7 +43,15 @@ class FlowExampleUITests: XCTestCase {
         tapButton(for: action)
         navigationTree.performAction(action)
 
+        sleepIfNeeded(for: action)
+
         check()
+    }
+
+    func sleepIfNeeded(for action: Action) {
+        if action == .setWindowRoot {
+            sleep(1)
+        }
     }
 
     func check(isVerbose: Bool = true) {
@@ -82,20 +90,80 @@ class FlowExampleUITests: XCTestCase {
 
     // MARK: Tests
 
+    func testReplace() {
+        let actions: [Action] = [
+            .replace,
+            .push,
+            .replace,
+            .present,
+            .replace
+        ]
+
+        perform(actions)
+    }
+
     func testBack() {
+
+        let actions: [Action] = [
+            .push,
+            .back,
+            .present,
+            .back
+        ]
+
+        perform(actions)
+    }
+
+    func testBackTo() {
+
+        let actions: [Action] = [
+            .push,
+            .push,
+            .push,
+            .push,
+            .present,
+            .push,
+            .backTo(3)
+        ]
+
+        perform(actions)
+    }
+
+    func testWindowRoot() {
+
+        let actions: [Action] = [
+            .push,
+            .present,
+            .setWindowRoot,
+            .present,
+            .push,
+            .backToWindowRoot
+        ]
+
+        perform(actions)
+    }
+
+    func testRandom() {
         let actions: [Action] = [
             .present,
             .push,
             .push,
             .backToNavigationRoot,
             .present,
+            .replace,
             .back,
             .backToWindowRoot,
             .present,
             .present,
             .push,
             .push,
-            .backTo(3)
+            .push,
+            .backToNavigationRoot,
+            .replace,
+            .backTo(3),
+            .replace,
+            .setWindowRoot,
+            .replace
         ]
 
         perform(actions)

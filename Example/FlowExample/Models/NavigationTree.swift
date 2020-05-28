@@ -157,6 +157,9 @@ extension NavigationTree {
         case .setWindowRoot:
             setWindowRoot()
 
+        case .jumpTo:
+            fatalError("Jump not implemented")
+
         case .back:
             back()
 

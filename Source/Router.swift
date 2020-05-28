@@ -8,21 +8,21 @@
 
 import UIKit
 
+typealias TraceNode = Node<Trace>
+
 public typealias Condition = (UIViewController) -> Bool
 public typealias Completion = () -> Void
 
-open class Router: NSObject {
+open class Router {
     
     // MARK: - Private properties
     
-    private let window: UIWindow?
+    private weak var window: UIWindow?
 
     private var windowRootController: UIViewController? {
         
         guard let windowRoot = keyWindow?.rootViewController else {
-            
             print("Root view controller for window not found")
-            
             return nil
         }
         
@@ -32,9 +32,7 @@ open class Router: NSObject {
     private var keyWindow: UIWindow? {
         
         guard let window = window else {
-            
             print("Current window not found. In order to use ... functionality Router must be inited with window")
-            
             return nil
         }
         
@@ -44,25 +42,29 @@ open class Router: NSObject {
     private var keyController: UIViewController? {
         
         guard let controller = currentController else {
-            
             assertionFailure("Current controller not found")
-            
             return nil
         }
         
         return controller
     }
     
-    private var keyContainerController: ContainerController? {
+    private var keyStackContainerController: StackContainerController? {
         
-        guard let container = keyController?.parent as? ContainerController else {
-            
+        guard let container = keyController?.parent as? StackContainerController else {
             print("Missing `UINavigationController` for current controller")
-            
             return nil
         }
         
         return container
+    }
+
+    private var pathToCurrentController: [Trace]? {
+        return tree?.findPath { $0.controller == self.currentController }
+    }
+
+    private var pathToTopController: [Trace]? {
+        return tree?.findPath { $0.controller == self.topController }
     }
     
     // MARK: - Public properties
@@ -70,215 +72,216 @@ open class Router: NSObject {
     public weak var currentController: UIViewController?
     
     public var topController: UIViewController? {
-        
         guard let root = windowRootController else { return nil }
         
         return getTopController(for: root)
     }
     
     public var backStack: [UIViewController] {
-        
         return getBackStack().filter { !($0 is RootViewController) }
     }
+
+    public var tree: Node<Trace>? {
+        return getNavigationTree()
+    }
+
     
     // MARK: - Private methods
     
     private func getBackStack() -> [UIViewController] {
-        
-        let result = findControllerInNavigationTree(type: UIViewController.self) { _ in
-            
-            return false
-        }
-        
-        return result.stack.reversed()
+        return pathToCurrentController!
+            .map { $0.controller }
     }
-    
-    // MARK: Forward Search
     
     private func getTopController(for controller: UIViewController) -> UIViewController {
         
         if let presented = controller.presentedViewController {
-            
             return getTopController(for: presented)
             
-        } else if let container = controller as? ContainerController, let visible = container.visibleController {
-            
+        }
+            else if let container = controller as? ContainerController,
+            let visible = container.visibleController
+        {
             return getTopController(for: visible)
             
         } else {
-            
             return controller
         }
     }
     
-    // MARK: Backward Search
-    
     private func findPreviousContentController(
         for controller: UIViewController
-    ) -> BackResult? {
-        
-        return findControllerInNavigationTree(for: controller) { (c) -> Bool in
-            
-            if c is ContainerController {
-                
-                return false
-                
-            } else if controller == c {
-                
-                return false
-                
-            } else {
-                
-                return true
-            }
-        }
-    }
-    
-    private func findControllerInNavigationTree<T: UIViewController>(
-        type: T.Type,
-        condition: ((T) -> Bool)? = nil
-    ) -> BackResult {
-        
-        guard let current = keyController else { return BackResult(action: BackAction()) }
-        
-        return findControllerInNavigationTree(for: current) { (controller) -> Bool in
-            
-            if let candidate = controller as? T {
-                
-                if let condition = condition {
-                    
-                    return condition(candidate)
-                    
-                } else {
-                    
-                    return true
-                }
-                
-            } else {
-                
-                return false
-            }
-        }
-    }
-    
-    private func findControllerInNavigationTree(
-        for controller: UIViewController,
-        condition: Condition
-    ) -> BackResult {
-        
-        return findControllerInNavigationTree(
-            condition: condition,
-            current: controller,
-            result: BackResult(action: BackAction())
-        )
-    }
-    
-    private func findControllerInNavigationTree(
-        condition: Condition,
-        current: UIViewController,
-        result: BackResult
-    ) -> BackResult {
-        
-        var nextResult = result
-        nextResult.stack.append(current)
-        
-        if condition(current) {
-            
-            nextResult.target = current
-            
-            return nextResult
+    ) -> UIViewController? {
+        let contentControllers = tree?
+            .findPath { $0.controller == controller }?
+            .filter { $0.type.isContent }
+            .map { $0.controller }
 
-        } else if let parent = current.parent {
-            
-            let next: UIViewController
-            
-            if let container = parent as? ContainerController {
-                            
-                if let previous = container.getPreviousController(for: current) {
-                    
-                    next = previous
-                    
-                    nextResult.action.popTo = previous
-                    nextResult.lastContentController = previous
-                    
-                } else {
-                    
-//                    Не покрывает кейс когда парент является и контейнерои и контент контроллером
-//                    nextResult.lastContentController = parent
-                    next = parent
-                }
-                
-            } else {
-                
-                nextResult.lastContentController = parent
-                next = parent
-            }
-            
-            return findControllerInNavigationTree(
-                 condition: condition,
-                 current: next,
-                 result: nextResult
-             )
-        
-        } else if let presenting = current.presentingViewController {
-            
-            nextResult.action.dismiss = presenting
-            nextResult.action.popTo = nil
-            
-            if
-                let container = presenting as? ContainerController,
-                let content = container.visibleContentController
-            {
-                nextResult.lastContentController = content
-                
-                return findControllerInNavigationTree(
-                    condition: condition,
-                    current: content,
-                    result: nextResult
-                )
-                
-            } else {
-                
-                nextResult.lastContentController = presenting
-                
-                return findControllerInNavigationTree(
-                    condition: condition,
-                    current: presenting,
-                    result: nextResult
-                )
-            }
-            
+        if
+            let controllers = contentControllers,
+            controllers.count > 1
+        {
+            return controllers[controllers.endIndex - 2]
+
         } else {
-            
-            nextResult.target = nil
-            
-            return nextResult
+            return contentControllers?.first
         }
     }
-    
+
+    private func perform<T: UIViewController>(
+        jumpRoute: Route,
+        animated: Bool = true,
+        prepare: ((T) -> Void)? = nil,
+        completion: ((T) -> Void)? = nil,
+        failure: Completion? = nil
+    ) {
+        var route = jumpRoute
+
+        route.cutMutualParts()
+
+        guard let action = route.action else {
+            failure?()
+            return
+        }
+
+        guard let target = route.target as? T else {
+            failure?()
+            return
+        }
+
+        prepare?(target)
+
+        action.perform(animated: animated) {
+            completion?(target)
+        }
+    }
+
+    private func getPathTo<T: UIViewController>(
+        _ controller: T.Type,
+        condition: ((T) -> Bool)? = nil
+    ) -> [Trace]? {
+        let pathToTargetController = tree?.findPath { (trace) -> Bool in
+            guard let pretender = trace.controller as? T else {
+                return false
+            }
+
+            return condition?(pretender) ?? true
+        }
+
+        guard let pathToTarget = pathToTargetController else {
+            return nil
+        }
+
+        return pathToTarget
+    }
+
+    private func getNavigationTree() -> Node<Trace>? {
+        guard let root = windowRootController else {
+            return nil
+        }
+
+        let rootTrace = Trace(
+            controller: root,
+            openType: .windowRoot,
+            isOnTopWay: true
+        )
+
+        let rootNode = Node<Trace>(value: rootTrace)
+
+        growTree(leaf: rootNode, shouldCheckPresent: true)
+
+        return rootNode
+    }
+
+    private func growTree(leaf: Node<Trace>, shouldCheckPresent: Bool) {
+        let lastController = leaf.value.controller
+
+        if let stackContaier = lastController as? StackContainerController {
+            var lastInStack = leaf
+
+            // Add all controllers in stack to tree
+            for controller in stackContaier.controllers {
+                let trace = Trace(
+                    controller: controller,
+                    openType: .pushed(stackContaier),
+                    isOnTopWay: shouldCheckPresent
+                )
+
+                let newNode = Node<Trace>(value: trace)
+                lastInStack.addChild(newNode)
+
+                lastInStack = newNode
+
+                // Check childs for container in the midle of stack:
+                // |->[content]->[container]->[content]
+                let isLast = controller == stackContaier.controllers.last
+
+                if controller is ContainerController && isLast == false {
+                    growTree(leaf: newNode, shouldCheckPresent: false)
+                }
+            }
+
+            growTree(leaf: lastInStack, shouldCheckPresent: shouldCheckPresent)
+
+        } else if let flatContaier = lastController as? FlatContainerController {
+
+            for controller in flatContaier.controllers {
+                let isVisible = controller == flatContaier.visibleController
+
+                let trace = Trace(
+                    controller: controller,
+                    openType: .sibling(flatContaier),
+                    isOnTopWay: isVisible
+                )
+
+                let newNode = Node<Trace>(value: trace)
+                leaf.addChild(newNode)
+
+                growTree(leaf: newNode, shouldCheckPresent: isVisible)
+            }
+
+        } else if
+            let generalContainer = lastController as? ContainerController,
+            let controller = generalContainer.visibleController
+        {
+            let trace = Trace(
+                controller: controller,
+                openType: .child(generalContainer),
+                isOnTopWay: true
+            )
+
+            let newNode = Node<Trace>(value: trace)
+            leaf.addChild(newNode)
+
+            growTree(leaf: newNode, shouldCheckPresent: true)
+
+        } else if
+            let presented = lastController.presentedViewController,
+            shouldCheckPresent
+        {
+            let trace = Trace(
+                controller: presented,
+                openType: .presented(lastController),
+                isOnTopWay: true
+            )
+
+            let node = TraceNode(value: trace)
+            leaf.addChild(node)
+
+            growTree(leaf: node, shouldCheckPresent: true)
+        }
+    }
+
     // MARK: - Public methods
     
     public init(window: UIWindow?) {
         self.window = window
     }
-    
-    open func navigate(
-        with action: BackAction,
-        animated: Bool = true,
-        completion: Completion? = nil
-    ) {
-        if let controllerToDismiss = action.dismiss {
-            let c = (action.popTo == nil) ? completion : nil
-            controllerToDismiss.dismiss(animated: animated, completion: c)
-        }
-        
-        if
-            let controllerToPop = action.popTo,
-            let container = controllerToPop.parent as? ContainerController
-        {
-            let isAnimated = (action.dismiss == nil) ? animated : false
-            container.backTo(controllerToPop, animated: isAnimated, completion: completion)
-        }
+
+    public convenience init(window: UIWindow?, controller: UIViewController) {
+        self.init(window: window)
+
+        currentController = controller
     }
     
     // MARK: Forward Navigation
@@ -288,7 +291,11 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        keyContainerController?.push(controllers: controllers, animated: animated, completion: completion)
+        keyStackContainerController?.push(
+            controllers: controllers,
+            animated: animated,
+            completion: completion
+        )
     }
     
     public func push(
@@ -296,7 +303,11 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        keyContainerController?.push(controller: controller, animated: animated, completion: completion)
+        keyStackContainerController?.push(
+            controller: controller,
+            animated: animated,
+            completion: completion
+        )
     }
     
     public func present(
@@ -304,18 +315,141 @@ open class Router: NSObject {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        keyController?.present(controller, animated: animated, completion: completion)
+        keyController?.present(
+            controller, animated: animated,
+            completion: completion
+        )
     }
-    
+
+    // MARK: Backward Navigation
+
+    public func backTo<T: UIViewController>(
+         _ controllerType: T.Type,
+         animated: Bool = true,
+         condition: ((T) -> Bool)? = nil,
+         prepare: ((T) -> Void)? = nil,
+         completion: ((T) -> Void)? = nil,
+         failure: Completion? = nil
+     ) {
+        guard let pathToCurrent = pathToCurrentController else {
+            return
+        }
+
+        let pathToTargetController = pathToCurrent.prefix(through: { (trace) -> Bool in
+            guard let pretender = trace.controller as? T else {
+                return false
+            }
+
+            return condition?(pretender) ?? true
+        })
+
+        guard let pathToTarget = pathToTargetController else {
+            return
+        }
+
+        let jumpTraces = Route(
+            pathToVisible: pathToCurrent,
+            pathToTarget: pathToTarget
+        )
+
+        perform(
+            jumpRoute: jumpTraces,
+            animated: animated,
+            prepare: prepare,
+            completion: completion,
+            failure: failure
+        )
+     }
+
+     public func back<T: UIViewController>(
+         animated: Bool = true,
+         prepare: ((T) -> Void)? = nil,
+         completion: ((T) -> Void)? = nil,
+         failure: Completion? = nil
+     ) {
+        guard let pathToCurrent = pathToCurrentController else {
+            return
+        }
+
+        // Path to previous controller
+        let pathToTarget: [Trace] = pathToCurrent.dropLast()
+
+        let jumpTraces = Route(
+            pathToVisible: pathToCurrent,
+            pathToTarget: pathToTarget
+        )
+
+        perform(
+            jumpRoute: jumpTraces,
+            animated: animated,
+            prepare: prepare,
+            completion: completion,
+            failure: failure
+        )
+     }
+
+     public func backToWindowRoot<T: UIViewController>(
+         animated: Bool = true,
+         prepare: ((T) -> Void)? = nil,
+         completion: ((T) -> Void)? = nil
+     ) {
+        guard let pathToCurrent = pathToCurrentController else {
+            return
+        }
+
+        // Path to first content controller
+        var pathToTarget: [Trace] = []
+
+        for trace in pathToCurrent {
+
+            pathToTarget.append(trace)
+
+            if trace.type.isContent {
+                break
+            }
+        }
+
+        let route = Route(
+            pathToVisible: pathToCurrent,
+            pathToTarget: pathToTarget
+        )
+
+        perform(
+            jumpRoute: route,
+            animated: animated,
+            prepare: prepare,
+            completion: completion,
+            failure: nil
+        )
+     }
+
+     public func backToKeyStackRoot<T: UIViewController>(
+         animated: Bool = true,
+         prepare: ((T) -> Void)? = nil,
+         completion: ((T) -> Void)? = nil
+     ) {
+        guard let target = keyStackContainerController?.root as? T else {
+            return
+        }
+
+        prepare?(target)
+
+        keyStackContainerController?.backTo(target, animated: animated) {
+            completion?(target)
+        }
+     }
+
     // MARK: Inplace Navigation
-    
+
     public func replace(
         to controller: UIViewController,
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        guard let current = keyController else { return }
-        
+        guard let current = keyController else {
+            return
+        }
+
         if let container = current.parent as? ContainerController {
             container.replace(
                 current,
@@ -323,116 +457,83 @@ open class Router: NSObject {
                 animated: animated,
                 completion: completion
             )
-            
+
         } else if let presenting = current.presentingViewController {
             current.dismiss(animated: animated, completion: nil)
             presenting.present(controller, animated: animated, completion: completion)
-            
-        } else if findPreviousContentController(for: current)?.target == nil {
+
+        } else if findPreviousContentController(for: current) == nil {
             setWindowRoot(controller, animated: animated)
         }
     }
-    
+
     public func setWindowRoot(
         _ controller: UIViewController,
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        if let root = keyWindow?.rootViewController as? RootViewController, let currentRoot = root.current {
+        if
+            let root = keyWindow?.rootViewController as? RootViewController,
+            let currentRoot = root.current
+        {
             root.transition(
                 from: currentRoot,
                 to: controller,
                 animated: animated,
                 completion: completion
             )
-            
+
         } else {
             let root = RootViewController()
             root.insert(controller)
-            
+
             keyWindow?.rootViewController = root
 
             completion?()
         }
     }
-    
-    // MARK: Backward Navigation
-    
-    public func backTo<T: UIViewController>(
-        to: T.Type,
+
+    public func jumpTo<T: UIViewController>(
+        _ controller: T.Type,
         animated: Bool = true,
         condition: ((T) -> Bool)? = nil,
         prepare: ((T) -> Void)? = nil,
-        completion: ((T) -> Void)? = nil
+        completion: ((T) -> Void)? = nil,
+        failure: Completion? = nil
     ) {
-        let navigationResult = findControllerInNavigationTree(type: to, condition: condition)
-        
-        guard let targetController = navigationResult.target as? T else {
-            print("Target controller of type `\(to)` not found in navigation tree")
+        guard let pathToTop = pathToTopController else {
             return
         }
-        
-        prepare?(targetController)
-        
-        navigate(with: navigationResult.action, animated: animated) {
-            completion?(targetController)
+
+        guard let pathToTarget = getPathTo(controller, condition: condition) else {
+            return
         }
-    }
-    
-    public func back<T: UIViewController>(
-        animated: Bool = true,
-        prepare: ((T) -> Void)? = nil,
-        completion: ((T) -> Void)? = nil
-    ) {
-        backTo(
-            to: T.self,
+
+        let jumpTraces = Route(
+            pathToVisible: pathToTop,
+            pathToTarget: pathToTarget
+        )
+
+        perform(
+            jumpRoute: jumpTraces,
             animated: animated,
-            condition: { [weak self] (controller) -> Bool in
-                if controller is ContainerController { return false }
-                
-                return self?.keyController !== controller
-            },
             prepare: prepare,
-            completion: completion
+            completion: completion,
+            failure: failure
         )
     }
-    
-    public func backToWindowRoot<T: UIViewController>(
+
+    public func makeVisible(
         animated: Bool = true,
-        prepare: ((T) -> Void)? = nil,
-        completion: ((T) -> Void)? = nil
+        completion: Completion? = nil
     ) {
-        var navigationResult = findControllerInNavigationTree(type: T.self) { _ in
-            return false
-        }
-        
-        navigationResult.target = navigationResult.lastContentController
-        
-        guard let targetController = navigationResult.target as? T else {
-            print("Target controller of type not found in navigation tree")
-            return
-        }
-        
-        prepare?(targetController)
-        
-        navigate(with: navigationResult.action, animated: animated) {
-            completion?(targetController)
-        }
-    }
-    
-    public func backToKeyNavigationRoot<T: UIViewController>(
-        animated: Bool = true,
-        prepare: ((T) -> Void)? = nil,
-        completion: ((T) -> Void)? = nil
-    ) {
-        guard let navigationRoot = keyContainerController?.root else { return }
-        
-        backTo(
-            to: T.self,
+        jumpTo(
+            UIViewController.self,
             animated: animated,
-            condition: { $0 === navigationRoot },
-            prepare: prepare,
-            completion: completion
+            condition: { $0 == self.currentController },
+            prepare: nil,
+            completion: { _ in completion?() },
+            failure: nil
         )
     }
 }
