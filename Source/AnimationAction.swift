@@ -12,8 +12,8 @@ struct AnimationAction {
     // MARK: Public properties
 
     var controllerToDismiss: UIViewController?
-    var controllerBackTo: UIViewController?
-    var controllersToSelect: [UIViewController] = []
+    var controllerBackTo: (UIViewController, StackContainerController)?
+    var controllersToSelect: [(UIViewController, FlatContainerController)] = []
 
     // MARK: Public methods
 
@@ -44,11 +44,11 @@ struct AnimationAction {
         for controllerToSelect in controllersToSelect {
             group.enter()
 
-            let isLast = controllerToSelect == controllersToSelect.last
+            let isLast = controllerToSelect.0 == controllersToSelect.last?.0
             let isAnimated = isLast && isSelectAnimated
 
-            controllerToSelect.flatContainer?.selectController(
-                controllerToSelect,
+            controllerToSelect.1.selectController(
+                controllerToSelect.0,
                 animated: isAnimated
             ) {
                 group.leave()
@@ -62,8 +62,8 @@ struct AnimationAction {
         if let controllerBackTo = controllerBackTo {
             group.enter()
 
-            controllerBackTo.stackContaier?.backTo(
-                controllerBackTo,
+            controllerBackTo.1.backTo(
+                controllerBackTo.0,
                 animated: isBackToAnimated
             ) {
                 group.leave()

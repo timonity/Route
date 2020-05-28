@@ -63,13 +63,13 @@ struct Route {
             case .windowRoot, .presented, .child:
                 break
 
-            case .pushed:
+            case .pushed(let container):
                 if trace == pathToTarget.last {
-                    action.controllerBackTo = trace.controller
+                    action.controllerBackTo = (trace.controller, container)
                 }
 
-            case .sibling:
-                action.controllersToSelect.append(trace.controller)
+            case .sibling(let container):
+                action.controllersToSelect.append((trace.controller, container))
             }
         }
 
