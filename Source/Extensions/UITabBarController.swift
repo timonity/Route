@@ -10,15 +10,15 @@ import UIKit
 
 extension UITabBarController: FlatContainerController {
 
-    var controllers: [UIViewController] {
+    public var controllers: [UIViewController] {
         return viewControllers ?? []
     }
 
-    var visibleController: UIViewController? {
+    public var visibleController: UIViewController? {
         return selectedViewController
     }
 
-    func selectController(
+    public func selectController(
         at index: Int,
         animated: Bool,
         completion: Completion?
@@ -31,7 +31,7 @@ extension UITabBarController: FlatContainerController {
         CATransaction.commit()
     }
 
-    func replace(
+    public func replace(
         _ controller: UIViewController,
         with newController: UIViewController,
         animated: Bool,

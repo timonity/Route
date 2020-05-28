@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol FlatContainerController: ContainerController {
+public protocol FlatContainerController: ContainerController {
 
     var controllers: [UIViewController] { get }
 
@@ -18,7 +18,7 @@ protocol FlatContainerController: ContainerController {
     )
 }
 
-extension FlatContainerController {
+public extension FlatContainerController {
 
     func selectController(
         _ controller: UIViewController,

@@ -10,22 +10,22 @@ import UIKit
 
 extension UINavigationController: StackContainerController {
 
-    var visibleController: UIViewController? {
+    public var visibleController: UIViewController? {
         
         return topViewController
     }
 
-    var controllers: [UIViewController] {
+    public var controllers: [UIViewController] {
 
         return viewControllers
     }
 
-    var root: UIViewController? {
+    public var root: UIViewController? {
 
         return viewControllers.first
     }
     
-    func getPreviousController(
+    public func getPreviousController(
         for controller: UIViewController
     ) -> UIViewController? {
         
@@ -44,7 +44,7 @@ extension UINavigationController: StackContainerController {
 
     // MARK: Forward Navigation
 
-    func push(
+    public func push(
         controller: UIViewController,
         animated: Bool = true,
         completion: (() -> Void)? = nil
@@ -58,7 +58,7 @@ extension UINavigationController: StackContainerController {
         CATransaction.commit()
     }
 
-    func push(
+    public func push(
         controllers: [UIViewController],
         animated: Bool = true,
         completion: (() -> Void)? = nil
@@ -73,7 +73,7 @@ extension UINavigationController: StackContainerController {
 
     // MARK: Inplace Navigation
 
-    func replace(
+    public func replace(
         _ oldController: UIViewController,
         with newController: UIViewController,
         animated: Bool,
@@ -96,7 +96,7 @@ extension UINavigationController: StackContainerController {
 
     // MARK: Backward Navigation
     
-    func backTo(
+    public func backTo(
         _ controller: UIViewController,
         animated: Bool,
         completion: Completion?

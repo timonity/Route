@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol StackContainerController: ContainerController {
+public protocol StackContainerController: ContainerController {
 
     var controllers: [UIViewController] { get }
 

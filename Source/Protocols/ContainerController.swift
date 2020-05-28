@@ -9,7 +9,7 @@ import UIKit
 
 // MARK: ContainerController
 
-protocol ContainerController {
+public protocol ContainerController {
     
     // MARK: Required
     
@@ -27,7 +27,7 @@ protocol ContainerController {
     )
 }
 
-extension ContainerController {
+public extension ContainerController {
 
     // MARK: Private
 
