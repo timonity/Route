@@ -97,13 +97,24 @@ open class Router {
     }
     
     public var backStack: [UIViewController] {
-        return getBackStack().filter { !($0 is RootViewController) }
+        return getBackStack()?
+            .filter { ($0 is RootViewController) == false } ?? []
+    }
+
+    public var topStack: [UIViewController] {
+        return getTopStack()?
+            .filter { ($0 is RootViewController) == false } ?? []
     }
     
     // MARK: - Private methods
     
-    private func getBackStack() -> [UIViewController] {
-        return pathToCurrentController!
+    private func getBackStack() -> [UIViewController]? {
+        return pathToCurrentController?
+            .map { $0.controller }
+    }
+
+    private func getTopStack() -> [UIViewController]? {
+        return pathToTopController?
             .map { $0.controller }
     }
     
