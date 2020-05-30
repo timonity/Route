@@ -31,7 +31,6 @@ class ViewController: UIViewController {
     // MARK: Public properties
     
     var id: Int {
-
         return navigationTree.id
     }
 
@@ -64,7 +63,6 @@ class ViewController: UIViewController {
     // MARK: Private methods
     
     private func setupButtons() {
-
         for idx in 0..<actions.count {
             let button = Button(action: actions[idx], id: id, tag: idx)
 
@@ -79,9 +77,8 @@ class ViewController: UIViewController {
     }
     
     @objc private func actionButtonTouched(_ sender: Button) {
-        
         switch actions[sender.tag] {
-            
+
         case .push:
             push()
             
@@ -112,7 +109,6 @@ class ViewController: UIViewController {
     }
     
     private func push() {
-
         let controller = ViewController.initiate()
 
         var tree = navigationTree
@@ -128,7 +124,6 @@ class ViewController: UIViewController {
     }
     
     private func present() {
-        
         let controller = ViewController.initiate()
 
         var tree = navigationTree
@@ -142,7 +137,6 @@ class ViewController: UIViewController {
     }
     
     private func replace() {
-        
         let controller = ViewController.initiate()
 
         var tree = navigationTree
@@ -177,12 +171,10 @@ class ViewController: UIViewController {
     }
 
     private func back() {
-        
         router.back()
     }
     
     private func backTo(_ controllerId: Int) {
-        
         let title = "From \(id)"
         
         router.backTo(
@@ -196,12 +188,10 @@ class ViewController: UIViewController {
     }
     
     private func backToWindowRoot() {
-        
         router.backToWindowRoot()
     }
     
     private func backToNavigationRoot() {
-        
         router.backToKeyStackRoot()
     }
 }
@@ -211,7 +201,6 @@ class ViewController: UIViewController {
 extension ViewController: StoryboadInitable {
     
     static var storyboardName: String {
-        
         return "Main"
     }
 }
@@ -221,11 +210,9 @@ extension ViewController: StoryboadInitable {
 extension ViewController {
 
     func showAlert(with message: String) {
-        
         let controller = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
         
-        let cancel = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
-        
+        let cancel = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         controller.addAction(cancel)
         
         router.present(controller)

@@ -45,11 +45,8 @@ class FlatViewController: UIViewController {
     var selectedController: UIViewController?
 
     var controllers: [UIViewController] = {
-
         let first = MyViewController.initiate()
-
         let second = MyViewController.initiate()
-
         let thrird = My2ViewController.initiate()
 
         return [first, thrird]

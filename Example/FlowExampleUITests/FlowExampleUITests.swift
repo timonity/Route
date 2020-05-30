@@ -35,7 +35,6 @@ class FlowExampleUITests: XCTestCase {
     // MARK: Public methods
 
     func perform(_ actions: [Action]) {
-
         actions.forEach { perform($0) }
     }
 
@@ -67,24 +66,20 @@ class FlowExampleUITests: XCTestCase {
     }
 
     func tapButton(for action: Action) {
-
         getButton(for: action).tap()
     }
 
     func getButton(for action: Action) -> XCUIElement {
-
         let id = navigationTree.id
 
         return app.buttons["\(id)-\(action.title)"]
     }
 
     func getTreeLabel() -> XCUIElement {
-
         return getTreeLabel(with: navigationTree.id)
     }
 
     func getTreeLabel(with id: Int) -> XCUIElement {
-
         return app.staticTexts["\(id)-Tree"]
     }
 
@@ -103,7 +98,6 @@ class FlowExampleUITests: XCTestCase {
     }
 
     func testBack() {
-
         let actions: [Action] = [
             .push,
             .back,
@@ -115,7 +109,6 @@ class FlowExampleUITests: XCTestCase {
     }
 
     func testBackTo() {
-
         let actions: [Action] = [
             .push,
             .push,
@@ -130,7 +123,6 @@ class FlowExampleUITests: XCTestCase {
     }
 
     func testWindowRoot() {
-
         let actions: [Action] = [
             .push,
             .present,
