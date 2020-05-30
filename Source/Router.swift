@@ -492,15 +492,17 @@ open class Router {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
-        guard let _keyWindow = keyWindow else { return }
+        guard let _keyWindow = keyWindow else {
+            return
+        }
 
         if
             let root = _keyWindow.rootViewController as? RootViewController,
             let currentRoot = root.current
         {
-            root.transition(
-                from: currentRoot,
-                to: controller,
+            root.replace(
+                currentRoot,
+                with: controller,
                 animated: animated,
                 completion: completion
             )
