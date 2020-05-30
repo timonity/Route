@@ -138,13 +138,12 @@ open class Router {
 
         route.cutMutualParts()
 
-        guard let action = route.action else {
+        guard
+            let action = route.action,
+            let target = route.target as? T
+        else {
             failure?()
-            return
-        }
 
-        guard let target = route.target as? T else {
-            failure?()
             return
         }
 
@@ -331,6 +330,8 @@ open class Router {
          failure: Completion? = nil
      ) {
         guard let pathToCurrent = pathToCurrentController else {
+            failure?()
+
             return
         }
 
@@ -343,16 +344,18 @@ open class Router {
         })
 
         guard let pathToTarget = pathToTargetController else {
+            failure?()
+
             return
         }
 
-        let jumpTraces = Route(
-            pathToVisible: pathToCurrent,
+        let route = Route(
+            pathToSource: pathToCurrent,
             pathToTarget: pathToTarget
         )
 
         perform(
-            jumpRoute: jumpTraces,
+            jumpRoute: route,
             animated: animated,
             prepare: prepare,
             completion: completion,
@@ -367,19 +370,21 @@ open class Router {
          failure: Completion? = nil
      ) {
         guard let pathToCurrent = pathToCurrentController else {
+            failure?()
+
             return
         }
 
         // Path to previous controller
         let pathToTarget: [Trace] = pathToCurrent.dropLast()
 
-        let jumpTraces = Route(
-            pathToVisible: pathToCurrent,
+        let route = Route(
+            pathToSource: pathToCurrent,
             pathToTarget: pathToTarget
         )
 
         perform(
-            jumpRoute: jumpTraces,
+            jumpRoute: route,
             animated: animated,
             prepare: prepare,
             completion: completion,
@@ -390,26 +395,20 @@ open class Router {
      public func backToWindowRoot<T: UIViewController>(
          animated: Bool = true,
          prepare: ((T) -> Void)? = nil,
-         completion: ((T) -> Void)? = nil
+         completion: ((T) -> Void)? = nil,
+         failure: Completion? = nil
      ) {
-        guard let pathToCurrent = pathToCurrentController else {
+        guard
+            let pathToCurrent = pathToCurrentController,
+            let pathToTarget = pathToCurrent.prefix(through: { $0.type.isContent })
+        else {
+            failure?()
+
             return
         }
 
-        // Path to first content controller
-        var pathToTarget: [Trace] = []
-
-        for trace in pathToCurrent {
-
-            pathToTarget.append(trace)
-
-            if trace.type.isContent {
-                break
-            }
-        }
-
         let route = Route(
-            pathToVisible: pathToCurrent,
+            pathToSource: pathToCurrent,
             pathToTarget: pathToTarget
         )
 
@@ -418,16 +417,19 @@ open class Router {
             animated: animated,
             prepare: prepare,
             completion: completion,
-            failure: nil
+            failure: failure
         )
      }
 
      public func backToKeyStackRoot<T: UIViewController>(
          animated: Bool = true,
          prepare: ((T) -> Void)? = nil,
-         completion: ((T) -> Void)? = nil
+         completion: ((T) -> Void)? = nil,
+         failure: Completion? = nil
      ) {
         guard let target = keyStackContainerController?.root as? T else {
+            failure?()
+
             return
         }
 
@@ -500,21 +502,22 @@ open class Router {
         completion: ((T) -> Void)? = nil,
         failure: Completion? = nil
     ) {
-        guard let pathToTop = pathToTopController else {
+        guard
+            let pathToTop = pathToTopController,
+            let pathToTarget = getPathTo(controller, condition: condition)
+        else {
+            failure?()
+
             return
         }
 
-        guard let pathToTarget = getPathTo(controller, condition: condition) else {
-            return
-        }
-
-        let jumpTraces = Route(
-            pathToVisible: pathToTop,
+        let route = Route(
+            pathToSource: pathToTop,
             pathToTarget: pathToTarget
         )
 
         perform(
-            jumpRoute: jumpTraces,
+            jumpRoute: route,
             animated: animated,
             prepare: prepare,
             completion: completion,
@@ -522,9 +525,11 @@ open class Router {
         )
     }
 
+    /// Controller must be in navigation tree.
     public func makeVisible(
         animated: Bool = true,
-        completion: Completion? = nil
+        completion: Completion? = nil,
+        failure: Completion? = nil
     ) {
         jumpTo(
             UIViewController.self,
@@ -532,7 +537,7 @@ open class Router {
             condition: { $0 == self.currentController },
             prepare: nil,
             completion: { _ in completion?() },
-            failure: nil
+            failure: failure
         )
     }
 }
