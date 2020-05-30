@@ -42,7 +42,6 @@ final class Logger {
         log(msg, level: .warning)
     }
 
-
     static func critical(_ msg: String) {
         log(msg, level: .critical)
     }

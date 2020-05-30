@@ -8,8 +8,6 @@
 
 import UIKit
 
-typealias TraceNode = Node<Trace>
-
 public typealias Condition = (UIViewController) -> Bool
 public typealias Completion = () -> Void
 
@@ -20,14 +18,12 @@ open class Router {
     private weak var window: UIWindow?
 
     private var windowRootController: UIViewController? {
-        guard let _window = keyWindow else { return nil }
+        guard let _window = keyWindow else {
+            return nil
+        }
         
         guard let windowRoot = _window.rootViewController else {
-            let msg = """
-            Missing root view controller for window \(_window).
-            """
-
-            Logger.error(msg)
+            Logger.error("Missing root view controller for window \(_window)")
 
             return nil
         }
@@ -37,10 +33,7 @@ open class Router {
     
     private var keyWindow: UIWindow? {
         guard let window = window else {
-            let msg = """
-            Missing key window. Init router with window.
-            """
-            Logger.error(msg)
+            Logger.error("Missing key window. Init router with window")
 
             return nil
         }
@@ -50,12 +43,10 @@ open class Router {
     
     private var keyController: UIViewController? {
         guard let controller = currentController else {
-            let msg = """
-            Current controller in Router not found. Init router with controller
-            """
+            Logger.error(
+                "Current controller in Router not found. Init router with controller"
+            )
 
-            Logger.error(msg)
-            
             return nil
         }
         
@@ -63,12 +54,14 @@ open class Router {
     }
     
     private var keyStackContainerController: StackContainerController? {
-        guard let _keyController = keyController else { return nil }
+        guard let _keyController = keyController else {
+            return nil
+        }
         
         guard let container = _keyController.parent as? StackContainerController else {
-            let msg = "Missing StackContainerController parent for controller \(_keyController)"
-
-            Logger.error(msg)
+            Logger.error(
+                "Missing StackContainerController parent for controller \(_keyController)"
+            )
 
             return nil
         }
@@ -115,7 +108,6 @@ open class Router {
     }
     
     private func getTopController(for controller: UIViewController) -> UIViewController {
-        
         if let presented = controller.presentedViewController {
             return getTopController(for: presented)
             
@@ -133,8 +125,7 @@ open class Router {
     private func findPreviousContentController(
         for controller: UIViewController
     ) -> UIViewController? {
-        let contentControllers = tree?
-            .findPath { $0.controller == controller }?
+        let contentControllers = getPathTo(UIViewController.self) { $0 == controller }?
             .filter { $0.type.isContent }
             .map { $0.controller }
 
@@ -291,7 +282,7 @@ open class Router {
                 isOnTopWay: true
             )
 
-            let node = TraceNode(value: trace)
+            let node = Node<Trace>(value: trace)
             leaf.addChild(node)
 
             growTree(leaf: node, shouldCheckPresent: true)
