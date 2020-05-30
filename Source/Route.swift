@@ -9,6 +9,8 @@ import UIKit
 
 struct Route {
 
+    // MARK: Public properties
+
     var pathToSource: [Trace]
     var pathToTarget: [Trace]
 
@@ -19,6 +21,8 @@ struct Route {
     var action: AnimationAction? {
         return getAnimationAction()
     }
+
+    // MARK: Public methods
 
     mutating func cutMutualParts() {
         var indicesToRemove: [Int] = []
@@ -35,7 +39,9 @@ struct Route {
         }
     }
 
-    func getAnimationAction() -> AnimationAction? {
+    // MARK: Private methods
+
+    private func getAnimationAction() -> AnimationAction? {
         var action = AnimationAction()
 
         // Go back animations actions

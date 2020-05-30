@@ -105,7 +105,12 @@ extension Node {
     public func findPath(
         condition: (T) -> Bool
     ) -> [T]? {
-        assert(isRoot, "Try to find path not from root node")
+
+        guard isRoot else {
+            Logger.critical("Try to find path not from root node \(self)")
+
+            return nil
+        }
 
         var result = [value]
 

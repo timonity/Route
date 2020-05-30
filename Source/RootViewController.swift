@@ -12,30 +12,25 @@ class RootViewController: UIViewController {
     // MARK: Override properties
     
     override var childForStatusBarStyle: UIViewController? {
-        
         return current
     }
     
     override var childForStatusBarHidden: UIViewController? {
-        
         return current
     }
     
     // MARK: Public properties
     
     public var current: UIViewController? {
-        
         return children.first
     }
     
     // MARK: Public methods
     
     func insert(_ controller: UIViewController) {
-        
         addChild(controller)
 
         controller.view.frame = view.frame
-
         view.addSubview(controller.view)
         
         controller.didMove(toParent: self)
@@ -92,7 +87,6 @@ class RootViewController: UIViewController {
 extension RootViewController: ContainerController {
     
     var visibleController: UIViewController? {
-        
         return current
     }
     

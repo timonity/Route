@@ -20,9 +20,15 @@ open class Router {
     private weak var window: UIWindow?
 
     private var windowRootController: UIViewController? {
+        guard let _window = keyWindow else { return nil }
         
-        guard let windowRoot = keyWindow?.rootViewController else {
-            print("Root view controller for window not found")
+        guard let windowRoot = _window.rootViewController else {
+            let msg = """
+            Missing root view controller for window \(_window).
+            """
+
+            Logger.error(msg)
+
             return nil
         }
         
@@ -30,9 +36,12 @@ open class Router {
     }
     
     private var keyWindow: UIWindow? {
-        
         guard let window = window else {
-            print("Current window not found. In order to use ... functionality Router must be inited with window")
+            let msg = """
+            Missing key window. Init router with window.
+            """
+            Logger.error(msg)
+
             return nil
         }
         
@@ -40,9 +49,13 @@ open class Router {
     }
     
     private var keyController: UIViewController? {
-        
         guard let controller = currentController else {
-            assertionFailure("Current controller not found")
+            let msg = """
+            Current controller in Router not found. Init router with controller
+            """
+
+            Logger.error(msg)
+            
             return nil
         }
         
@@ -50,9 +63,13 @@ open class Router {
     }
     
     private var keyStackContainerController: StackContainerController? {
+        guard let _keyController = keyController else { return nil }
         
-        guard let container = keyController?.parent as? StackContainerController else {
-            print("Missing `UINavigationController` for current controller")
+        guard let container = _keyController.parent as? StackContainerController else {
+            let msg = "Missing StackContainerController parent for controller \(_keyController)"
+
+            Logger.error(msg)
+
             return nil
         }
         
@@ -72,6 +89,11 @@ open class Router {
     }
     
     // MARK: - Public properties
+
+    public var isVerbose: Bool {
+        get { return Logger.isVerbose }
+        set { Logger.isVerbose = newValue }
+    }
     
     public weak var currentController: UIViewController?
     
@@ -219,6 +241,8 @@ open class Router {
                 }
             }
 
+            //TODO: Log if no child controllers in stack container.
+
             growTree(leaf: lastInStack, shouldCheckPresent: shouldCheckPresent)
 
         } else if let flatContaier = lastController as? FlatContainerController {
@@ -238,6 +262,8 @@ open class Router {
                 growTree(leaf: newNode, shouldCheckPresent: isVisible)
             }
 
+            //TODO: Log if no child controllers in flat container.
+
         } else if
             let generalContainer = lastController as? ContainerController,
             let controller = generalContainer.visibleController
@@ -250,6 +276,8 @@ open class Router {
 
             let newNode = Node<Trace>(value: trace)
             leaf.addChild(newNode)
+
+            //TODO: Log if no child controller in container.
 
             growTree(leaf: newNode, shouldCheckPresent: shouldCheckPresent)
 
@@ -473,8 +501,10 @@ open class Router {
         animated: Bool = true,
         completion: Completion? = nil
     ) {
+        guard let _keyWindow = keyWindow else { return }
+
         if
-            let root = keyWindow?.rootViewController as? RootViewController,
+            let root = _keyWindow.rootViewController as? RootViewController,
             let currentRoot = root.current
         {
             root.transition(
@@ -488,7 +518,7 @@ open class Router {
             let root = RootViewController()
             root.insert(controller)
 
-            keyWindow?.rootViewController = root
+            _keyWindow.rootViewController = root
 
             completion?()
         }

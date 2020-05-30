@@ -12,14 +12,26 @@ final class Logger {
     // MARK: Types
 
     enum Level {
+        case debug
         case warning
         case error
+        case critical
+    }
+
+    // MARK: Public preperties
+
+    static var isVerbose: Bool = false
+
+    // MARK: Private methods
+
+    private static func log(_ msg: String, level: Level) {
+        print(msg)
     }
 
     // MARK: Public methods
 
-    static func log(_ msg: String, level: Level) {
-        print(msg)
+    static func debug(_ msg: String) {
+        log(msg, level: .debug)
     }
 
     static func error(_ msg: String) {
@@ -28,5 +40,10 @@ final class Logger {
 
     static func warning(_ msg: String) {
         log(msg, level: .warning)
+    }
+
+
+    static func critical(_ msg: String) {
+        log(msg, level: .critical)
     }
 }
