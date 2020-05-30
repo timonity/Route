@@ -225,7 +225,7 @@ open class Router {
         } else if let flatContaier = lastController as? FlatContainerController {
 
             for controller in flatContaier.controllers {
-                let isVisible = controller == flatContaier.visibleController
+                let isVisible = (controller == flatContaier.visibleController) && shouldCheckPresent
 
                 let trace = Trace(
                     controller: controller,
@@ -246,13 +246,13 @@ open class Router {
             let trace = Trace(
                 controller: controller,
                 openType: .child(generalContainer),
-                isOnTopWay: true
+                isOnTopWay: shouldCheckPresent
             )
 
             let newNode = Node<Trace>(value: trace)
             leaf.addChild(newNode)
 
-            growTree(leaf: newNode, shouldCheckPresent: true)
+            growTree(leaf: newNode, shouldCheckPresent: shouldCheckPresent)
 
         } else if
             let presented = lastController.presentedViewController,
