@@ -36,8 +36,8 @@ class FlatViewController: UIViewController {
     @IBOutlet private weak var titleLabel: UILabel!
     @IBOutlet private weak var pageControl: UIPageControl!
 
-    private var pageController: UIPageViewController? {
-        return children.first as? UIPageViewController
+    private var pageController: PageViewController? {
+        return children.first as? PageViewController
     }
 
     // MARK: Public properties
@@ -60,19 +60,13 @@ class FlatViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        pageController?.dataSource = self
-        pageController?.delegate = self
-
         pageControl.numberOfPages = controllers.count
 
-        updateUI(index: 0)
+        pageController?.childControllers = controllers
 
-        pageController?.setViewControllers(
-            [controllers[0]],
-            direction: .forward,
-            animated: false,
-            completion: nil
-        )
+        pageController?.didSelectControllerHandler = { [weak self] idx in
+            self?.updateUI(index: idx)
+        }
     }
 
     // MARK: Private methods
@@ -81,23 +75,6 @@ class FlatViewController: UIViewController {
         titleLabel.text = "Selected controller: \(index)"
 
         pageControl.currentPage = index
-    }
-
-    // MARK: Public methods
-
-    func selectController(
-        at index: Int,
-        animated: Bool,
-        completion: Completion?
-    ) {
-        updateUI(index: index)
-
-        pageController?.setViewControllers(
-            [controllers[index]],
-            direction: .reverse,
-            animated: animated,
-            completion: { _ in completion?() }
-        )
     }
 }
 
@@ -119,100 +96,12 @@ extension FlatViewController: ContainerController {
     }
 }
 
-// MARK: UIPageViewControllerDataSource
-
-extension FlatViewController: UIPageViewControllerDataSource {
-
-    func pageViewController(
-        _ pageViewController: UIPageViewController,
-        viewControllerBefore viewController: UIViewController
-    ) -> UIViewController? {
-        guard let idx = controllers.firstIndex(of: viewController) else {
-            return nil
-        }
-
-        return controllers[safe: idx - 1]
-    }
-
-    func pageViewController(
-        _ pageViewController: UIPageViewController,
-        viewControllerAfter viewController: UIViewController
-    ) -> UIViewController? {
-        guard let idx = controllers.firstIndex(of: viewController) else {
-            return nil
-        }
-
-        return controllers[safe: idx + 1]
-    }
-}
-
-// MARK: UIPageViewControllerDelegate
-
-extension FlatViewController: UIPageViewControllerDelegate {
-
-    func pageViewController(
-        _ pageViewController: UIPageViewController,
-        didFinishAnimating finished: Bool,
-        previousViewControllers: [UIViewController],
-        transitionCompleted completed: Bool
-    ) {
-        guard let idx = controllers.firstIndex(of: pageViewController.children[0]) else {
-            return
-        }
-
-        selectedController = controllers[idx]
-
-        updateUI(index: idx)
-    }
-}
-
 // MARK: StoryboadInitable
 
 extension FlatViewController: StoryboadInitable {
 
     static var storyboardName: String {
         return "Main"
-    }
-}
-
-// MARK: UIPageViewController
-
-extension UIPageViewController {
-
-    var flatController: FlatViewController? {
-        return parent as? FlatViewController
-    }
-}
-
-extension UIPageViewController: FlatContainerController {
-
-    public var controllers: [UIViewController] {
-        return flatController?.controllers ?? []
-    }
-
-    public var visibleController: UIViewController? {
-        return flatController?.selectedController
-    }
-
-    public func replace(
-        _ controller: UIViewController,
-        with newController: UIViewController,
-        animated: Bool,
-        completion: Completion?
-    ) {
-        assertionFailure("Not implemented")
-    }
-
-    public func selectController(
-        at index: Int,
-        animated: Bool,
-        completion: Completion?
-    ) {
-        flatController?.selectController(
-            at: index,
-            animated: animated,
-            completion: completion
-        )
     }
 }
 
