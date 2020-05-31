@@ -9,27 +9,7 @@
 import UIKit
 import Route
 
-class MyViewController: UIViewController, CodeInitable {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        view.backgroundColor = .green
-    }
-}
-
-class My2ViewController: UIViewController, CodeInitable {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        view.backgroundColor = .red
-    }
-}
-
 class FlatViewController: UIViewController {
-
-    // MARK: Override properties
 
     // MARK: Private properties
 
@@ -43,23 +23,20 @@ class FlatViewController: UIViewController {
 
     var selectedController: UIViewController?
 
-    var controllers: [UIViewController] = {
-        let first = MyViewController.initiate()
-        let second = MyViewController.initiate()
-        let thrird = My2ViewController.initiate()
-
+    var controllers: [ViewController] = {
         let c1 = ViewController.initiate()
+        c1.navigationTree = NavigationTree(levels: [[1]])
         c1.view.backgroundColor = .red
 
         let c2 = ViewController.initiate()
+        c2.navigationTree = NavigationTree(levels: [[2]])
         c2.view.backgroundColor = .green
 
         let c3 = ViewController.initiate()
+        c3.navigationTree = NavigationTree(levels: [[3]])
         c3.view.backgroundColor = .purple
 
         return [c1, c2, c3]
-
-//        return [first, thrird]
     }()
 
     // MARK: Override methods
@@ -79,7 +56,7 @@ class FlatViewController: UIViewController {
     // MARK: Private methods
 
     private func updateUI(index: Int) {
-        titleLabel.text = "Selected controller: \(index)"
+        titleLabel.text = String(controllers[index].id)
     }
 }
 

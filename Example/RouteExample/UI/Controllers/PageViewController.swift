@@ -61,7 +61,7 @@ class PageViewController: UIPageViewController {
 
         setViewControllers(
             [controller],
-            direction: .reverse,
+            direction: .forward,
             animated: animated,
             completion: { _ in completion?() }
         )
@@ -133,7 +133,14 @@ extension PageViewController: UIPageViewControllerDataSource {
     }
 
     func presentationIndex(for pageViewController: UIPageViewController) -> Int {
-        return 0
+        guard
+            let pretender = selectedController,
+            let idx = childControllers.firstIndex(of: pretender)
+        else {
+            return 0
+        }
+
+        return idx
     }
 }
 
