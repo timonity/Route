@@ -21,7 +21,6 @@
 		A140F91224505ACD00C2A2EA /* NavigationTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A140F91124505ACD00C2A2EA /* NavigationTestCase.swift */; };
 		A140F91424505C3000C2A2EA /* ContentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A140F91324505C3000C2A2EA /* ContentController.swift */; };
 		A140F91624505C6700C2A2EA /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A140F91524505C6700C2A2EA /* NavigationController.swift */; };
-		A158032724607CF100FD7FF3 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A09DC2452288600756D4A /* String.swift */; };
 		A188220C24606F1F004A7729 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A09D82452283500756D4A /* Action.swift */; };
 		A188220D24607BCC004A7729 /* NavigationTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AB95DA245EBD080030FD7E /* NavigationTree.swift */; };
 		A1A8ADE124805C3400F45FB5 /* FlatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A8ADE024805C3400F45FB5 /* FlatViewController.swift */; };
@@ -137,6 +136,52 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		A11463B4248442B70048E0AC /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				A11463AE248441640048E0AC /* UIView.swift */,
+				A11463B2248442000048E0AC /* UIViewController.swift */,
+				A11463AC248441310048E0AC /* UITabBarController.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		A11463B5248442EA0048E0AC /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				A1F851B524182FE400284CBD /* ViewController.swift */,
+				A1A8ADE024805C3400F45FB5 /* FlatViewController.swift */,
+				A11463AA24827E820048E0AC /* PageViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		A11463B6248442FE0048E0AC /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A11A09DA2452284D00756D4A /* Button.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A11463B7248443180048E0AC /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				A11A09DC2452288600756D4A /* String.swift */,
+				A11463B02484419A0048E0AC /* Collection.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		A11463B8248443800048E0AC /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				A1F851BF24182FE700284CBD /* Info.plist */,
+				A1F851BA24182FE700284CBD /* Assets.xcassets */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
 		A1AB95DC245F2EDC0030FD7E /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -149,16 +194,11 @@
 		A1AB95DD245F2F0F0030FD7E /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				A1F851B524182FE400284CBD /* ViewController.swift */,
-				A11463B02484419A0048E0AC /* Collection.swift */,
-				A11463B2248442000048E0AC /* UIViewController.swift */,
-				A11463AC248441310048E0AC /* UITabBarController.swift */,
-				A11463AE248441640048E0AC /* UIView.swift */,
-				A1A8ADE024805C3400F45FB5 /* FlatViewController.swift */,
-				A11463AA24827E820048E0AC /* PageViewController.swift */,
-				A11A09DA2452284D00756D4A /* Button.swift */,
-				A1F851B724182FE400284CBD /* Main.storyboard */,
+				A11463B5248442EA0048E0AC /* Controllers */,
+				A11463B4248442B70048E0AC /* Extensions */,
+				A11463B6248442FE0048E0AC /* Views */,
 				A1F851BC24182FE700284CBD /* LaunchScreen.storyboard */,
+				A1F851B724182FE400284CBD /* Main.storyboard */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -211,11 +251,10 @@
 		A1F851B024182FE400284CBD /* FlowExample */ = {
 			isa = PBXGroup;
 			children = (
-				A1F851BF24182FE700284CBD /* Info.plist */,
 				A1F851B124182FE400284CBD /* AppDelegate.swift */,
-				A11A09DC2452288600756D4A /* String.swift */,
-				A1F851BA24182FE700284CBD /* Assets.xcassets */,
+				A11463B7248443180048E0AC /* Extensions */,
 				A1AB95DC245F2EDC0030FD7E /* Models */,
+				A11463B8248443800048E0AC /* Support */,
 				A1AB95DD245F2F0F0030FD7E /* UI */,
 			);
 			path = FlowExample;
@@ -458,7 +497,6 @@
 			files = (
 				A188220D24607BCC004A7729 /* NavigationTree.swift in Sources */,
 				A1AB95E52460326F0030FD7E /* FlowExampleUITests.swift in Sources */,
-				A158032724607CF100FD7FF3 /* String.swift in Sources */,
 				A188220C24606F1F004A7729 /* Action.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -730,7 +768,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = FlowExample/Info.plist;
+				INFOPLIST_FILE = FlowExample/Support/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -748,7 +786,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = FlowExample/Info.plist;
+				INFOPLIST_FILE = FlowExample/Support/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
