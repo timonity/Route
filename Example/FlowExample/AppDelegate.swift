@@ -36,26 +36,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 }
-
-// MARK: Router
-
-public extension UIViewController {
-    
-    var router: Router {
-        return Router(window: UIApplication.shared.keyWindow, controller: self)
-    }
-}
-
-extension UITabBarController: StoryboadInitable {
-    
-    public static var storyboardId: String {
-        
-        return "TabBar"
-    }
-    
-    public static var storyboardName: String {
-        
-        return "Main"
-    }
-    
-}

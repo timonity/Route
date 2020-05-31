@@ -34,7 +34,6 @@ class FlatViewController: UIViewController {
     // MARK: Private properties
 
     @IBOutlet private weak var titleLabel: UILabel!
-    @IBOutlet private weak var pageControl: UIPageControl!
 
     private var pageController: PageViewController? {
         return children.first as? PageViewController
@@ -49,7 +48,18 @@ class FlatViewController: UIViewController {
         let second = MyViewController.initiate()
         let thrird = My2ViewController.initiate()
 
-        return [first, thrird]
+        let c1 = ViewController.initiate()
+        c1.view.backgroundColor = .red
+
+        let c2 = ViewController.initiate()
+        c2.view.backgroundColor = .green
+
+        let c3 = ViewController.initiate()
+        c3.view.backgroundColor = .purple
+
+        return [c1, c2, c3]
+
+//        return [first, thrird]
     }()
 
     // MARK: Override methods
@@ -57,9 +67,9 @@ class FlatViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        pageControl.numberOfPages = controllers.count
-
         pageController?.childControllers = controllers
+
+        updateUI(index: 0)
 
         pageController?.didSelectControllerHandler = { [weak self] idx in
             self?.updateUI(index: idx)
@@ -70,8 +80,6 @@ class FlatViewController: UIViewController {
 
     private func updateUI(index: Int) {
         titleLabel.text = "Selected controller: \(index)"
-
-        pageControl.currentPage = index
     }
 }
 
@@ -100,11 +108,4 @@ extension FlatViewController: StoryboadInitable {
     static var storyboardName: String {
         return "Main"
     }
-}
-
-extension Collection {
-
-    subscript (safe index: Index) -> Element? {
-          return indices.contains(index) ? self[index] : nil
-      }
 }

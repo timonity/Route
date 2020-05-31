@@ -36,7 +36,7 @@ enum Action: Equatable {
             return "Replace"
             
         case .setWindowRoot:
-            return "Set Window Root"
+            return "New Window Root"
 
         case .jumpTo(let id):
             return "Jump to \(id)"
@@ -48,10 +48,10 @@ enum Action: Equatable {
             return "Back to \(id)"
             
         case .backToWindowRoot:
-            return "Back to Window Root"
+            return "To Window Root"
             
         case .backToNavigationRoot:
-            return "Back to Current Nav. Root"
+            return "To Nav. Root"
         }
     }
 }

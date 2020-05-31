@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		68F04C443A084AB87D4D126C /* Pods_FlowExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F28A307FDC693FB8EAC951B /* Pods_FlowExampleTests.framework */; };
 		A11463AB24827E820048E0AC /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11463AA24827E820048E0AC /* PageViewController.swift */; };
+		A11463AD248441310048E0AC /* UITabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11463AC248441310048E0AC /* UITabBarController.swift */; };
+		A11463AF248441640048E0AC /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11463AE248441640048E0AC /* UIView.swift */; };
+		A11463B12484419A0048E0AC /* Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11463B02484419A0048E0AC /* Collection.swift */; };
+		A11463B3248442000048E0AC /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11463B2248442000048E0AC /* UIViewController.swift */; };
 		A11A09D92452283500756D4A /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A09D82452283500756D4A /* Action.swift */; };
 		A11A09DB2452284D00756D4A /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A09DA2452284D00756D4A /* Button.swift */; };
 		A11A09DD2452288600756D4A /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11A09DC2452288600756D4A /* String.swift */; };
@@ -56,6 +60,10 @@
 		5ECD523AE03049B75353BCC7 /* Pods-FlowExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlowExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-FlowExampleTests/Pods-FlowExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
 		8AE9B8E5B0407093F433639F /* Pods-FlowExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlowExample.release.xcconfig"; path = "Target Support Files/Pods-FlowExample/Pods-FlowExample.release.xcconfig"; sourceTree = "<group>"; };
 		A11463AA24827E820048E0AC /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
+		A11463AC248441310048E0AC /* UITabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITabBarController.swift; sourceTree = "<group>"; };
+		A11463AE248441640048E0AC /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
+		A11463B02484419A0048E0AC /* Collection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collection.swift; sourceTree = "<group>"; };
+		A11463B2248442000048E0AC /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		A11A09D82452283500756D4A /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		A11A09DA2452284D00756D4A /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		A11A09DC2452288600756D4A /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
@@ -142,6 +150,10 @@
 			isa = PBXGroup;
 			children = (
 				A1F851B524182FE400284CBD /* ViewController.swift */,
+				A11463B02484419A0048E0AC /* Collection.swift */,
+				A11463B2248442000048E0AC /* UIViewController.swift */,
+				A11463AC248441310048E0AC /* UITabBarController.swift */,
+				A11463AE248441640048E0AC /* UIView.swift */,
 				A1A8ADE024805C3400F45FB5 /* FlatViewController.swift */,
 				A11463AA24827E820048E0AC /* PageViewController.swift */,
 				A11A09DA2452284D00756D4A /* Button.swift */,
@@ -470,9 +482,13 @@
 			files = (
 				A1A8ADE124805C3400F45FB5 /* FlatViewController.swift in Sources */,
 				A1F851B624182FE400284CBD /* ViewController.swift in Sources */,
+				A11463B3248442000048E0AC /* UIViewController.swift in Sources */,
+				A11463AF248441640048E0AC /* UIView.swift in Sources */,
 				A11A09D92452283500756D4A /* Action.swift in Sources */,
+				A11463AD248441310048E0AC /* UITabBarController.swift in Sources */,
 				A11A09DD2452288600756D4A /* String.swift in Sources */,
 				A1AB95DB245EBD080030FD7E /* NavigationTree.swift in Sources */,
+				A11463B12484419A0048E0AC /* Collection.swift in Sources */,
 				A1F851B224182FE400284CBD /* AppDelegate.swift in Sources */,
 				A11A09DB2452284D00756D4A /* Button.swift in Sources */,
 				A11463AB24827E820048E0AC /* PageViewController.swift in Sources */,

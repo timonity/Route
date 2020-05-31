@@ -13,19 +13,38 @@ class ViewController: UIViewController {
     
     // MARK: Private properties
     
+    @IBOutlet private weak var forwardStackView: UIStackView!
+    @IBOutlet private weak var inplaceStackView: UIStackView!
+    @IBOutlet private weak var backwardStackView: UIStackView!
+
+    var stacks: [UIStackView] {
+        return [forwardStackView, inplaceStackView, backwardStackView]
+    }
+
     @IBOutlet private var navigationTreeLabel: UILabel!
-    @IBOutlet private weak var stackView: UIStackView!
-    
-    private let actions: [Action] = [
+
+    private let forwardAcitons: [Action] = [
         .push,
-        .present,
+        .present
+    ]
+
+    private let inplaceAcitons: [Action] = [
         .replace,
         .setWindowRoot,
-        .jumpTo(3),
+        .jumpTo(3)
+    ]
+
+    private let backwardAcitons: [Action] = [
         .back,
         .backTo(3),
         .backToWindowRoot,
         .backToNavigationRoot
+    ]
+
+    private lazy var actions: [[Action]] = [
+        forwardAcitons,
+        inplaceAcitons,
+        backwardAcitons
     ]
     
     // MARK: Public properties
@@ -57,27 +76,37 @@ class ViewController: UIViewController {
 
         navigationTreeLabel.accessibilityIdentifier = "\(id)-Tree"
 
-        title = String(navigationTree.id)
+        navigationItem.title = String(navigationTree.id)
     }
 
     // MARK: Private methods
     
     private func setupButtons() {
-        for idx in 0..<actions.count {
-            let button = Button(action: actions[idx], id: id, tag: idx)
 
-            button.addTarget(
-                self,
-                action: #selector(self.actionButtonTouched(_:)),
-                for: .touchUpInside
-            )
+        for (i, actions) in actions.enumerated() {
+            for (j, action) in actions.enumerated() {
 
-            stackView.addArrangedSubview(button)
+                let tag = i * 10 + j
+
+                let button = Button(action: action, id: id, tag: tag)
+
+                button.addTarget(
+                    self,
+                    action: #selector(self.actionButtonTouched(_:)),
+                    for: .touchUpInside
+                )
+
+                stacks[i].addArrangedSubview(button)
+            }
         }
     }
     
     @objc private func actionButtonTouched(_ sender: Button) {
-        switch actions[sender.tag] {
+
+        let i = sender.tag / 10
+        let j = sender.tag % 10
+
+        switch actions[i][j] {
 
         case .push:
             push()
@@ -158,14 +187,13 @@ class ViewController: UIViewController {
     }
 
     private func jumpTo(_ id: Int) {
-        let title = "Jumped from \(id)"
 
         router.jumpTo(
             ViewController.self,
             animated: true,
             condition: { $0.id == id },
-            prepare: { $0.title = title },
-            completion: { $0.view.backgroundColor = .red },
+            prepare: { $0.view.backgroundColor = .red },
+            completion: { $0.showAlert(with: "Jumped from \(self.id)") },
             failure: { self.showAlert(with: "Not found") }
         )
     }

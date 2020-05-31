@@ -15,7 +15,7 @@ class Button: UIButton {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        layer.cornerRadius = frame.size.height / 2
+        layer.cornerRadius = frame.size.height / 4
         layer.masksToBounds = true
     }
 
@@ -31,7 +31,7 @@ class Button: UIButton {
         setTitleColor(.white, for: .normal)
         setTitleColor(.gray, for: .highlighted)
 
-        titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
 
         if #available(iOS 11.0, *) {
             backgroundColor = UIColor(named: "main_button")

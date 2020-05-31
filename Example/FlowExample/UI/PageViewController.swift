@@ -15,6 +15,8 @@ class PageViewController: UIPageViewController {
 
     private var selectedController: UIViewController?
 
+    private var selectPretender: UIViewController?
+
     // MARK: Public properties
 
     var childControllers: [UIViewController] = [] {
@@ -33,6 +35,12 @@ class PageViewController: UIPageViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        let pageControl = UIPageControl.appearance(
+            whenContainedInInstancesOf: [PageViewController.self]
+        )
+        pageControl.pageIndicatorTintColor = .lightGray
+        pageControl.currentPageIndicatorTintColor = .black
 
         dataSource = self
         delegate = self
@@ -102,22 +110,30 @@ extension PageViewController: UIPageViewControllerDataSource {
         _ pageViewController: UIPageViewController,
         viewControllerBefore viewController: UIViewController
     ) -> UIViewController? {
-        guard let idx = controllers.firstIndex(of: viewController) else {
+        guard let idx = childControllers.firstIndex(of: viewController) else {
             return nil
         }
 
-        return controllers[safe: idx - 1]
+        return childControllers[safe: idx - 1]
     }
 
     func pageViewController(
         _ pageViewController: UIPageViewController,
         viewControllerAfter viewController: UIViewController
     ) -> UIViewController? {
-        guard let idx = controllers.firstIndex(of: viewController) else {
+        guard let idx = childControllers.firstIndex(of: viewController) else {
             return nil
         }
 
-        return controllers[safe: idx + 1]
+        return childControllers[safe: idx + 1]
+    }
+
+    func presentationCount(for pageViewController: UIPageViewController) -> Int {
+        return childControllers.count
+    }
+
+    func presentationIndex(for pageViewController: UIPageViewController) -> Int {
+        return 0
     }
 }
 
@@ -127,15 +143,27 @@ extension PageViewController: UIPageViewControllerDelegate {
 
     func pageViewController(
         _ pageViewController: UIPageViewController,
+        willTransitionTo pendingViewControllers: [UIViewController]
+    ) {
+        selectPretender = pendingViewControllers.first
+    }
+
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
         didFinishAnimating finished: Bool,
         previousViewControllers: [UIViewController],
         transitionCompleted completed: Bool
     ) {
-        guard let idx = controllers.firstIndex(of: pageViewController.children[0]) else {
+        guard completed else { return }
+
+        guard
+            let pretender = selectPretender,
+            let idx = childControllers.firstIndex(of: pretender)
+        else {
             return
         }
 
-        selectedController = controllers[idx]
+        selectedController = childControllers[idx]
 
         didSelectControllerHandler?(idx)
     }
