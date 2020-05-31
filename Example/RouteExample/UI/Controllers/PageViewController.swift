@@ -134,8 +134,8 @@ extension PageViewController: UIPageViewControllerDataSource {
 
     func presentationIndex(for pageViewController: UIPageViewController) -> Int {
         guard
-            let pretender = selectedController,
-            let idx = childControllers.firstIndex(of: pretender)
+            let selecter = selectedController,
+            let idx = childControllers.firstIndex(of: selecter)
         else {
             return 0
         }

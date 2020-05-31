@@ -41,6 +41,14 @@ class FlatViewController: UIViewController {
 
     // MARK: Override methods
 
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        // Load view on awakining to force setup page view controller.
+        // It needs to add controllers to navigation tree.
+        load()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -57,6 +65,10 @@ class FlatViewController: UIViewController {
 
     private func updateUI(index: Int) {
         titleLabel.text = String(controllers[index].id)
+    }
+
+    private func load() {
+        _ = view
     }
 }
 
