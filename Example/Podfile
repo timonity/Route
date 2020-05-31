@@ -1,15 +1,15 @@
 platform :ios, '9.0'
 
-target 'FlowExample' do
+target 'RouteExample' do
   use_frameworks!
 
-  pod 'Flow', :path => '../'
+  pod 'Route', :path => '../'
   
 end
 
-target 'FlowExampleTests' do
+target 'RouteExampleUITests' do
   use_frameworks!
 
-  pod 'Flow', :path => '../'
+  pod 'Route', :path => '../'
   
 end

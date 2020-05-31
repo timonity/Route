@@ -194,7 +194,7 @@ Router can be created without **controller**, which is ok to set window root vie
 Add the following to `Podfile`:
 
 ```ruby
-pod 'Flow'
+pod 'Route'
 ```
 
 ### Manual
@@ -203,4 +203,4 @@ Download and drag files from Source folder into your Xcode project.
 
 ## License
 
-Flow is distributed under the [MIT License](https://qwe.qwe/).
+Route is distributed under the [MIT License](https://qwe.qwe/).
