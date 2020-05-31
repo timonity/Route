@@ -75,7 +75,9 @@ struct Route {
                 }
 
             case .sibling(let container):
-                action.controllersToSelect.append((trace.controller, container))
+                if container.visibleController != trace.controller {
+                    action.controllersToSelect.append((trace.controller, container))
+                }
             }
         }
 

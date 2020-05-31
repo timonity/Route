@@ -187,14 +187,13 @@ class ViewController: UIViewController {
     }
 
     private func jumpTo(_ id: Int) {
-
         router.jumpTo(
             ViewController.self,
             animated: true,
             condition: { $0.id == id },
             prepare: { $0.view.backgroundColor = .red },
-            completion: { $0.showAlert(with: "Jumped from \(self.id)") },
-            failure: { self.showAlert(with: "Not found") }
+            completion: { $0.showAlert(with: "Success!") },
+            failure: { self.showAlert(with: "Failure!") }
         )
     }
 
@@ -210,8 +209,8 @@ class ViewController: UIViewController {
             animated: true,
             condition: { $0.id == controllerId },
             prepare: { $0.title = title },
-            completion: { _ in  },
-            failure: { self.showAlert(with: "Not found") }
+            completion: { $0.showAlert(with: "Success!") },
+            failure: { self.showAlert(with: "Failure!") }
         )
     }
     
