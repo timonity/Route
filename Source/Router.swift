@@ -70,11 +70,11 @@ open class Router {
     }
 
     private var pathToCurrentController: [Trace]? {
-        return tree?.findPath { $0.controller == self.currentController }
+        return getPathToController { $0 == self.currentController }
     }
 
     private var pathToTopController: [Trace]? {
-        return tree?.findPath { $0.controller == self.topController }
+        return getPathToController { $0 == self.topController }
     }
 
     private var tree: Node<Trace>? {
@@ -136,7 +136,7 @@ open class Router {
     private func findPreviousContentController(
         for controller: UIViewController
     ) -> UIViewController? {
-        let contentControllers = getPathTo(UIViewController.self) { $0 == controller }?
+        let contentControllers = getPathToController { $0 == controller }?
             .filter { $0.type.isContent }
             .map { $0.controller }
 
@@ -178,8 +178,7 @@ open class Router {
         }
     }
 
-    private func getPathTo<T: UIViewController>(
-        _ controller: T.Type,
+    private func getPathToController<T: UIViewController>(
         condition: ((T) -> Bool)? = nil
     ) -> [Trace]? {
         let pathToTargetController = tree?.findPath { (trace) -> Bool in
@@ -310,6 +309,13 @@ open class Router {
         self.init(window: window)
 
         currentController = controller
+    }
+
+    public func find<T: UIViewController>(
+        _ controller: T.Type,
+        condition: ((T) -> Bool)? = nil
+    ) -> UIViewController? {
+        return getPathToController(condition: condition)?.last?.controller
     }
     
     // MARK: Forward Navigation
@@ -538,7 +544,7 @@ open class Router {
     ) {
         guard
             let pathToTop = pathToTopController,
-            let pathToTarget = getPathTo(controller, condition: condition)
+            let pathToTarget = getPathToController(condition: condition)
         else {
             failure?()
 
