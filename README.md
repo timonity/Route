@@ -8,7 +8,7 @@
  <a href="https://"><img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT" /></a>
 </p>
 
-Easy navigation in iOS application. Just works as expected.
+Router doesn't hold any state, all values required for navigation are calculated on the fly based on `UIViewController` properties. It's fully compatible with existing project navigation system. You can easily mix router navigation command calls with performing segues or push/present/dismiss/etc. Therefore it can be painlesly added to any ongoing project.
 
 ## Features
 
@@ -35,7 +35,7 @@ extension UIViewController {
 }
 ```
 
-## Basic Usage
+## Usage
 
 ### Forward Navigation
 
@@ -53,11 +53,11 @@ router.present(controller, animated: true, completion: { ... })
 router.push(controller, animated: true, completion: { ... })
 ```
 
-**Note:** completion block gets called right after the transition completes.
+**Note:** *completion* closure is called immediately after the transition is completed.
 
 ### Backward Navigation
 
-#### Back to arbitrary controller in navigation tree
+#### Back to arbitrary controller
 
 ```swift
 router.back(
@@ -68,10 +68,9 @@ router.back(
     completion: { controller in ... }
 )
 ```
+Provide condition in addition to target controller type, in case **more than one** controller of such type in back stack.
 
-Provide condition in addition to target controller type, in case that **more than one** controller of such type in back stack.
-
-#### Back to previous controller in navigation tree
+#### Back to previous controller
 
 ```swift
 router.back(
@@ -91,7 +90,7 @@ router.backToWindowRoot(
 )
 ```
 
-**Note:** prepare block gets called just before the transition begins and can be used for returning some data to target controller.
+**Note:** *prepare* closure is called before the transition begins. This closure can be used for returning some data to target controller.
 
 ### Inplace Navigation
 
