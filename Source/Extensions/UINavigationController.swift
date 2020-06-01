@@ -11,17 +11,14 @@ import UIKit
 extension UINavigationController: StackContainerController {
 
     public var visibleController: UIViewController? {
-        
         return topViewController
     }
 
     public var controllers: [UIViewController] {
-
         return viewControllers
     }
 
     public var root: UIViewController? {
-
         return viewControllers.first
     }
     
@@ -49,7 +46,6 @@ extension UINavigationController: StackContainerController {
         animated: Bool = true,
         completion: (() -> Void)? = nil
     ) {
-
         CATransaction.begin()
 
         CATransaction.setCompletionBlock(completion)
@@ -80,7 +76,7 @@ extension UINavigationController: StackContainerController {
         completion: Completion?
     ) {
         guard let oldIdx = viewControllers.firstIndex(of: oldController) else {
-            print("Controller `\(oldController)` not found in navigation controller `\(self)` stack")
+            Logger.error("Controller `\(oldController)` not found in navigation controller `\(self)` stack")
             return
         }
 

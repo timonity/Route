@@ -27,16 +27,13 @@ public protocol StoryboadInitable: Initable {
 public extension StoryboadInitable where Self: UIViewController {
     
     static var storyboardId: String {
-        
         return String(describing: self)
     }
     
     static func initiate() -> Self {
-        
         let storyboard = UIStoryboard(name: storyboardName, bundle: nil)
         
         guard let instance = storyboard.instantiateViewController(withIdentifier: storyboardId) as? Self else {
-            
             fatalError("Unable to initiate `\(self)` with storyboard id `\(storyboardId)` from storyboard `\(storyboardName)`")
         }
         
@@ -54,12 +51,10 @@ public protocol XibInitable: Initable {
 public extension XibInitable where Self: UIViewController {
     
     static var xibName: String {
-        
         return String(describing: self)
     }
     
     static func initiate() -> Self {
-        
         return Self(nibName: xibName, bundle: nil)
     }
 }
@@ -71,7 +66,6 @@ public protocol CodeInitable: Initable { }
 public extension CodeInitable where Self: UIViewController {
     
     static func initiate() -> Self {
-    
         return Self()
     }
 }

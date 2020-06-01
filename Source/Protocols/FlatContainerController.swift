@@ -26,7 +26,7 @@ public extension FlatContainerController {
         completion: Completion? = nil
     ) {
         guard let index = controllers.firstIndex(of: controller) else {
-            print("Error: couldn't select \(controller) in \(self). Controller index not found.")
+            Logger.error("Couldn't select \(controller) in \(self). Controller index not found.")
 
             return
         }
