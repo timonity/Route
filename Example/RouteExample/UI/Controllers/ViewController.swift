@@ -174,7 +174,7 @@ class ViewController: UIViewController {
         controller.navigationTree = tree
         
         router.replace(
-            to: controller,
+            with: controller,
             animated: true,
             completion: { }
         )
@@ -187,8 +187,8 @@ class ViewController: UIViewController {
     }
 
     private func jumpTo(_ id: Int) {
-        router.jumpTo(
-            ViewController.self,
+        router.jump(
+            to: ViewController.self,
             animated: true,
             condition: { $0.id == id },
             prepare: { $0.view.backgroundColor = .red },
@@ -204,8 +204,8 @@ class ViewController: UIViewController {
     private func backTo(_ controllerId: Int) {
         let title = "From \(id)"
         
-        router.backTo(
-            ViewController.self,
+        router.back(
+            to: ViewController.self,
             animated: true,
             condition: { $0.id == controllerId },
             prepare: { $0.title = title },

@@ -351,8 +351,8 @@ open class Router {
 
     // MARK: Backward Navigation
 
-    public func backTo<T: UIViewController>(
-         _ controllerType: T.Type,
+    public func back<T: UIViewController>(
+         to controllerType: T.Type,
          animated: Bool = true,
          condition: ((T) -> Bool)? = nil,
          prepare: ((T) -> Void)? = nil,
@@ -473,7 +473,7 @@ open class Router {
     // MARK: Inplace Navigation
 
     public func replace(
-        to controller: UIViewController,
+        with controller: UIViewController,
         animated: Bool = true,
         completion: Completion? = nil
     ) {
@@ -528,8 +528,8 @@ open class Router {
         }
     }
 
-    public func jumpTo<T: UIViewController>(
-        _ controller: T.Type,
+    public func jump<T: UIViewController>(
+        to controller: T.Type,
         animated: Bool = true,
         condition: ((T) -> Bool)? = nil,
         prepare: ((T) -> Void)? = nil,
@@ -565,8 +565,8 @@ open class Router {
         completion: Completion? = nil,
         failure: Completion? = nil
     ) {
-        jumpTo(
-            UIViewController.self,
+        jump(
+            to: UIViewController.self,
             animated: animated,
             condition: { $0 == self.currentController },
             prepare: nil,
