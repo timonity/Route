@@ -7,30 +7,34 @@
 
 import UIKit
 
-enum OpenType {
+struct Trace {
 
-    case windowRoot
-    case presented(UIViewController)
-    case child(ContainerController)
-    case pushed(StackContainerController)
-    case sibling(FlatContainerController)
-}
+    // MARK: Types
 
-enum ControllerType {
+    enum ControllerType {
 
-    case content
-    case container
-    case flatContainer
-    case stackContaier
+        case content
+        case container
+        case flatContainer
+        case stackContaier
 
-    var isContent: Bool {
-        return self == .content
+        var isContent: Bool {
+            return self == .content
+        }
     }
-}
 
-public struct Trace {
+    enum OpenType {
 
-    public let controller: UIViewController
+        case windowRoot
+        case presented(UIViewController)
+        case child(ContainerController)
+        case pushed(StackContainerController)
+        case sibling(FlatContainerController)
+    }
+
+    // MARK: Public properties
+
+    let controller: UIViewController
     let openType: OpenType
     let isOnTopWay: Bool
 
