@@ -411,8 +411,15 @@ open class Router {
             return
         }
 
-        // Path to previous controller
-        let pathToTarget: [Trace] = pathToCurrent.dropLast()
+        // Path to previous content controller
+
+        guard let idx = pathToCurrent.dropLast().lastIndex(where: { $0.type.isContent }) else {
+            failure?()
+
+            return
+        }
+
+        let pathToTarget: [Trace] = Array(pathToCurrent.prefix(through: idx))
 
         let route = Route(
             pathToSource: pathToCurrent,
