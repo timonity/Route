@@ -314,8 +314,8 @@ open class Router {
     public func find<T: UIViewController>(
         _ controller: T.Type,
         condition: ((T) -> Bool)? = nil
-    ) -> UIViewController? {
-        return getPathToController(condition: condition)?.last?.controller
+    ) -> T? {
+        return getPathToController(condition: condition)?.last?.controller as? T
     }
     
     // MARK: Forward Navigation
