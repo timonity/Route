@@ -152,19 +152,19 @@ open class Router {
     }
 
     private func perform<T: UIViewController>(
-        jumpRoute: Route,
+        route: Route,
         animated: Bool = true,
         prepare: ((T) -> Void)? = nil,
         completion: ((T) -> Void)? = nil,
         failure: Completion? = nil
     ) {
-        var route = jumpRoute
+        var _route = route
 
-        route.cutMutualParts()
+        _route.cutMutualParts()
 
         guard
-            let action = route.action,
-            let target = route.target as? T
+            let action = _route.action,
+            let target = _route.target as? T
         else {
             failure?()
 
@@ -385,7 +385,7 @@ open class Router {
         )
 
         perform(
-            jumpRoute: route,
+            route: route,
             animated: animated,
             prepare: prepare,
             completion: completion,
@@ -414,7 +414,7 @@ open class Router {
         )
 
         perform(
-            jumpRoute: route,
+            route: route,
             animated: animated,
             prepare: prepare,
             completion: completion,
@@ -443,7 +443,7 @@ open class Router {
         )
 
         perform(
-            jumpRoute: route,
+            route: route,
             animated: animated,
             prepare: prepare,
             completion: completion,
@@ -551,7 +551,7 @@ open class Router {
         )
 
         perform(
-            jumpRoute: route,
+            route: route,
             animated: animated,
             prepare: prepare,
             completion: completion,
