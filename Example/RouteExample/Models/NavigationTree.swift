@@ -111,7 +111,7 @@ struct NavigationTree {
             if let count = lvls.last?.count {
 
                 lvls.append(
-                    " ".duplicate(count - 2) + "|"
+                    " ".duplicate(count - 2) + "↑"
                 )
 
                 lvl.append(
@@ -125,7 +125,7 @@ struct NavigationTree {
 
                 if id == level.last { break }
 
-                lvl.append("––")
+                lvl.append("→")
             }
 
             lvls.append(lvl)
