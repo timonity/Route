@@ -29,7 +29,7 @@ class Button: UIButton {
 
         setTitle(action.title, for: .normal)
         setTitleColor(.white, for: .normal)
-        setTitleColor(.gray, for: .highlighted)
+        setTitleColor(.darkGray, for: .highlighted)
 
         titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
 
