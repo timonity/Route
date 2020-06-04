@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct NavigationTree {
+struct NavigationTree: Hashable {
 
     // MARK: Public properties
 
@@ -135,8 +135,9 @@ struct NavigationTree {
             .reversed()
             .map { $0.appending("\n") }
             .reduce("") { $0 + $1 }
+            .dropLast()
 
-        return (tree, lvls.count + 1)
+        return (String(tree), lvls.count + 1)
     }
 }
 

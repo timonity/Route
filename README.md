@@ -20,8 +20,6 @@ Router doesn't hold any state, all values required for navigation are calculated
 - Architecture agnostic
 - Lightweight
 
-Router doesn't hold any state, all values required for navigation are calculated on the fly based on `UIViewController` properties. So it's fully compatible with existing project navigation system. You can easily mix router navigation command calls with performing segues or push/present/dismiss/etc. So it can be painlesly added to any ongoing project.
-
 ## Add
 
 Provide access point to router (from view controller, for example):
@@ -34,6 +32,46 @@ extension UIViewController {
     }
 }
 ```
+
+## Example
+<table>
+  <tr>
+    <th>Back</th>
+    <th>Back To</th>
+    <th>Jump To</th>
+  </tr>
+  <tr>
+    <th><img src="qwe.png"></th>
+    <th><img src="qwe.png"></th>
+    <th><img src="qwe.png"></th>
+  </tr>
+  <tr>
+    <td><div class="highlight highlight-source-swift"><pre>
+router.back(
+  animated: true,
+  prepare: { $0.dark() }
+)
+
+</pre></div>
+    </td>
+    <td><div class="highlight highlight-source-swift"><pre>
+router.back(
+  to: ViewController.self,
+  animated: true,
+  condition: { $0.id == 3 },
+  completion: { $0.alert() }
+)</pre></div>
+    </td>
+    <td><div class="highlight highlight-source-swift"><pre>
+router.jump(
+  to: ViewController.self,
+  animated: true,
+  condition: { $0.id == 3 },
+  prepare: { $0 }
+)</pre></div>
+    </td>
+  </tr>
+</table>
 
 ## Usage
 
@@ -180,6 +218,8 @@ If container contains child controller at one level, like `UITabBarController` o
 - iOS 9.0 +
 
 ## Istallation
+
+Route doesn't contain any external dependencies.
 
 ### CocoaPods
 

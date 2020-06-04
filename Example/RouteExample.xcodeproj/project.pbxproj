@@ -22,6 +22,8 @@
 		A1A8ADE124805C3400F45FB5 /* FlatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A8ADE024805C3400F45FB5 /* FlatViewController.swift */; };
 		A1AB95DB245EBD080030FD7E /* NavigationTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AB95DA245EBD080030FD7E /* NavigationTree.swift */; };
 		A1AB95E52460326F0030FD7E /* RouteExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AB95E42460326F0030FD7E /* RouteExampleUITests.swift */; };
+		A1F18EC7248852A5007918CD /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F18EC6248852A5007918CD /* HeaderView.swift */; };
+		A1F18EC9248852E2007918CD /* HeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1F18EC8248852E2007918CD /* HeaderView.xib */; };
 		A1F851B224182FE400284CBD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F851B124182FE400284CBD /* AppDelegate.swift */; };
 		A1F851B624182FE400284CBD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F851B524182FE400284CBD /* ViewController.swift */; };
 		A1F851BB24182FE700284CBD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1F851BA24182FE700284CBD /* Assets.xcassets */; };
@@ -63,6 +65,8 @@
 		A1AB95E22460326F0030FD7E /* RouteExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RouteExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1AB95E42460326F0030FD7E /* RouteExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteExampleUITests.swift; sourceTree = "<group>"; };
 		A1AB95E62460326F0030FD7E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1F18EC6248852A5007918CD /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
+		A1F18EC8248852E2007918CD /* HeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderView.xib; sourceTree = "<group>"; };
 		A1F851AE24182FE400284CBD /* RouteExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RouteExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1F851B124182FE400284CBD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1F851B524182FE400284CBD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -142,6 +146,7 @@
 			isa = PBXGroup;
 			children = (
 				A11A09DA2452284D00756D4A /* Button.swift */,
+				A1D236EF24899A01002A35FC /* HeaderView */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -192,6 +197,15 @@
 				A1AB95E62460326F0030FD7E /* Info.plist */,
 			);
 			path = RouteExampleUITests;
+			sourceTree = "<group>";
+		};
+		A1D236EF24899A01002A35FC /* HeaderView */ = {
+			isa = PBXGroup;
+			children = (
+				A1F18EC6248852A5007918CD /* HeaderView.swift */,
+				A1F18EC8248852E2007918CD /* HeaderView.xib */,
+			);
+			path = HeaderView;
 			sourceTree = "<group>";
 		};
 		A1F851A524182FE400284CBD = {
@@ -322,6 +336,7 @@
 				A1F851C52418360000284CBD /* Main.storyboard in Resources */,
 				A1F851BE24182FE700284CBD /* LaunchScreen.storyboard in Resources */,
 				A1F851BB24182FE700284CBD /* Assets.xcassets in Resources */,
+				A1F18EC9248852E2007918CD /* HeaderView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -455,6 +470,7 @@
 				A1F851B224182FE400284CBD /* AppDelegate.swift in Sources */,
 				A11A09DB2452284D00756D4A /* Button.swift in Sources */,
 				A11463AB24827E820048E0AC /* PageViewController.swift in Sources */,
+				A1F18EC7248852A5007918CD /* HeaderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -649,6 +665,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = RouteExample/Support/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -667,6 +684,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = RouteExample/Support/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

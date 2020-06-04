@@ -4,6 +4,7 @@ target 'RouteExample' do
   use_frameworks!
 
   pod 'Route', :path => '../'
+  pod 'TableAdapter', '~>1.1.0'
   
 end
 

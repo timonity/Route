@@ -8,20 +8,48 @@
 
 import UIKit
 import Route
+import TableAdapter
+
+enum IItem: Hashable {
+
+    case tree(NavigationTree)
+    case action(Action)
+}
 
 class ViewController: UIViewController {
     
     // MARK: Private properties
-    
-    @IBOutlet private weak var forwardStackView: UIStackView!
-    @IBOutlet private weak var inplaceStackView: UIStackView!
-    @IBOutlet private weak var backwardStackView: UIStackView!
 
-    var stacks: [UIStackView] {
-        return [forwardStackView, inplaceStackView, backwardStackView]
-    }
+    @IBOutlet private weak var tableView: UITableView!
 
-    @IBOutlet private var navigationTreeLabel: UILabel!
+    private lazy var adapter = TableAdapter<IItem, Int>(
+        tableView: tableView,
+        sender: self,
+        cellIdentifierProvider: { (indexPath, item) -> String? in
+
+            switch item {
+
+            case .tree:
+                return "TreeCell"
+
+            case .action:
+                return "ActionCell"
+            }
+        },
+        cellDidSelectHandler: { [weak self] (table, indexPath, item) in
+            table.deselectRow(at: indexPath, animated: true)
+
+            switch item {
+
+            case .tree:
+                break
+
+            case .action(let value):
+                self?.apply(action: value)
+            }
+
+        }
+    )
 
     private let forwardAcitons: [Action] = [
         .push,
@@ -59,79 +87,89 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setupButtons()
-        
-        if #available(iOS 13.0, *) {
-            navigationTreeLabel.font = UIFont.monospacedSystemFont(
-                ofSize: 15,
-                weight: .regular
-            )
-        }
 
-        let plot = navigationTree.plot()
+        setupTable()
+        setupTitle()
 
-        navigationTreeLabel.text = plot.0
-        navigationTreeLabel.numberOfLines = plot.1
-
-        navigationTreeLabel.accessibilityIdentifier = "\(id)-Tree"
-
-        navigationItem.title = String(navigationTree.id)
+        updateUI()
     }
 
     // MARK: Private methods
-    
-    private func setupButtons() {
 
-        for (i, actions) in actions.enumerated() {
-            for (j, action) in actions.enumerated() {
+    private func updateUI() {
 
-                let tag = i * 10 + j
+        let treeSection = Section<IItem, Int>(
+            id: 0,
+            items: [.tree(navigationTree)]
+        )
 
-                let button = Button(action: action, id: id, tag: tag)
+        let forwardSection = Section<IItem, Int>(
+            id: 1,
+            items: forwardAcitons.map { IItem.action($0) },
+            header: .custom(item: "Forward")
+        )
 
-                button.addTarget(
-                    self,
-                    action: #selector(self.actionButtonTouched(_:)),
-                    for: .touchUpInside
-                )
+        let backwardSection = Section<IItem, Int>(
+            id: 2,
+            items: backwardAcitons.map { IItem.action($0) },
+            header: .custom(item: "Backward")
+        )
 
-                stacks[i].addArrangedSubview(button)
-            }
-        }
+        let inplaceSection = Section<IItem, Int>(
+            id: 3,
+            items: inplaceAcitons.map { IItem.action($0) },
+            header: .custom(item: "Inplace")
+        )
+
+        let sections = [
+            treeSection,
+            forwardSection,
+            backwardSection,
+            inplaceSection
+        ]
+
+        adapter.update(with: sections, animated: false)
     }
-    
-    @objc private func actionButtonTouched(_ sender: Button) {
 
-        let i = sender.tag / 10
-        let j = sender.tag % 10
+    private func setupTable() {
+        tableView.register(
+            UINib(nibName: "HeaderView", bundle: nil),
+            forHeaderFooterViewReuseIdentifier: adapter.defaultHeaderIdentifier
+        )
+    }
 
-        switch actions[i][j] {
+    private func setupTitle() {
+        navigationItem.title = String(navigationTree.id)
+    }
+
+    private func apply(action: Action) {
+
+        switch action {
 
         case .push:
             push()
-            
+
         case .present:
             present()
-            
+
         case .replace:
             replace()
-            
+
         case .setWindowRoot:
             setWindowRoot()
 
         case .jumpTo(let id):
             jumpTo(id)
-            
+
         case .back:
             back()
-            
+
         case .backTo(let id):
             backTo(id)
-            
+
         case .backToWindowRoot:
             backToWindowRoot()
-            
+
         case .backToNavigationRoot:
             backToNavigationRoot()
         }
@@ -191,14 +229,16 @@ class ViewController: UIViewController {
             to: ViewController.self,
             animated: true,
             condition: { $0.id == id },
-            prepare: { $0.view.backgroundColor = .red },
+//            prepare: { $0.view.backgroundColor = .red },
             completion: { $0.showAlert(with: "Success!") },
             failure: { self.showAlert(with: "Failure!") }
         )
     }
 
     private func back() {
-        router.back()
+        router.back(
+            prepare: { $0.randBg() }
+        )
     }
     
     private func backTo(_ controllerId: Int) {
@@ -223,6 +263,25 @@ class ViewController: UIViewController {
     }
 }
 
+extension UIViewController {
+
+    func randBg() {
+
+    }
+}
+
+extension UIColor {
+
+    static var random: UIColor {
+        return UIColor(
+            red: .random(in: 0..<1),
+            green: .random(in: 0..<1),
+            blue: .random(in: 0..<1),
+            alpha: 1.0
+        )
+    }
+}
+
 // MARK: StoryboardInitable
 
 extension ViewController: StoryboadInitable {
@@ -243,5 +302,54 @@ extension ViewController {
         controller.addAction(cancel)
         
         router.present(controller)
+    }
+}
+
+// MARK: TreeTableViewCell
+
+class TreeTableViewCell: UITableViewCell {
+
+    // MARK: Private properties
+
+    @IBOutlet private weak var treeLabel: UILabel!
+
+    // MARK: Override methods
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        if #available(iOS 13.0, *) {
+            treeLabel.font = UIFont.monospacedSystemFont(
+                ofSize: 16,
+                weight: .semibold
+            )
+        }
+    }
+}
+
+extension TreeTableViewCell: SenderConfigurable {
+
+    func setup(with item: IItem, sender: ViewController) {
+        if case let IItem.tree(tree) = item {
+            let plot = tree.plot()
+            
+            treeLabel.text = plot.0
+            treeLabel.numberOfLines = plot.1
+
+            treeLabel.accessibilityIdentifier = "\(sender.id)-Tree"
+        }
+    }
+}
+
+// MARK: ActionTableViewCell
+
+class ActionTableViewCell: UITableViewCell, SenderConfigurable {
+
+    func setup(with item: IItem, sender: ViewController) {
+        if case let IItem.action(action) = item {
+            textLabel?.text = action.title
+
+            accessibilityIdentifier = "\(sender.id)-\(action.title)"
+        }
     }
 }
