@@ -39,7 +39,7 @@ class RouteExampleUITests: XCTestCase {
     }
 
     func perform(_ action: Action) {
-        tapButton(for: action)
+        tapElement(for: action)
         navigationTree.performAction(action)
 
         sleepIfNeeded(for: action)
@@ -54,25 +54,31 @@ class RouteExampleUITests: XCTestCase {
     }
 
     func check(isVerbose: Bool = true) {
-        let tree = getTreeLabel(with: navigationTree.id).label
-        let plot = navigationTree.plot().0
+        var tree = getTreeLabel(with: navigationTree.id).label
+        var plot = navigationTree.plot().0
+
+        tree = tree.replacingOccurrences(of: " ", with: "")
+        tree = tree.replacingOccurrences(of: "\n", with: "")
+
+        plot = plot.replacingOccurrences(of: " ", with: "")
+        plot = plot.replacingOccurrences(of: "\n", with: "")
 
         if isVerbose {
             print(tree)
-            print(navigationTree.plot().0)
+            print(plot)
         }
 
         XCTAssertEqual(tree, plot)
     }
 
-    func tapButton(for action: Action) {
-        getButton(for: action).tap()
+    func tapElement(for action: Action) {
+        getElement(for: action).tap()
     }
 
-    func getButton(for action: Action) -> XCUIElement {
+    func getElement(for action: Action) -> XCUIElement {
         let id = navigationTree.id
 
-        return app.buttons["\(id)-\(action.title)"]
+        return app.cells["\(id)-\(action.title)"]
     }
 
     func getTreeLabel() -> XCUIElement {
@@ -102,6 +108,7 @@ class RouteExampleUITests: XCTestCase {
             .push,
             .back,
             .present,
+            .present,
             .back
         ]
 
@@ -130,6 +137,16 @@ class RouteExampleUITests: XCTestCase {
             .present,
             .push,
             .backToWindowRoot
+        ]
+
+        perform(actions)
+    }
+
+    func testToNavigationRoot() {
+        let actions: [Action] = [
+            .present,
+            .push,
+            .backToNavigationRoot
         ]
 
         perform(actions)

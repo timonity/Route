@@ -90,6 +90,10 @@ class ViewController: UIViewController {
 
         setupTable()
         setupTitle()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
 
         updateUI()
     }
@@ -334,7 +338,7 @@ extension TreeTableViewCell: SenderConfigurable {
             let plot = tree.plot()
             
             treeLabel.text = plot.0
-            treeLabel.numberOfLines = plot.1
+//            treeLabel.numberOfLines = plot.1
 
             treeLabel.accessibilityIdentifier = "\(sender.id)-Tree"
         }
