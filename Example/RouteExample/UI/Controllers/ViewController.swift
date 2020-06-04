@@ -10,10 +10,10 @@ import UIKit
 import Route
 import TableAdapter
 
-enum IItem: Hashable {
+enum Item: Hashable {
 
-    case tree(NavigationTree)
-    case action(Action)
+    case tree(NavigationTree, Int)
+    case action(Action, Int)
 }
 
 class ViewController: UIViewController {
@@ -22,9 +22,8 @@ class ViewController: UIViewController {
 
     @IBOutlet private weak var tableView: UITableView!
 
-    private lazy var adapter = TableAdapter<IItem, Int>(
+    private lazy var adapter = TableAdapter<Item, Int>(
         tableView: tableView,
-        sender: self,
         cellIdentifierProvider: { (indexPath, item) -> String? in
 
             switch item {
@@ -44,10 +43,9 @@ class ViewController: UIViewController {
             case .tree:
                 break
 
-            case .action(let value):
+            case .action(let value, let id):
                 self?.apply(action: value)
             }
-
         }
     )
 
@@ -102,26 +100,26 @@ class ViewController: UIViewController {
 
     private func updateUI() {
 
-        let treeSection = Section<IItem, Int>(
+        let treeSection = Section<Item, Int>(
             id: 0,
-            items: [.tree(navigationTree)]
+            items: [.tree(navigationTree, id)]
         )
 
-        let forwardSection = Section<IItem, Int>(
+        let forwardSection = Section<Item, Int>(
             id: 1,
-            items: forwardAcitons.map { IItem.action($0) },
+            items: forwardAcitons.map { Item.action($0, id) },
             header: .custom(item: "Forward")
         )
 
-        let backwardSection = Section<IItem, Int>(
+        let backwardSection = Section<Item, Int>(
             id: 2,
-            items: backwardAcitons.map { IItem.action($0) },
+            items: backwardAcitons.map { Item.action($0, id) },
             header: .custom(item: "Backward")
         )
 
-        let inplaceSection = Section<IItem, Int>(
+        let inplaceSection = Section<Item, Int>(
             id: 3,
-            items: inplaceAcitons.map { IItem.action($0) },
+            items: inplaceAcitons.map { Item.action($0, id) },
             header: .custom(item: "Inplace")
         )
 
@@ -331,29 +329,29 @@ class TreeTableViewCell: UITableViewCell {
     }
 }
 
-extension TreeTableViewCell: SenderConfigurable {
+extension TreeTableViewCell: Configurable {
 
-    func setup(with item: IItem, sender: ViewController) {
-        if case let IItem.tree(tree) = item {
+    func setup(with item: Item) {
+        if case let Item.tree(tree, id) = item {
             let plot = tree.plot()
             
             treeLabel.text = plot.0
-//            treeLabel.numberOfLines = plot.1
+            treeLabel.numberOfLines = plot.1
 
-            treeLabel.accessibilityIdentifier = "\(sender.id)-Tree"
+            treeLabel.accessibilityIdentifier = "\(id)-Tree"
         }
     }
 }
 
 // MARK: ActionTableViewCell
 
-class ActionTableViewCell: UITableViewCell, SenderConfigurable {
+class ActionTableViewCell: UITableViewCell, Configurable {
 
-    func setup(with item: IItem, sender: ViewController) {
-        if case let IItem.action(action) = item {
+    func setup(with item: Item) {
+        if case let Item.action(action, id) = item {
             textLabel?.text = action.title
 
-            accessibilityIdentifier = "\(sender.id)-\(action.title)"
+            accessibilityIdentifier = "\(id)-\(action.title)"
         }
     }
 }
