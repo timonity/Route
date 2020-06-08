@@ -22,6 +22,7 @@
 		A1A8ADE124805C3400F45FB5 /* FlatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A8ADE024805C3400F45FB5 /* FlatViewController.swift */; };
 		A1AB95DB245EBD080030FD7E /* NavigationTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AB95DA245EBD080030FD7E /* NavigationTree.swift */; };
 		A1AB95E52460326F0030FD7E /* RouteExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AB95E42460326F0030FD7E /* RouteExampleUITests.swift */; };
+		A1B85FAA248EECB30025E3C4 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B85FA9248EECB30025E3C4 /* UIColor.swift */; };
 		A1F18EC7248852A5007918CD /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F18EC6248852A5007918CD /* HeaderView.swift */; };
 		A1F18EC9248852E2007918CD /* HeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1F18EC8248852E2007918CD /* HeaderView.xib */; };
 		A1F851B224182FE400284CBD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F851B124182FE400284CBD /* AppDelegate.swift */; };
@@ -65,6 +66,7 @@
 		A1AB95E22460326F0030FD7E /* RouteExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RouteExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1AB95E42460326F0030FD7E /* RouteExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteExampleUITests.swift; sourceTree = "<group>"; };
 		A1AB95E62460326F0030FD7E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1B85FA9248EECB30025E3C4 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		A1F18EC6248852A5007918CD /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		A1F18EC8248852E2007918CD /* HeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderView.xib; sourceTree = "<group>"; };
 		A1F851AE24182FE400284CBD /* RouteExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RouteExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -128,6 +130,7 @@
 				A11463AE248441640048E0AC /* UIView.swift */,
 				A11463B2248442000048E0AC /* UIViewController.swift */,
 				A11463AC248441310048E0AC /* UITabBarController.swift */,
+				A1B85FA9248EECB30025E3C4 /* UIColor.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -459,6 +462,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1A8ADE124805C3400F45FB5 /* FlatViewController.swift in Sources */,
+				A1B85FAA248EECB30025E3C4 /* UIColor.swift in Sources */,
 				A1F851B624182FE400284CBD /* ViewController.swift in Sources */,
 				A11463B3248442000048E0AC /* UIViewController.swift in Sources */,
 				A11463AF248441640048E0AC /* UIView.swift in Sources */,
@@ -508,7 +512,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = DA68413B275538158D039DED /* Pods-RouteExampleUITests.debug.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = RouteExampleUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -518,6 +523,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ru.home.RouteExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = RouteExample;
@@ -528,7 +535,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 46377A0309BCE04DC8325B51 /* Pods-RouteExampleUITests.release.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = RouteExampleUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -538,6 +546,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ru.home.RouteExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = RouteExample;
@@ -663,7 +673,9 @@
 			baseConfigurationReference = 0FEBCCC7AE00019AF1038418 /* Pods-RouteExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 64KAQ7888U;
 				INFOPLIST_FILE = RouteExample/Support/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -672,6 +684,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ru.home.RouteExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -682,7 +695,9 @@
 			baseConfigurationReference = 8AE9B8E5B0407093F433639F /* Pods-RouteExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 64KAQ7888U;
 				INFOPLIST_FILE = RouteExample/Support/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -691,6 +706,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = ru.home.RouteExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
