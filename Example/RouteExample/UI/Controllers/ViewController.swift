@@ -231,7 +231,6 @@ class ViewController: UIViewController {
             to: ViewController.self,
             animated: true,
             condition: { $0.id == id },
-//            prepare: { $0.view.backgroundColor = .red },
             completion: { $0.showAlert(with: "Success!") },
             failure: { self.showAlert(with: "Failure!") }
         )
@@ -239,7 +238,9 @@ class ViewController: UIViewController {
 
     private func back() {
         router.back(
-            prepare: { $0.randBg() }
+            prepare: { (controller: ViewController)  in
+                controller.randBg()
+            }
         )
     }
     
@@ -263,24 +264,11 @@ class ViewController: UIViewController {
     private func backToNavigationRoot() {
         router.backToKeyStackRoot()
     }
-}
 
-extension UIViewController {
+    // MARK: Public methods
 
     func randBg() {
-
-    }
-}
-
-extension UIColor {
-
-    static var random: UIColor {
-        return UIColor(
-            red: .random(in: 0..<1),
-            green: .random(in: 0..<1),
-            blue: .random(in: 0..<1),
-            alpha: 1.0
-        )
+        tableView.backgroundColor = .random
     }
 }
 
@@ -309,7 +297,7 @@ extension ViewController {
 
 // MARK: TreeTableViewCell
 
-class TreeTableViewCell: UITableViewCell {
+class TreeTableViewCell: UITableViewCell, Configurable {
 
     // MARK: Private properties
 
@@ -327,14 +315,13 @@ class TreeTableViewCell: UITableViewCell {
             )
         }
     }
-}
 
-extension TreeTableViewCell: Configurable {
+    // MARK: Public methods
 
     func setup(with item: Item) {
         if case let Item.tree(tree, id) = item {
             let plot = tree.plot()
-            
+
             treeLabel.text = plot.0
             treeLabel.numberOfLines = plot.1
 
