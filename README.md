@@ -36,20 +36,20 @@ extension UIViewController {
 ## Example
 <table>
   <tr>
-    <th>Back</th>
-    <th>Back To</th>
-    <th>Jump To</th>
+    <th>Back to previous</th>
+    <th>Back to 3</th>
+    <th>Jump to 3</th>
   </tr>
   <tr>
-    <th><img src="qwe.png"></th>
-    <th><img src="qwe.png"></th>
-    <th><img src="qwe.png"></th>
+    <th><img src="https://user-images.githubusercontent.com/16690973/84081780-4649c280-a9e7-11ea-9d13-7167db8838ac.gif"></th>
+    <th><img src="https://user-images.githubusercontent.com/16690973/84082472-92493700-a9e8-11ea-92d1-0f709fb0c85b.gif"></th>
+    <th><img src="https://user-images.githubusercontent.com/16690973/84084525-544e1200-a9ec-11ea-92cc-6c5e13e66484.gif"></th>
   </tr>
   <tr>
     <td><div class="highlight highlight-source-swift"><pre>
 router.back(
   animated: true,
-  prepare: { $0.dark() }
+  prepare: { $0.randBg() }
 )
 
 </pre></div>
@@ -67,7 +67,7 @@ router.jump(
   to: ViewController.self,
   animated: true,
   condition: { $0.id == 3 },
-  prepare: { $0 }
+  completion: { $0.alert() }
 )</pre></div>
     </td>
   </tr>
