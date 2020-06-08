@@ -41,7 +41,7 @@ extension UIViewController {
     <th>Jump to 3</th>
   </tr>
   <tr>
-    <th><img src="https://user-images.githubusercontent.com/16690973/84081780-4649c280-a9e7-11ea-9d13-7167db8838ac.gif"></th>
+    <th><img src="https://user-images.githubusercontent.com/16690973/84085754-f242dc00-a9ee-11ea-9777-1004ebd08359.gif"></th>
     <th><img src="https://user-images.githubusercontent.com/16690973/84082472-92493700-a9e8-11ea-92d1-0f709fb0c85b.gif"></th>
     <th><img src="https://user-images.githubusercontent.com/16690973/84084525-544e1200-a9ec-11ea-92cc-6c5e13e66484.gif"></th>
   </tr>
