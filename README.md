@@ -48,25 +48,25 @@ extension UIViewController {
   <tr>
     <td><div class="highlight highlight-source-swift"><pre>
 router.back(
-   animated: true,
-   prepare: { $0.randBg() }
+    animated: true,
+    prepare: { $0.randBg() }
 )
 </pre></div>
     </td>
     <td><div class="highlight highlight-source-swift"><pre>
 router.back(
-   to: ViewController.self,
-   animated: true,
-   condition: { $0.id == 3 },
-   completion: { $0.alert() }
+    to: ViewController.self,
+    animated: true,
+    condition: { $0.id == 3 },
+    completion: { $0.alert() }
 )</pre></div>
     </td>
     <td><div class="highlight highlight-source-swift"><pre>
 router.jump(
-   to: ViewController.self,
-   animated: true,
-   condition: { $0.id == 3 },
-   completion: { $0.alert() }
+    to: ViewController.self,
+    animated: true,
+    condition: { $0.id == 3 },
+    completion: { $0.alert() }
 )</pre></div>
     </td>
   </tr>
