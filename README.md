@@ -5,7 +5,7 @@
  <a href="https://cocoapods.org/pods/tablekit"><img src="https://img.shields.io/badge/pod-1.0.0-blue.svg" alt="CocoaPods compatible" /></a>
     <a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat" alt="Carthage compatible" /></a>
  <img src="https://img.shields.io/badge/platform-iOS-blue.svg?style=flat" alt="Platform iOS" />
- <a href="https://"><img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT" /></a>
+ <a href="https://github.com/timonity/Route/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT" /></a>
 </p>
 
 Router doesn't hold any state, all values required for navigation are calculated on the fly based on `UIViewController` properties. It's fully compatible with existing project navigation system. You can easily mix router navigation command calls with performing segues or push/present/dismiss/etc. Therefore it can be painlesly added to any ongoing project.
@@ -235,4 +235,4 @@ Download and drag files from Source folder into your Xcode project.
 
 ## License
 
-Route is distributed under the [MIT License](https://qwe.qwe/).
+Route is distributed under the [MIT License](https://github.com/timonity/Route/blob/master/LICENSE).
