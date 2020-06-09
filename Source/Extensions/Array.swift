@@ -13,7 +13,7 @@ extension Array {
         do {
             guard let idx = try firstIndex(where: condition) else { return nil }
 
-            return Array(self.prefix(through: idx))
+            return Array(prefix(through: idx))
 
         } catch {
             return nil

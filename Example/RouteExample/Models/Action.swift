@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum Action: Equatable {
+enum Action: Hashable {
     
     case push
     case present
@@ -48,10 +48,10 @@ enum Action: Equatable {
             return "Back to \(id)"
             
         case .backToWindowRoot:
-            return "To Window Root"
+            return "Back to Window Root"
             
         case .backToNavigationRoot:
-            return "To Nav. Root"
+            return "Back to Nav. Root"
         }
     }
 }

@@ -20,8 +20,6 @@ Router doesn't hold any state, all values required for navigation are calculated
 - Architecture agnostic
 - Lightweight
 
-Router doesn't hold any state, all values required for navigation are calculated on the fly based on `UIViewController` properties. So it's fully compatible with existing project navigation system. You can easily mix router navigation command calls with performing segues or push/present/dismiss/etc. So it can be painlesly added to any ongoing project.
-
 ## Add
 
 Provide access point to router (from view controller, for example):
@@ -34,6 +32,46 @@ extension UIViewController {
     }
 }
 ```
+
+## Example
+<table>
+  <tr>
+    <th>Back to previous</th>
+    <th>Back to 3</th>
+    <th>Jump to 3</th>
+  </tr>
+  <tr>
+    <th><img src="https://user-images.githubusercontent.com/16690973/84085754-f242dc00-a9ee-11ea-9777-1004ebd08359.gif"></th>
+    <th><img src="https://user-images.githubusercontent.com/16690973/84082472-92493700-a9e8-11ea-92d1-0f709fb0c85b.gif"></th>
+    <th><img src="https://user-images.githubusercontent.com/16690973/84084525-544e1200-a9ec-11ea-92cc-6c5e13e66484.gif"></th>
+  </tr>
+  <tr>
+    <td><div class="highlight highlight-source-swift"><pre>
+router.back(
+  animated: true,
+  prepare: { $0.randBg() }
+)
+<br>
+</pre></div>
+    </td>
+    <td><div class="highlight highlight-source-swift"><pre>
+router.back(
+  to: ViewController.self,
+  animated: true,
+  condition: { $0.id == 3 },
+  completion: { $0.alert() }
+)</pre></div>
+    </td>
+    <td><div class="highlight highlight-source-swift"><pre>
+router.jump(
+  to: ViewController.self,
+  animated: true,
+  condition: { $0.id == 3 },
+  completion: { $0.alert() }
+)</pre></div>
+    </td>
+  </tr>
+</table>
 
 ## Usage
 
@@ -180,6 +218,8 @@ If container contains child controller at one level, like `UITabBarController` o
 - iOS 9.0 +
 
 ## Istallation
+
+Route doesn't contain any external dependencies.
 
 ### CocoaPods
 
