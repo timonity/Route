@@ -210,7 +210,7 @@ If container contains stack of child controllers, like `UINavigationController`,
 
 ### Flat container
 
-If container contains child controller at one level, like `UITabBarController` or `UIPageViewController`, it must implement ['FlatContainerController'](https://github.com/timonity/Route/blob/master/Source/Protocols/FlatContainerController.swift) protocol. See [tab bar example](https://github.com/timonity/Route/blob/master/Source/Extensions/UITabBarController.swift) or [page controller example](https://github.com/timonity/Route/blob/master/Example/RouteExample/UI/Controllers/PageViewController.swift).
+If container contains child controller at one level, like `UITabBarController` or `UIPageViewController`, it must implement [`FlatContainerController`](https://github.com/timonity/Route/blob/master/Source/Protocols/FlatContainerController.swift) protocol. See [tab bar example](https://github.com/timonity/Route/blob/master/Source/Extensions/UITabBarController.swift) or [page controller example](https://github.com/timonity/Route/blob/master/Example/RouteExample/UI/Controllers/PageViewController.swift).
 
 ## Requirements
 
